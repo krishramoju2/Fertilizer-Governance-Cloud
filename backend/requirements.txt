@@ -1,9 +1,10 @@
+# Use pre-built wheels where possible
 Flask==3.0.0
 flask-cors==4.0.0
-pymongo==4.6.0
-pandas==2.1.0
-numpy==1.26.0
-python-dotenv==1.0.0
+pymongo[srv]==4.6.0  # Use SRV extra for MongoDB Atlas
+pandas==2.1.4  # Slightly newer version with better wheel support
+numpy==1.26.4
+python-dotenv==1.0.1
 PyJWT==2.8.0
 Werkzeug==3.0.1
 gunicorn==21.2.0
