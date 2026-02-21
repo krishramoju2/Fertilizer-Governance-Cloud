@@ -2,16 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
-from bson.json_util import dumps
 import datetime
 import jwt
 import os
-import bcrypt
+import hashlib
 from functools import wraps
-from dotenv import load_dotenv
 import logging
-from logging.handlers import RotatingFileHandler
+from dotenv import load_dotenv
 import traceback
+import urllib.parse
 
 # Load environment variables
 load_dotenv()
@@ -22,90 +21,115 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Enhanced CORS configuration
-CORS(app, origins=[
-    "http://localhost:3000",
-    "http://localhost:5000",
-    "https://your-frontend-domain.vercel.app",  # Add your frontend URL
-    "https://fertilizer-backend-jj59.onrender.com"
-], supports_credentials=True)
+# CORS configuration
+CORS(app, origins=["*"])
 
-# Configuration with proper defaults
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    if not SECRET_KEY:
-        raise ValueError("SECRET_KEY must be set in environment variables")
-    
-    MONGO_URI = os.environ.get('MONGO_URI')
-    if not MONGO_URI:
-        raise ValueError("MONGO_URI must be set in environment variables")
-    
-    TOKEN_EXPIRY = datetime.timedelta(days=7)  # Longer expiry for better UX
-    BCRYPT_ROUNDS = 12
-    ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
+# Configuration
+SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_change_this')
 
-app.config.from_object(Config)
+app.config['SECRET_KEY'] = SECRET_KEY
 
-# MongoDB connection with retry logic
-def get_db():
+# ==================== MONGODB CONNECTION WITH PROPER AUTH ====================
+
+def get_mongo_connection():
+    """Establish MongoDB connection with proper authentication"""
     try:
-        client = MongoClient(
-            app.config['MONGO_URI'],
-            maxPoolSize=50,
-            minPoolSize=10,
-            maxIdleTimeMS=45000,
-            retryWrites=True,
-            retryReads=True,
-            connectTimeoutMS=5000,
-            serverSelectionTimeoutMS=5000
-        )
+        # Your MongoDB credentials - UPDATE THESE!
+        username = "krishramoju"  # Your MongoDB username
+        password = "Krish161205"      # Your MongoDB password
+        cluster = "cluster0.svleqvv.mongodb.net"
+        database = "fertilizer_db"
+        
+        # URL encode the password to handle special characters
+        encoded_password = urllib.parse.quote_plus(password)
+        
+        # Construct connection string properly
+        mongo_uri = f"mongodb+srv://{username}:{encoded_password}@{cluster}/{database}?retryWrites=true&w=majority&appName=Cluster0"
+        
+        logger.info(f"Attempting to connect to MongoDB...")
+        
+        # Create client with timeout
+        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+        
         # Test connection
         client.admin.command('ping')
-        logger.info("MongoDB connection successful")
-        return client['fertilizer_intelligence']
+        logger.info("✅ MongoDB ping successful")
+        
+        # Get database
+        db = client[database]
+        
+        # Create collections
+        users_collection = db['users']
+        history_collection = db['history']
+        
+        # Create indexes (with error handling)
+        try:
+            users_collection.create_index('email', unique=True)
+            logger.info("✅ Created email index")
+        except Exception as e:
+            logger.warning(f"Index creation warning (may already exist): {e}")
+        
+        try:
+            history_collection.create_index([('user_id', 1), ('timestamp', -1)])
+            logger.info("✅ Created history index")
+        except Exception as e:
+            logger.warning(f"Index creation warning: {e}")
+        
+        logger.info("✅ MongoDB connection successful")
+        
+        return client, db, users_collection, history_collection
+        
     except Exception as e:
-        logger.error(f"MongoDB connection failed: {e}")
+        logger.error(f"❌ MongoDB connection failed: {e}")
+        logger.error(traceback.format_exc())
         raise
 
-db = get_db()
+# Initialize MongoDB connection
+try:
+    client, db, users_collection, history_collection = get_mongo_connection()
+    DB_CONNECTED = True
+except Exception as e:
+    logger.critical(f"Failed to connect to MongoDB: {e}")
+    client = None
+    db = None
+    users_collection = None
+    history_collection = None
+    DB_CONNECTED = False
 
-# Create indexes for better performance
-db.users.create_index('email', unique=True)
-db.history.create_index([('user_id', 1), ('timestamp', -1)])
-db.history.create_index('timestamp', expireAfterSeconds=2592000)  # Auto-delete after 30 days
+# ==================== PASSWORD UTILITIES ====================
 
-# ==================== UTILITY FUNCTIONS ====================
+def hash_password(password):
+    """Simple password hashing using SHA-256"""
+    salt = "farmadvisor_salt_2026"
+    hash_object = hashlib.sha256((password + salt).encode('utf-8'))
+    return hash_object.hexdigest()
+
+def check_password(plain_password, hashed_password):
+    """Check if plain password matches hashed password"""
+    return hash_password(plain_password) == hashed_password
+
+# ==================== HELPER FUNCTIONS ====================
 
 def serialize_doc(doc):
     """Convert MongoDB document to JSON serializable format"""
-    if doc and '_id' in doc:
+    if doc:
         doc['_id'] = str(doc['_id'])
-    if doc and 'user_id' in doc:
-        doc['user_id'] = str(doc['user_id'])
     return doc
 
-def validate_input(data, required_fields):
-    """Validate input data"""
-    missing = [field for field in required_fields if field not in data]
-    if missing:
-        return False, f"Missing fields: {', '.join(missing)}"
-    
-    # Type validation for numeric fields
-    numeric_fields = ['Temparature', 'Moisture', 'Fertilizer_Quantity', 'Nitrogen', 'Potassium', 'Phosphorous']
-    for field in numeric_fields:
-        if field in data:
-            try:
-                float(data[field])
-            except (ValueError, TypeError):
-                return False, f"{field} must be a number"
-    
-    return True, None
+def check_db_connection():
+    """Check if database is connected"""
+    global DB_CONNECTED
+    return DB_CONNECTED
 
 # ==================== AUTH MIDDLEWARE ====================
 
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        # Check DB connection first
+        if not check_db_connection():
+            return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
+        
         token = None
         auth_header = request.headers.get('Authorization')
         
@@ -113,111 +137,333 @@ def token_required(f):
             token = auth_header.split(' ')[1]
         
         if not token:
-            return jsonify({'success': False, 'message': 'Authentication token missing'}), 401
+            return jsonify({'success': False, 'message': 'Token missing'}), 401
         
         try:
-            data = jwt.decode(
-                token, 
-                app.config['SECRET_KEY'], 
-                algorithms=["HS256"]
-            )
-            
-            current_user = db.users.find_one({'_id': ObjectId(data['user_id'])})
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = users_collection.find_one({'_id': ObjectId(data['user_id'])})
             
             if not current_user:
                 return jsonify({'success': False, 'message': 'User not found'}), 401
             
-            # Add user to kwargs
             kwargs['current_user'] = current_user
             
         except jwt.ExpiredSignatureError:
             return jsonify({'success': False, 'message': 'Token expired'}), 401
-        except jwt.InvalidTokenError as e:
-            return jsonify({'success': False, 'message': f'Invalid token: {str(e)}'}), 401
-        except Exception as e:
-            logger.error(f"Token validation error: {traceback.format_exc()}")
-            return jsonify({'success': False, 'message': 'Authentication failed'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'success': False, 'message': 'Invalid token'}), 401
         
         return f(*args, **kwargs)
     
     return decorated
 
-# ==================== HEALTH CHECK ====================
+# ==================== FERTILIZER ANALYSIS ENGINE ====================
+
+class FertilizerAnalyzer:
+    """Fertilizer compatibility and quantity analyzer based on CSV data"""
+    
+    # Soil type compatibility matrix
+    SOIL_COMPATIBILITY = {
+        'Sandy': {
+            'Urea': 'Good',
+            'DAP': 'Good',
+            '14-35-14': 'Average',
+            '28-28': 'Good',
+            '17-17-17': 'Good',
+            '20-20': 'Average',
+            '10-26-26': 'Average'
+        },
+        'Loamy': {
+            'Urea': 'Excellent',
+            'DAP': 'Excellent',
+            '14-35-14': 'Good',
+            '28-28': 'Excellent',
+            '17-17-17': 'Excellent',
+            '20-20': 'Good',
+            '10-26-26': 'Good'
+        },
+        'Clayey': {
+            'Urea': 'Good',
+            'DAP': 'Good',
+            '14-35-14': 'Average',
+            '28-28': 'Average',
+            '17-17-17': 'Good',
+            '20-20': 'Good',
+            '10-26-26': 'Average'
+        },
+        'Black': {
+            'Urea': 'Excellent',
+            'DAP': 'Good',
+            '14-35-14': 'Excellent',
+            '28-28': 'Good',
+            '17-17-17': 'Excellent',
+            '20-20': 'Good',
+            '10-26-26': 'Good'
+        },
+        'Red': {
+            'Urea': 'Average',
+            'DAP': 'Good',
+            '14-35-14': 'Good',
+            '28-28': 'Average',
+            '17-17-17': 'Good',
+            '20-20': 'Good',
+            '10-26-26': 'Average'
+        }
+    }
+    
+    # Crop-specific recommendations
+    CROP_RECOMMENDATIONS = {
+        'Maize': {
+            'optimal_temp': (25, 32),
+            'optimal_moisture': (35, 50),
+            'common_fertilizers': ['Urea', '28-28', '17-17-17', '14-35-14']
+        },
+        'Sugarcane': {
+            'optimal_temp': (28, 35),
+            'optimal_moisture': (40, 60),
+            'common_fertilizers': ['Urea', 'DAP', '17-17-17', '14-35-14']
+        },
+        'Cotton': {
+            'optimal_temp': (25, 35),
+            'optimal_moisture': (30, 50),
+            'common_fertilizers': ['Urea', 'DAP', '14-35-14', '28-28']
+        },
+        'Wheat': {
+            'optimal_temp': (20, 30),
+            'optimal_moisture': (35, 55),
+            'common_fertilizers': ['Urea', 'DAP', '28-28', '17-17-17']
+        },
+        'Paddy': {
+            'optimal_temp': (25, 35),
+            'optimal_moisture': (40, 65),
+            'common_fertilizers': ['Urea', '28-28', '20-20', '14-35-14']
+        },
+        'Barley': {
+            'optimal_temp': (20, 28),
+            'optimal_moisture': (30, 45),
+            'common_fertilizers': ['Urea', '28-28', '17-17-17', '20-20']
+        },
+        'Millets': {
+            'optimal_temp': (25, 35),
+            'optimal_moisture': (25, 40),
+            'common_fertilizers': ['Urea', '28-28', '20-20', 'DAP']
+        },
+        'Pulses': {
+            'optimal_temp': (20, 30),
+            'optimal_moisture': (30, 45),
+            'common_fertilizers': ['DAP', '20-20', '28-28', '10-26-26']
+        },
+        'Ground Nuts': {
+            'optimal_temp': (25, 35),
+            'optimal_moisture': (35, 50),
+            'common_fertilizers': ['DAP', '28-28', '17-17-17', '14-35-14']
+        },
+        'Oil seeds': {
+            'optimal_temp': (25, 35),
+            'optimal_moisture': (30, 45),
+            'common_fertilizers': ['Urea', 'DAP', '20-20', '14-35-14']
+        },
+        'Tobacco': {
+            'optimal_temp': (20, 30),
+            'optimal_moisture': (30, 45),
+            'common_fertilizers': ['DAP', '28-28', '20-20', '10-26-26']
+        }
+    }
+    
+    # Fertilizer quantity ranges (kg/hectare)
+    QUANTITY_RANGES = {
+        'Urea': (35, 45),
+        'DAP': (35, 45),
+        '14-35-14': (25, 35),
+        '28-28': (20, 30),
+        '17-17-17': (10, 20),
+        '20-20': (10, 20),
+        '10-26-26': (15, 25)
+    }
+    
+    @classmethod
+    def analyze(cls, data):
+        """Main analysis function"""
+        try:
+            # Extract inputs with defaults
+            temperature = float(data.get('Temparature', 26))
+            moisture = float(data.get('Moisture', 45))
+            soil_type = data.get('Soil_Type', 'Loamy')
+            crop_type = data.get('Crop_Type', 'Maize')
+            fertilizer_name = data.get('Fertilizer_Name', 'Urea')
+            quantity = float(data.get('Fertilizer_Quantity', 30))
+            
+            # Get crop recommendations
+            crop_rec = cls.CROP_RECOMMENDATIONS.get(crop_type, cls.CROP_RECOMMENDATIONS['Maize'])
+            
+            # 1. Temperature compatibility
+            temp_min, temp_max = crop_rec['optimal_temp']
+            temp_compatible = temp_min <= temperature <= temp_max
+            temp_status = "Optimal" if temp_compatible else "Suboptimal"
+            
+            # 2. Moisture compatibility
+            moist_min, moist_max = crop_rec['optimal_moisture']
+            moisture_compatible = moist_min <= moisture <= moist_max
+            moisture_status = "Optimal" if moisture_compatible else "Adjust Needed"
+            
+            # 3. Soil compatibility
+            soil_compat = cls.SOIL_COMPATIBILITY.get(soil_type, {}).get(fertilizer_name, 'Average')
+            
+            # 4. Overall compatibility
+            if temp_compatible and moisture_compatible and soil_compat in ['Excellent', 'Good']:
+                overall_compatibility = "Highly Compatible"
+                compatibility_score = 85 + (10 if soil_compat == 'Excellent' else 0)
+            elif temp_compatible or moisture_compatible:
+                overall_compatibility = "Moderately Compatible"
+                compatibility_score = 60
+            else:
+                overall_compatibility = "Not Recommended"
+                compatibility_score = 30
+            
+            # 5. Quantity analysis
+            q_min, q_max = cls.QUANTITY_RANGES.get(fertilizer_name, (20, 40))
+            
+            if quantity < q_min:
+                quantity_status = "Insufficient"
+                quantity_message = f"Quantity too low. Recommended: {q_min}-{q_max} kg/ha"
+                quantity_score = 40
+            elif quantity > q_max:
+                quantity_status = "Excessive"
+                quantity_message = f"Quantity too high. Recommended: {q_min}-{q_max} kg/ha"
+                quantity_score = 30
+            else:
+                quantity_status = "Optimal"
+                quantity_message = f"Perfect quantity! Within range {q_min}-{q_max} kg/ha"
+                quantity_score = 100
+            
+            # 6. Generate personalized suggestions
+            suggestions = []
+            
+            if not temp_compatible:
+                if temperature < temp_min:
+                    suggestions.append(f"🌡️ Temperature is too low for {crop_type}. Consider delayed planting or using plastic mulch.")
+                else:
+                    suggestions.append(f"🌡️ Temperature is too high for {crop_type}. Provide shade or irrigate during peak hours.")
+            
+            if not moisture_compatible:
+                if moisture < moist_min:
+                    suggestions.append(f"💧 Soil moisture is low. Irrigate before fertilizer application.")
+                else:
+                    suggestions.append(f"💧 Soil moisture is high. Improve drainage or wait for optimal conditions.")
+            
+            if soil_compat == 'Average':
+                suggestions.append(f"🌱 {fertilizer_name} has average compatibility with {soil_type} soil. Consider adding organic matter.")
+            elif soil_compat in ['Good', 'Excellent']:
+                suggestions.append(f"🌱 Excellent! {fertilizer_name} works well with {soil_type} soil.")
+            
+            if quantity_status != "Optimal":
+                suggestions.append(quantity_message)
+            
+            # Add crop-specific suggestion
+            suggestions.append(f"👉 For {crop_type}, commonly used fertilizers: {', '.join(crop_rec['common_fertilizers'][:3])}")
+            
+            # 7. Calculate overall score
+            overall_score = int((compatibility_score + quantity_score) / 2)
+            
+            return {
+                'success': True,
+                'overall_compatibility': overall_compatibility,
+                'overall_score': overall_score,
+                'temperature_status': temp_status,
+                'temperature_range': f"{temp_min}°C - {temp_max}°C",
+                'moisture_status': moisture_status,
+                'moisture_range': f"{moist_min}% - {moist_max}%",
+                'soil_compatibility': soil_compat,
+                'quantity_status': quantity_status,
+                'quantity_range': f"{q_min} - {q_max} kg/ha",
+                'suggestions': suggestions[:4],
+                'fertilizer_info': {
+                    'name': fertilizer_name,
+                    'type': 'Nitrogenous' if fertilizer_name == 'Urea' else 'Complex',
+                    'application': 'Split application recommended' if fertilizer_name in ['Urea', 'DAP'] else 'Basal application'
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Analysis error: {traceback.format_exc()}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+# ==================== ROUTES ====================
 
 @app.route('/', methods=['GET'])
-@app.route('/health', methods=['GET'])
-def health_check():
-    """Health check endpoint for Render"""
-    try:
-        # Check MongoDB connection
-        db.command('ping')
-        mongo_status = 'connected'
-    except Exception as e:
-        mongo_status = 'disconnected'
-        logger.error(f"Health check - MongoDB: {e}")
-    
+def home():
+    db_status = "connected" if check_db_connection() else "disconnected"
     return jsonify({
         'success': True,
-        'status': 'operational',
-        'environment': app.config['ENVIRONMENT'],
-        'timestamp': datetime.datetime.utcnow().isoformat(),
-        'database': mongo_status,
-        'message': 'Fertilizer Intelligence API is running'
-    }), 200
+        'message': 'Fertilizer Intelligence API is running',
+        'version': '2.0.0',
+        'database': db_status,
+        'timestamp': datetime.datetime.now().isoformat()
+    })
+
+@app.route('/health', methods=['GET'])
+def health():
+    db_status = check_db_connection()
+    return jsonify({
+        'status': 'healthy' if db_status else 'degraded',
+        'database': 'connected' if db_status else 'disconnected',
+        'timestamp': datetime.datetime.now().isoformat()
+    })
 
 # ==================== AUTH ROUTES ====================
 
 @app.route('/register', methods=['POST'])
 def register():
-    """User registration with password hashing"""
+    # Check DB connection
+    if not check_db_connection():
+        return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
+    
     try:
         data = request.get_json()
         
         # Validate input
-        if not data or not data.get('email') or not data.get('password'):
-            return jsonify({
-                'success': False,
-                'message': 'Email and password required'
-            }), 400
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        email = data.get('email', '').lower().strip()
+        password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Email and password required'}), 400
         
         # Check if user exists
-        if db.users.find_one({'email': data['email'].lower().strip()}):
-            return jsonify({
-                'success': False,
-                'message': 'Email already registered'
-            }), 409
+        if users_collection.find_one({'email': email}):
+            return jsonify({'success': False, 'message': 'Email already registered'}), 400
         
         # Hash password
-        salt = bcrypt.gensalt(rounds=app.config['BCRYPT_ROUNDS'])
-        hashed_password = bcrypt.hashpw(
-            data['password'].encode('utf-8'), 
-            salt
-        )
+        hashed_password = hash_password(password)
         
-        # Create user
+        # Create user with farm details
         user = {
-            'email': data['email'].lower().strip(),
+            'email': email,
             'password': hashed_password,
-            'name': data.get('name', data['email'].split('@')[0]),
-            'created_at': datetime.datetime.utcnow(),
-            'last_login': None,
-            'preferences': {
-                'notifications': True,
-                'default_crop': data.get('default_crop', 'Maize')
-            }
+            'name': data.get('name', email.split('@')[0]),
+            'farm_details': {
+                'soil_type': data.get('soil_type', 'Loamy'),
+                'farm_size': float(data.get('farm_size', 1)),
+                'location': data.get('location', ''),
+                'primary_crops': data.get('primary_crops', [])
+            },
+            'created_at': datetime.datetime.utcnow()
         }
         
-        result = db.users.insert_one(user)
+        result = users_collection.insert_one(user)
         user_id = str(result.inserted_id)
         
         # Generate token
         token = jwt.encode({
             'user_id': user_id,
             'email': user['email'],
-            'exp': datetime.datetime.utcnow() + app.config['TOKEN_EXPIRY']
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }, app.config['SECRET_KEY'])
-        
-        logger.info(f"New user registered: {user['email']}")
         
         return jsonify({
             'success': True,
@@ -225,66 +471,45 @@ def register():
             'user': {
                 'id': user_id,
                 'email': user['email'],
-                'name': user['name']
-            },
-            'message': 'Registration successful'
+                'name': user['name'],
+                'farm_details': user['farm_details']
+            }
         }), 201
         
     except Exception as e:
         logger.error(f"Registration error: {traceback.format_exc()}")
-        return jsonify({
-            'success': False,
-            'message': 'Registration failed. Please try again.'
-        }), 500
+        return jsonify({'success': False, 'message': f'Registration failed: {str(e)}'}), 500
 
 @app.route('/login', methods=['POST'])
 def login():
-    """User login with password verification"""
+    # Check DB connection
+    if not check_db_connection():
+        return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
+    
     try:
         data = request.get_json()
         
-        # Validate input
-        if not data or not data.get('email') or not data.get('password'):
-            return jsonify({
-                'success': False,
-                'message': 'Email and password required'
-            }), 400
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        email = data.get('email', '').lower().strip()
+        password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Email and password required'}), 400
         
         # Find user
-        user = db.users.find_one({
-            'email': data['email'].lower().strip()
-        })
+        user = users_collection.find_one({'email': email})
         
-        if not user:
-            return jsonify({
-                'success': False,
-                'message': 'Invalid email or password'
-            }), 401
-        
-        # Verify password
-        if not bcrypt.checkpw(
-            data['password'].encode('utf-8'),
-            user['password']
-        ):
-            return jsonify({
-                'success': False,
-                'message': 'Invalid email or password'
-            }), 401
-        
-        # Update last login
-        db.users.update_one(
-            {'_id': user['_id']},
-            {'$set': {'last_login': datetime.datetime.utcnow()}}
-        )
+        if not user or not check_password(password, user['password']):
+            return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
         
         # Generate token
         token = jwt.encode({
             'user_id': str(user['_id']),
             'email': user['email'],
-            'exp': datetime.datetime.utcnow() + app.config['TOKEN_EXPIRY']
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }, app.config['SECRET_KEY'])
-        
-        logger.info(f"User logged in: {user['email']}")
         
         return jsonify({
             'success': True,
@@ -292,409 +517,236 @@ def login():
             'user': {
                 'id': str(user['_id']),
                 'email': user['email'],
-                'name': user.get('name', user['email'].split('@')[0])
-            },
-            'message': 'Login successful'
+                'name': user.get('name', 'Farmer'),
+                'farm_details': user.get('farm_details', {})
+            }
         }), 200
         
     except Exception as e:
         logger.error(f"Login error: {traceback.format_exc()}")
-        return jsonify({
-            'success': False,
-            'message': 'Login failed. Please try again.'
-        }), 500
+        return jsonify({'success': False, 'message': f'Login failed: {str(e)}'}), 500
 
-# ==================== PREDICTION ENGINE ====================
+# ==================== FARM ROUTES ====================
 
-class FertilizerAnalyzer:
-    """Advanced fertilizer analysis engine"""
-    
-    @staticmethod
-    def check_compatibility(temp, moisture, crop_type, fertilizer_name):
-        """Check fertilizer compatibility with conditions"""
-        
-        # Temperature ranges by crop
-        crop_temp_ranges = {
-            'Maize': (18, 32),
-            'Wheat': (15, 25),
-            'Rice': (20, 35),
-            'Sugarcane': (20, 35),
-            'Cotton': (21, 32),
-            'Vegetables': (15, 30),
-            'Fruits': (18, 32),
-            'Default': (15, 35)
-        }
-        
-        # Moisture ranges by fertilizer type
-        fertilizer_moisture = {
-            'Urea': (40, 70),
-            'DAP': (35, 65),
-            'MOP': (30, 60),
-            'NPK': (35, 75),
-            'Compost': (45, 80),
-            'Default': (30, 75)
-        }
-        
-        temp_range = crop_temp_ranges.get(crop_type, crop_temp_ranges['Default'])
-        moisture_range = fertilizer_moisture.get(fertilizer_name, fertilizer_moisture['Default'])
-        
-        # Detailed analysis
-        issues = []
-        
-        if not (temp_range[0] <= temp <= temp_range[1]):
-            issues.append(f"Temperature {temp}°C is outside optimal range ({temp_range[0]}-{temp_range[1]}°C) for {crop_type}")
-        
-        if not (moisture_range[0] <= moisture <= moisture_range[1]):
-            issues.append(f"Soil moisture {moisture}% is outside optimal range ({moisture_range[0]}-{moisture_range[1]}%) for {fertilizer_name}")
-        
-        is_compatible = len(issues) == 0
-        
-        if is_compatible:
-            reason = f"Perfect conditions! Temperature and moisture are optimal for applying {fertilizer_name} to {crop_type}."
-            recommendation = "Proceed with application as planned."
-        else:
-            reason = "; ".join(issues)
-            recommendation = FertilizerAnalyzer.generate_recommendation(temp, moisture, issues)
-        
-        return is_compatible, reason, recommendation
-    
-    @staticmethod
-    def check_quantity(quantity, crop_type, fertilizer_name):
-        """Check if fertilizer quantity is optimal"""
-        
-        # Quantity ranges by crop and fertilizer type (kg/hectare)
-        quantity_ranges = {
-            'Maize': {'Urea': (100, 150), 'DAP': (50, 80), 'MOP': (30, 50), 'Default': (50, 120)},
-            'Wheat': {'Urea': (80, 120), 'DAP': (40, 60), 'MOP': (20, 40), 'Default': (40, 100)},
-            'Rice': {'Urea': (90, 130), 'DAP': (45, 70), 'MOP': (25, 45), 'Default': (45, 110)},
-            'Default': {'Default': (40, 90)}
-        }
-        
-        crop_ranges = quantity_ranges.get(crop_type, quantity_ranges['Default'])
-        range_for_fertilizer = crop_ranges.get(fertilizer_name, crop_ranges.get('Default', (40, 90)))
-        
-        min_q, max_q = range_for_fertilizer
-        
-        if quantity < min_q:
-            status = "Insufficient"
-            reason = f"Quantity {quantity}kg/ha is below recommended minimum ({min_q}kg/ha). Yield may be affected."
-            recommendation = f"Increase application to at least {min_q}kg/ha for optimal results."
-        elif quantity > max_q:
-            status = "Excessive"
-            reason = f"Quantity {quantity}kg/ha exceeds recommended maximum ({max_q}kg/ha). Risk of environmental damage and waste."
-            recommendation = f"Reduce application to maximum {max_q}kg/ha to prevent nutrient runoff and crop burn."
-        else:
-            status = "Optimal"
-            reason = f"Quantity {quantity}kg/ha is within optimal range ({min_q}-{max_q}kg/ha)."
-            recommendation = "Perfect dosage! Continue with current application rate."
-        
-        return status, reason, recommendation
-    
-    @staticmethod
-    def generate_recommendation(temp, moisture, issues):
-        """Generate actionable recommendations"""
-        
-        recommendations = []
-        
-        if "temperature" in str(issues).lower():
-            if temp < 15:
-                recommendations.append("Wait for warmer conditions (above 15°C) before applying fertilizer.")
-            elif temp > 35:
-                recommendations.append("Apply during early morning or evening to reduce heat stress.")
-        
-        if "moisture" in str(issues).lower():
-            if moisture < 30:
-                recommendations.append("Irrigate the field before fertilizer application.")
-            elif moisture > 80:
-                recommendations.append("Delay application until soil drains to optimal moisture levels.")
-        
-        if not recommendations:
-            recommendations.append("Consider split application for better nutrient uptake.")
-        
-        return " ".join(recommendations)
-
-@app.route('/predict', methods=['POST'])
+@app.route('/farm/update', methods=['POST'])
 @token_required
-def predict(**kwargs):
-    """Enhanced prediction endpoint"""
+def update_farm(**kwargs):
     try:
         current_user = kwargs['current_user']
         data = request.get_json()
         
-        # Validate input
-        required = ['Temparature', 'Moisture', 'Crop_Type', 'Fertilizer_Name', 'Fertilizer_Quantity']
-        valid, message = validate_input(data, required)
-        if not valid:
-            return jsonify({'success': False, 'message': message}), 400
+        farm_details = {
+            'soil_type': data.get('soil_type', current_user.get('farm_details', {}).get('soil_type', 'Loamy')),
+            'farm_size': float(data.get('farm_size', current_user.get('farm_details', {}).get('farm_size', 1))),
+            'location': data.get('location', current_user.get('farm_details', {}).get('location', '')),
+            'primary_crops': data.get('primary_crops', current_user.get('farm_details', {}).get('primary_crops', []))
+        }
         
-        # Parse inputs
-        temp = float(data['Temparature'])
-        moisture = float(data['Moisture'])
-        quantity = float(data['Fertilizer_Quantity'])
-        crop_type = data['Crop_Type']
-        fertilizer_name = data['Fertilizer_Name']
+        users_collection.update_one(
+            {'_id': current_user['_id']},
+            {'$set': {'farm_details': farm_details}}
+        )
+        
+        return jsonify({
+            'success': True,
+            'farm_details': farm_details
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# ==================== PREDICTION ROUTE ====================
+
+@app.route('/predict', methods=['POST'])
+@token_required
+def predict(**kwargs):
+    try:
+        current_user = kwargs['current_user']
+        data = request.get_json()
+        
+        # Get farm details for defaults
+        farm_details = current_user.get('farm_details', {})
+        
+        # Prepare input data
+        input_data = {
+            'Temparature': float(data.get('Temparature', 26)),
+            'Moisture': float(data.get('Moisture', 45)),
+            'Soil_Type': data.get('Soil_Type', farm_details.get('soil_type', 'Loamy')),
+            'Crop_Type': data.get('Crop_Type', 'Maize'),
+            'Fertilizer_Name': data.get('Fertilizer_Name', 'Urea'),
+            'Fertilizer_Quantity': float(data.get('Fertilizer_Quantity', 30))
+        }
         
         # Run analysis
-        is_compatible, comp_reason, comp_recommendation = FertilizerAnalyzer.check_compatibility(
-            temp, moisture, crop_type, fertilizer_name
-        )
+        result = FertilizerAnalyzer.analyze(input_data)
         
-        q_status, q_reason, q_recommendation = FertilizerAnalyzer.check_quantity(
-            quantity, crop_type, fertilizer_name
-        )
+        if not result['success']:
+            return jsonify({'success': False, 'message': result.get('error', 'Analysis failed')}), 400
         
-        # Calculate efficiency score (0-100)
-        efficiency_score = 100
-        if not is_compatible:
-            efficiency_score -= 30
-        if q_status != "Optimal":
-            efficiency_score -= 20
-        
-        efficiency_score = max(0, efficiency_score)
-        
-        # Store in database
-        record = {
+        # Store in history
+        history_entry = {
             'user_id': current_user['_id'],
-            'crop_type': crop_type,
-            'fertilizer_name': fertilizer_name,
-            'temperature': temp,
-            'moisture': moisture,
-            'fertilizer_quantity': quantity,
-            'compatibility': "Compatible" if is_compatible else "Incompatible",
-            'compatibility_reason': comp_reason,
-            'compatibility_recommendation': comp_recommendation,
-            'quantity_status': q_status,
-            'quantity_reason': q_reason,
-            'quantity_recommendation': q_recommendation,
-            'efficiency_score': efficiency_score,
+            'input_data': input_data,
+            'result': result,
             'timestamp': datetime.datetime.utcnow()
         }
         
-        db.history.insert_one(record)
+        history_collection.insert_one(history_entry)
         
-        # Prepare response
-        response = {
+        return jsonify({
             'success': True,
-            'compatibility': "Compatible" if is_compatible else "Incompatible",
-            'compatibility_reason': comp_reason,
-            'compatibility_recommendation': comp_recommendation,
-            'quantity_status': q_status,
-            'quantity_reason': q_reason,
-            'quantity_recommendation': q_recommendation,
-            'efficiency_score': efficiency_score,
-            'summary': {
-                'crop': crop_type,
-                'fertilizer': fertilizer_name,
-                'conditions': f"{temp}°C, {moisture}% moisture",
-                'overall_assessment': 'Excellent' if efficiency_score > 80 else 'Good' if efficiency_score > 60 else 'Needs Improvement'
-            }
-        }
-        
-        logger.info(f"Prediction made for user: {current_user['email']}")
-        
-        return jsonify(response), 200
+            'result': result,
+            'input': input_data
+        }), 200
         
     except Exception as e:
         logger.error(f"Prediction error: {traceback.format_exc()}")
-        return jsonify({
-            'success': False,
-            'message': 'Analysis failed. Please try again.'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 # ==================== HISTORY ROUTES ====================
 
 @app.route('/history', methods=['GET'])
 @token_required
 def get_history(**kwargs):
-    """Get user's prediction history with pagination"""
     try:
         current_user = kwargs['current_user']
         
-        # Pagination parameters
-        page = int(request.args.get('page', 1))
-        limit = int(request.args.get('limit', 20))
-        skip = (page - 1) * limit
-        
-        # Get total count
-        total = db.history.count_documents({'user_id': current_user['_id']})
-        
-        # Get paginated history
-        history = list(db.history.find(
+        # Get last 20 entries
+        history = list(history_collection.find(
             {'user_id': current_user['_id']}
-        ).sort('timestamp', -1).skip(skip).limit(limit))
+        ).sort('timestamp', -1).limit(20))
         
-        # Serialize documents
+        # Format for response
+        formatted_history = []
         for item in history:
-            item['_id'] = str(item['_id'])
-            item['user_id'] = str(item['user_id'])
-            if 'timestamp' in item:
-                item['timestamp'] = item['timestamp'].isoformat()
+            formatted_history.append({
+                'id': str(item['_id']),
+                'crop_type': item['input_data']['Crop_Type'],
+                'fertilizer': item['input_data']['Fertilizer_Name'],
+                'compatibility': item['result']['overall_compatibility'],
+                'score': item['result']['overall_score'],
+                'timestamp': item['timestamp'].isoformat() if item.get('timestamp') else None
+            })
         
         return jsonify({
             'success': True,
-            'data': history,
-            'pagination': {
-                'page': page,
-                'limit': limit,
-                'total': total,
-                'pages': (total + limit - 1) // limit
-            }
+            'history': formatted_history
         }), 200
         
     except Exception as e:
-        logger.error(f"History error: {traceback.format_exc()}")
-        return jsonify({
-            'success': False,
-            'message': 'Failed to fetch history'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/history/<record_id>', methods=['DELETE'])
 @token_required
-def delete_history_record(**kwargs):
-    """Delete a specific history record"""
+def delete_history(**kwargs):
     try:
         current_user = kwargs['current_user']
         record_id = kwargs.get('record_id')
         
-        result = db.history.delete_one({
+        result = history_collection.delete_one({
             '_id': ObjectId(record_id),
             'user_id': current_user['_id']
         })
         
         if result.deleted_count == 0:
-            return jsonify({
-                'success': False,
-                'message': 'Record not found'
-            }), 404
+            return jsonify({'success': False, 'message': 'Record not found'}), 404
         
-        return jsonify({
-            'success': True,
-            'message': 'Record deleted successfully'
-        }), 200
+        return jsonify({'success': True, 'message': 'Record deleted'}), 200
         
     except Exception as e:
-        logger.error(f"Delete error: {traceback.format_exc()}")
-        return jsonify({
-            'success': False,
-            'message': 'Failed to delete record'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
-# ==================== ANALYTICS ROUTES ====================
+# ==================== ANALYTICS ROUTE ====================
 
 @app.route('/analytics', methods=['GET'])
 @token_required
 def get_analytics(**kwargs):
-    """Get comprehensive analytics for user"""
     try:
         current_user = kwargs['current_user']
         
         # Get all user history
-        history = list(db.history.find({'user_id': current_user['_id']}))
+        history = list(history_collection.find({'user_id': current_user['_id']}))
         
         if not history:
             return jsonify({
                 'success': True,
-                'data': {
-                    'message': 'No data available for analytics'
+                'analytics': {
+                    'total_analyses': 0,
+                    'compatibility_rate': 0,
+                    'average_score': 0,
+                    'crop_distribution': {},
+                    'fertilizer_distribution': {},
+                    'time_series': {'labels': [], 'scores': []}
                 }
             }), 200
         
-        # Compatibility distribution
-        comp_dist = {"Compatible": 0, "Incompatible": 0}
-        for item in history:
-            comp_dist[item['compatibility']] += 1
+        # Calculate statistics
+        total = len(history)
+        compatible_count = sum(1 for h in history if 'Highly Compatible' in h['result']['overall_compatibility'])
+        avg_score = sum(h['result']['overall_score'] for h in history) / total
         
         # Crop distribution
-        crop_dist = {}
-        fertilizer_dist = {}
+        crops = {}
+        fertilizers = {}
         
-        # Time series data
-        time_data = []
-        efficiency_data = []
-        
-        for item in history[-30:]:  # Last 30 records
-            crop_dist[item['crop_type']] = crop_dist.get(item['crop_type'], 0) + 1
-            fertilizer_dist[item['fertilizer_name']] = fertilizer_dist.get(item['fertilizer_name'], 0) + 1
+        for h in history:
+            crop = h['input_data']['Crop_Type']
+            crops[crop] = crops.get(crop, 0) + 1
             
-            if 'timestamp' in item and 'efficiency_score' in item:
-                time_data.append({
-                    'date': item['timestamp'].strftime("%Y-%m-%d"),
-                    'score': item['efficiency_score']
-                })
-                efficiency_data.append(item['efficiency_score'])
+            fert = h['input_data']['Fertilizer_Name']
+            fertilizers[fert] = fertilizers.get(fert, 0) + 1
         
-        # Calculate averages
-        avg_efficiency = sum(efficiency_data) / len(efficiency_data) if efficiency_data else 0
+        # Time series for last 7 entries
+        recent = history[-7:]
+        time_labels = []
+        time_scores = []
         
-        # Success rate
-        total_records = len(history)
-        compatible_records = comp_dist.get("Compatible", 0)
-        success_rate = (compatible_records / total_records * 100) if total_records > 0 else 0
-        
-        # Most common crop and fertilizer
-        most_common_crop = max(crop_dist.items(), key=lambda x: x[1])[0] if crop_dist else "N/A"
-        most_common_fertilizer = max(fertilizer_dist.items(), key=lambda x: x[1])[0] if fertilizer_dist else "N/A"
-        
-        analytics = {
-            'summary': {
-                'total_analyses': total_records,
-                'success_rate': round(success_rate, 2),
-                'average_efficiency': round(avg_efficiency, 2),
-                'most_analyzed_crop': most_common_crop,
-                'most_used_fertilizer': most_common_fertilizer
-            },
-            'compatibility_distribution': comp_dist,
-            'crop_distribution': crop_dist,
-            'fertilizer_distribution': fertilizer_dist,
-            'efficiency_trend': time_data[-10:],  # Last 10 records
-            'recent_activity': len(history[-7:])  # Last 7 days activity
-        }
+        for h in recent:
+            if h.get('timestamp'):
+                time_labels.append(h['timestamp'].strftime('%d/%m'))
+            else:
+                time_labels.append('N/A')
+            time_scores.append(h['result']['overall_score'])
         
         return jsonify({
             'success': True,
-            'data': analytics
+            'analytics': {
+                'total_analyses': total,
+                'compatibility_rate': round((compatible_count / total) * 100, 1) if total > 0 else 0,
+                'average_score': round(avg_score, 1) if total > 0 else 0,
+                'crop_distribution': crops,
+                'fertilizer_distribution': fertilizers,
+                'time_series': {
+                    'labels': time_labels,
+                    'scores': time_scores
+                }
+            }
         }), 200
         
     except Exception as e:
         logger.error(f"Analytics error: {traceback.format_exc()}")
-        return jsonify({
-            'success': False,
-            'message': 'Failed to generate analytics'
-        }), 500
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 # ==================== ERROR HANDLERS ====================
 
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({
-        'success': False,
-        'message': 'Endpoint not found'
-    }), 404
+    return jsonify({'success': False, 'message': 'Endpoint not found'}), 404
 
 @app.errorhandler(405)
 def method_not_allowed(error):
-    return jsonify({
-        'success': False,
-        'message': 'Method not allowed'
-    }), 405
+    return jsonify({'success': False, 'message': 'Method not allowed'}), 405
 
 @app.errorhandler(500)
 def internal_error(error):
-    logger.error(f"Internal server error: {error}")
-    return jsonify({
-        'success': False,
-        'message': 'Internal server error'
-    }), 500
+    return jsonify({'success': False, 'message': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    debug = app.config['ENVIRONMENT'] == 'development'
+    debug = os.environ.get('ENVIRONMENT', 'development') == 'development'
     
-    logger.info(f"Starting server on port {port} in {app.config['ENVIRONMENT']} mode")
+    logger.info(f"🚀 Starting server on port {port}")
+    logger.info(f"🔧 Debug mode: {debug}")
+    logger.info(f"💾 Database status: {'Connected' if DB_CONNECTED else 'Disconnected'}")
     
-    app.run(
-        host='0.0.0.0',
-        port=port,
-        debug=debug,
-        threaded=True
-    )
+    app.run(host='0.0.0.0', port=port, debug=debug)
