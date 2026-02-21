@@ -1,25 +1,83 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "FarmAdvisor",
+  "name": "FarmAdvisor Pro - Smart Fertilizer Recommendation System",
+  "description": "AI-Powered fertilizer recommendations based on soil conditions, crop type, and environmental factors",
+  "categories": ["agriculture", "farming", "productivity", "education"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any"
     },
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "apple touch icon"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait",
+  "scope": "/",
+  "theme_color": "#1a472a",
+  "background_color": "#f5f7fa",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "FarmAdvisor Dashboard"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Fertilizer Analysis"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Analysis",
+      "short_name": "Analyze",
+      "description": "Start a new fertilizer analysis",
+      "url": "/analysis",
+      "icons": [{ "src": "shortcut-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "View History",
+      "short_name": "History",
+      "description": "View past analyses",
+      "url": "/history"
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Stats",
+      "description": "View analytics dashboard",
+      "url": "/analytics"
+    }
+  ]
 }

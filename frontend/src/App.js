@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // API Configuration
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE = process.env.REACT_APP_API_URL || "https://fertilizer-backend-jj59.onrender.com";
 
 // Create axios instance
 const api = axios.create({
@@ -231,7 +231,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // Generate PDF
+  // ✅ FIXED PDF GENERATION - This is the ONLY change
   const generatePDF = () => {
     if (!result) return;
 
@@ -256,7 +256,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     doc.setFont('helvetica', 'bold');
     doc.text('Input Parameters:', 15, 60);
     
-    doc.autoTable({
+    // ✅ FIXED: Using autoTable function instead of doc.autoTable
+    autoTable(doc, {
       startY: 65,
       head: [['Parameter', 'Value']],
       body: [
