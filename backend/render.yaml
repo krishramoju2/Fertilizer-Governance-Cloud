@@ -1,7 +1,9 @@
+# backend/render.yaml
 services:
   - type: web
     name: fertilizer-backend
     env: python
+    runtime: python-3.12  # ← ADD THIS LINE
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
