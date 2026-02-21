@@ -64,36 +64,30 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
-# ==================== DATASET LOADING (UPDATED: PANDAS-FREE) ====================
+# ==================== DATASET LOADING (PANDAS-FREE) ====================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'fertilizer_data.json')
 CSV_FILE = os.path.join(BASE_DIR, 'Fertilizer Prediction.csv')
-df = None  # This will be a list of dictionaries
+df = None 
 
 def load_data():
     global df
     try:
-        # 1. Try JSON first (Optimized for Render)
         if os.path.exists(DATA_FILE):
             with open(DATA_FILE, 'r') as f:
                 df = json.load(f)
-            print(f"✅ Dataset loaded: {len(df)} records from {DATA_FILE}")
+            print(f"✅ Dataset loaded: {len(df)} records")
             return True
-        # 2. Fallback to CSV (Local only - requires pandas)
         elif os.path.exists(CSV_FILE):
             import pandas as pd
             temp_df = pd.read_csv(CSV_FILE)
             temp_df.columns = temp_df.columns.str.strip()
-            for col in temp_df.select_dtypes(include=['object', 'str']).columns:
-                temp_df[col] = temp_df[col].astype(str).str.strip()
             df = temp_df.to_dict(orient='records')
-            print(f"✅ Dataset loaded from CSV fallback: {len(df)} records")
+            print(f"✅ Loaded from CSV fallback")
             return True
-        else:
-            print(f"❌ No dataset found at {DATA_FILE} or {CSV_FILE}")
-            return False
+        return False
     except Exception as e:
-        print(f"❌ Error loading dataset: {e}")
+        print(f"❌ Load error: {e}")
         return False
 
 # ==================== CONFIGURATION ====================
@@ -107,167 +101,67 @@ QUANTITY_RANGES = {
     '10-26-26': {'min': 20, 'max': 50, 'optimal_min': 30, 'optimal_max': 45}
 }
 
-# ==================== COMPATIBILITY LOGIC (UPDATED: PANDAS-FREE) ====================
+# ==================== LOGIC FUNCTIONS ====================
 def check_compatibility(crop_type, soil_type, fertilizer_name, temperature=None, humidity=None, moisture=None):
-    if df is None:
-        return True, "Dataset not loaded - proceeding with default logic", None
-    
+    if df is None: return True, "Proceeding with default logic", None
     try:
-        # Filter matches using list comprehension
-        matches = [
-            row for row in df 
-            if str(row.get('Crop Type', '')).lower() == str(crop_type).lower()
-            and str(row.get('Soil Type', '')).lower() == str(soil_type).lower()
-        ]
+        matches = [r for r in df if str(r.get('Crop Type','')).lower() == str(crop_type).lower() and str(r.get('Soil Type','')).lower() == str(soil_type).lower()]
+        if not matches:
+            crop_m = [r for r in df if str(r.get('Crop Type','')).lower() == str(crop_type).lower()]
+            if crop_m:
+                counts = Counter(r.get('Fertilizer Name','') for r in crop_m)
+                if fertilizer_name in counts: return True, f"Common for {crop_type}", None
+                top = counts.most_common(1)[0][0]
+                return False, f"Not common for {crop_type}", str(top)
+            return True, "No historical data", None
         
-        if len(matches) == 0:
-            crop_matches = [row for row in df if str(row.get('Crop Type', '')).lower() == str(crop_type).lower()]
-            if len(crop_matches) > 0:
-                fertilizer_freq = Counter(row.get('Fertilizer Name', '') for row in crop_matches)
-                if fertilizer_name in fertilizer_freq:
-                    return True, f"{fertilizer_name} is commonly used for {crop_type}", None
-                else:
-                    top_alt = fertilizer_freq.most_common(1)[0][0] if fertilizer_freq else "Urea"
-                    return False, f"{fertilizer_name} is not commonly used for {crop_type}", str(top_alt)
-            return True, f"No historical data for {crop_type} in {soil_type} soil", None
-        
-        fertilizer_counts = Counter(row.get('Fertilizer Name', '') for row in matches)
-        total_matches = len(matches)
-        
-        if fertilizer_name in fertilizer_counts:
-            freq = fertilizer_counts[fertilizer_name]
-            percentage = (freq / total_matches) * 100
-            
-            weather_note = ""
-            if temperature is not None and humidity is not None:
-                if temperature > 30 and humidity < 40:
-                    weather_note = " (Hot & dry: may reduce nutrient efficiency)"
-                elif temperature < 20:
-                    weather_note = " (Cool conditions: slower nutrient uptake)"
-                elif humidity > 70:
-                    weather_note = " (High humidity: monitor for fungal issues)"
-            
-            if percentage >= 30:
-                return True, f"{fertilizer_name} is highly suitable for {crop_type} in {soil_type} soil ({percentage:.1f}% match){weather_note}", None
-            elif percentage >= 15:
-                return True, f"{fertilizer_name} is moderately suitable ({percentage:.1f}% match){weather_note}", None
-            else:
-                top_fert = fertilizer_counts.most_common(1)[0][0]
-                return False, f"{fertilizer_name} is rarely used ({percentage:.1f}%). {top_fert} is preferred for {crop_type}", str(top_fert)
-        else:
-            top_fert = fertilizer_counts.most_common(1)[0][0] if fertilizer_counts else "Urea"
-            return False, f"{fertilizer_name} has no historical usage for {crop_type} in {soil_type} soil. Try {top_fert}", str(top_fert)
-            
-    except Exception as e:
-        print(f"⚠️ Compatibility check error: {e}")
-        return True, "Compatibility check failed - proceeding", None
+        counts = Counter(r.get('Fertilizer Name','') for r in matches)
+        total = len(matches)
+        if fertilizer_name in counts:
+            perc = (counts[fertilizer_name] / total) * 100
+            status = perc >= 15
+            return status, f"{fertilizer_name} is {perc:.1f}% suitable", None
+        top = counts.most_common(1)[0][0]
+        return False, f"Preferred: {top}", str(top)
+    except: return True, "Error in check", None
 
-# ==================== QUANTITY ASSESSMENT (SAME LOGIC) ====================
-def assess_quantity(fertilizer_name, quantity, crop_type, soil_type, temperature=None, humidity=None, moisture=None, nitrogen=0, phosphorous=0, potassium=0):
+def assess_quantity(fert, qty, crop, soil, temp=None, hum=None, moist=None, n=0, p=0, k=0):
     recommendations = []
-    qty_range = QUANTITY_RANGES.get(fertilizer_name, {'min': 20, 'max': 60, 'optimal_min': 30, 'optimal_max': 50}).copy()
-
-    if soil_type.lower() == 'sandy':
-        qty_range['optimal_min'] += 5
-        qty_range['optimal_max'] += 10
-        recommendations.append("🌱 Sandy soil drains quickly - consider split applications to prevent leaching.")
-    elif soil_type.lower() == 'clayey':
-        qty_range['optimal_max'] -= 5
-        recommendations.append("🌱 Clay soil retains nutrients well - avoid over-application to prevent buildup.")
-    elif soil_type.lower() == 'black':
-        recommendations.append("🌱 Black soil is naturally fertile - moderate application is usually sufficient.")
-
-    if temperature is not None:
-        if temperature > 32:
-            qty_range['optimal_min'] += 5
-            recommendations.append("🌡️ High temperatures increase nutrient demand - ensure adequate irrigation.")
-        elif temperature < 18:
-            qty_range['optimal_min'] -= 5
-            recommendations.append("🌡️ Cool conditions slow nutrient uptake - apply fertilizer closer to active growth.")
-
-    if humidity is not None:
-        if humidity > 75:
-            recommendations.append("💧 High humidity - ensure good drainage to prevent nutrient runoff.")
-        elif humidity < 35:
-            recommendations.append("💧 Low humidity - irrigate immediately after fertilizer application.")
-
-    if moisture is not None and moisture < 25:
-        recommendations.append("💧 Low soil moisture - water before applying fertilizer for better absorption.")
-
-    if fertilizer_name == 'Urea' and nitrogen > 45:
-        recommendations.append(f"⚖️ Current nitrogen level ({nitrogen} kg/ha) is high - consider reducing quantity to avoid excess.")
-    elif fertilizer_name == 'DAP' and phosphorous > 28:
-        recommendations.append(f"⚖️ Phosphorous level ({phosphorous} kg/ha) is adequate - focus on nitrogen for balanced growth.")
-
-    if quantity < qty_range['min']:
-        status = "Too Low"
-        reason = f"{quantity} kg/acre is below minimum ({qty_range['min']} kg/acre) for {fertilizer_name}"
-        recommendations.insert(0, f"✅ Increase to at least {qty_range['optimal_min']} kg/acre for effective results.")
-    elif qty_range['optimal_min'] <= quantity <= qty_range['optimal_max']:
-        status = "Optimal"
-        reason = f"{quantity} kg/acre is ideal for {crop_type} in {soil_type} soil"
-        recommendations.insert(0, "✅ Perfect amount! Apply in split doses for better absorption.")
-    elif quantity <= qty_range['max']:
-        status = "Slightly High"
-        reason = f"{quantity} kg/acre is above optimal but acceptable"
-        recommendations.insert(0, f"⚠️ Consider reducing to {qty_range['optimal_max']} kg/acre for cost efficiency.")
+    r = QUANTITY_RANGES.get(fert, {'min': 20, 'max': 60, 'optimal_min': 30, 'optimal_max': 50}).copy()
+    
+    if soil.lower() == 'sandy': r['optimal_min'] += 5; recommendations.append("🌱 Sandy soil: use split doses.")
+    if temp and temp > 32: r['optimal_min'] += 5; recommendations.append("🌡️ High temp increases demand.")
+    
+    if qty < r['min']:
+        return "Too Low", f"Below {r['min']} kg/acre", recommendations + [f"✅ Aim for {r['optimal_min']} kg"]
+    elif r['optimal_min'] <= qty <= r['optimal_max']:
+        return "Optimal", "Ideal range", recommendations + ["✅ Perfect amount!"]
     else:
-        status = "Too High"
-        reason = f"{quantity} kg/acre exceeds maximum safe limit"
-        recommendations.insert(0, f"❌ Reduce quantity to {qty_range['optimal_max']} kg/acre to avoid crop damage.")
-        
-    return status, reason, recommendations
+        return "High", "Exceeds optimal", recommendations + ["⚠️ Monitor for burn"]
 
-# ==================== RISK SCORING (SAME LOGIC) ====================
-def calculate_risk_score(compatibility, quantity_status, nitrogen, phosphorous, potassium, temperature=None, humidity=None, moisture=None):
+def calculate_risk_score(comp, q_stat, n, p, k, temp=None, hum=None, moist=None):
     score = 0
-    score += 0 if compatibility == "Compatible" else 25
-    quantity_risk = {"Optimal": 0, "Slightly High": 12, "Too High": 30, "Too Low": 18}
-    score += quantity_risk.get(quantity_status, 20)
-    
-    total_npk = nitrogen + phosphorous + potassium
-    if total_npk > 90: score += 20
-    elif total_npk < 20: score += 15
-
-    if temperature is not None and (temperature > 35 or temperature < 10): score += 15
-    if humidity is not None and (humidity > 85 or humidity < 25): score += 5
-    if moisture is not None and moisture < 20: score += 10
-    
+    if comp != "Compatible": score += 25
+    score += {"Optimal": 0, "Too Low": 18, "High": 25}.get(q_stat, 20)
+    if (n+p+k) > 90: score += 20
+    if temp and (temp > 35 or temp < 10): score += 15
     return min(score, 100)
 
-# ==================== AUTH ENDPOINTS ====================
+# ==================== ENDPOINTS ====================
+
 @app.route('/register', methods=['POST'])
 def register():
     try:
         data = request.get_json()
         if users_collection.find_one({'email': data['email']}):
-            return jsonify({'error': 'Email already registered'}), 400
-        user = {
-            'name': data['name'],
-            'email': data['email'],
-            'password': generate_password_hash(data['password']),
-            'created_at': datetime.now(timezone.utc)
-        }
-        result = users_collection.insert_one(user)
-        
-        farm_size = float(data.get('farm_size', 0)) if data.get('farm_size') else 0.0
-        farm = {
-            'user_id': result.inserted_id,
-            'location': data.get('location', ''),
-            'farm_size': farm_size,
-            'soil_type': data.get('soil_type', 'Loamy'),
-            'created_at': datetime.now(timezone.utc)
-        }
+            return jsonify({'error': 'Email exists'}), 400
+        user = {'name': data['name'], 'email': data['email'], 'password': generate_password_hash(data['password']), 'created_at': datetime.now(timezone.utc)}
+        res = users_collection.insert_one(user)
+        farm = {'user_id': res.inserted_id, 'location': data.get('location', ''), 'farm_size': float(data.get('farm_size', 0)), 'soil_type': data.get('soil_type', 'Loamy'), 'created_at': datetime.now(timezone.utc)}
         farms_collection.insert_one(farm)
-        
-        token = jwt.encode({'user_id': str(result.inserted_id)}, app.config['SECRET_KEY'], algorithm='HS256')
-        return jsonify({
-            'message': 'Registration successful',
-            'token': token,
-            'user': {'id': str(result.inserted_id), 'name': user['name'], 'email': user['email']}
-        }), 201
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        token = jwt.encode({'user_id': str(res.inserted_id)}, app.config['SECRET_KEY'], algorithm='HS256')
+        return jsonify({'token': token, 'user': {'id': str(res.inserted_id), 'name': user['name']}}), 201
+    except Exception as e: return jsonify({'error': str(e)}), 500
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -276,64 +170,35 @@ def login():
         user = users_collection.find_one({'email': data['email']})
         if not user or not check_password_hash(user['password'], data['password']):
             return jsonify({'error': 'Invalid credentials'}), 401
-        
         token = jwt.encode({'user_id': str(user['_id'])}, app.config['SECRET_KEY'], algorithm='HS256')
-        return jsonify({
-            'message': 'Login successful',
-            'token': token,
-            'user': {'id': str(user['_id']), 'name': user['name'], 'email': user['email']}
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'token': token, 'user': {'id': str(user['_id']), 'name': user['name']}})
+    except Exception as e: return jsonify({'error': str(e)}), 500
 
-@app.route('/farm', methods=['GET'])
+@app.route('/farm', methods=['GET', 'PUT'])
 @token_required
-def get_farm(current_user):
-    try:
+def handle_farm(current_user):
+    if request.method == 'GET':
         farm = farms_collection.find_one({'user_id': current_user['_id']})
-        if farm:
-            farm['_id'] = str(farm['_id'])
-            farm['user_id'] = str(farm['user_id'])
-            return jsonify(farm)
-        return jsonify({})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/farm', methods=['PUT'])
-@token_required
-def update_farm(current_user):
-    try:
+        if farm: farm['_id'] = str(farm['_id']); farm['user_id'] = str(farm['user_id'])
+        return jsonify(farm or {})
+    else:
         data = request.get_json()
-        farms_collection.update_one(
-            {'user_id': current_user['_id']},
-            {'$set': {
-                'location': data.get('location', ''),
-                'farm_size': float(data.get('farm_size', 0)) if data.get('farm_size') else 0,
-                'soil_type': data.get('soil_type', 'Loamy'),
-                'updated_at': datetime.now(timezone.utc)
-            }}
-        )
-        return jsonify({'message': 'Farm updated successfully'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        farms_collection.update_one({'user_id': current_user['_id']}, {'$set': {'location': data.get('location'), 'farm_size': float(data.get('farm_size',0)), 'soil_type': data.get('soil_type'), 'updated_at': datetime.now(timezone.utc)}})
+        return jsonify({'message': 'Updated'})
 
-# ==================== PREDICT ENDPOINT ====================
 @app.route('/predict', methods=['POST'])
 @token_required
 def predict(current_user):
     try:
         data = request.get_json()
         farm = farms_collection.find_one({'user_id': current_user['_id']})
+        soil = farm.get('soil_type', 'Loamy') if farm else 'Loamy'
         
-        soil_type = farm.get('soil_type', 'Loamy') if farm else 'Loamy'
-        farm_size = farm.get('farm_size', 0) if farm else 0
-        location = farm.get('location', 'Your farm') if farm else 'Your farm'
-
         inputs = {
             'Temparature': float(data.get('Temparature', 26)),
             'Humidity': float(data.get('Humidity', 52)),
             'Moisture': float(data.get('Moisture', 38)),
-            'Soil_Type': soil_type,
+            'Soil_Type': soil,
             'Crop_Type': str(data.get('Crop_Type', 'Maize')).strip(),
             'Nitrogen': float(data.get('Nitrogen', 0)),
             'Potassium': float(data.get('Potassium', 0)),
@@ -342,152 +207,92 @@ def predict(current_user):
             'Fertilizer_Quantity': float(data.get('Fertilizer_Quantity', 50))
         }
 
-        if not inputs['Fertilizer_Name'] or inputs['Fertilizer_Quantity'] <= 0:
-            return jsonify({'error': 'Fertilizer name and quantity required'}), 400
+        is_comp, comp_r, alt = check_compatibility(inputs['Crop_Type'], inputs['Soil_Type'], inputs['Fertilizer_Name'], inputs['Temparature'], inputs['Humidity'], inputs['Moisture'])
+        q_stat, q_reason, recs = assess_quantity(inputs['Fertilizer_Name'], inputs['Fertilizer_Quantity'], inputs['Crop_Type'], inputs['Soil_Type'], inputs['Temparature'], inputs['Humidity'], inputs['Moisture'], inputs['Nitrogen'], inputs['Phosphorous'], inputs['Potassium'])
+        risk = calculate_risk_score("Compatible" if is_comp else "Incompatible", q_stat, inputs['Nitrogen'], inputs['Phosphorous'], inputs['Potassium'], inputs['Temparature'])
 
-        is_compatible, compat_reason, suggested_alt = check_compatibility(
-            inputs['Crop_Type'], inputs['Soil_Type'], inputs['Fertilizer_Name'],
-            temperature=inputs['Temparature'], humidity=inputs['Humidity'], moisture=inputs['Moisture']
-        )
-
-        qty_status, qty_reason, qty_recommendations = assess_quantity(
-            inputs['Fertilizer_Name'], inputs['Fertilizer_Quantity'], inputs['Crop_Type'], inputs['Soil_Type'],
-            temperature=inputs['Temparature'], humidity=inputs['Humidity'], moisture=inputs['Moisture'],
-            nitrogen=inputs['Nitrogen'], phosphorous=inputs['Phosphorous'], potassium=inputs['Potassium']
-        )
-
-        risk_score = calculate_risk_score(
-            "Compatible" if is_compatible else "Incompatible", qty_status,
-            inputs['Nitrogen'], inputs['Phosphorous'], inputs['Potassium'],
-            temperature=inputs['Temparature'], humidity=inputs['Humidity'], moisture=inputs['Moisture']
-        )
-
-        if risk_score <= 20: overall_status = "Low Risk - Excellent Choice"
-        elif risk_score <= 35: overall_status = "Moderate Risk - Acceptable"
-        elif risk_score <= 50: overall_status = "Moderate-High Risk - Review Recommended"
-        else: overall_status = "High Risk - Not Recommended"
-
-        all_recommendations = qty_recommendations.copy()
-        
-        # Simple crop advice lookup
-        crop_advice = {'maize': "🌽 Maize is a heavy feeder - ensure nitrogen during growth.", 'paddy': "🌾 Paddy requires flooded conditions."}
-        crop_key = inputs['Crop_Type'].lower()
-        if crop_key in crop_advice: all_recommendations.append(crop_advice[crop_key])
-
-        result = {
-            'compatibility': 'Compatible' if is_compatible else 'Incompatible',
-            'compatibility_reason': compat_reason,
-            'quantity_status': qty_status,
-            'quantity_reason': qty_reason,
-            'recommendations': all_recommendations,
-            'suggested_fertilizer': suggested_alt,
-            'risk_score': round(risk_score, 1),
-            'status': overall_status,
-            'recommended_fertilizer': inputs['Fertilizer_Name'] if is_compatible else (suggested_alt or inputs['Fertilizer_Name']),
-            'personalized_context': {
-                'farm_location': location,
-                'soil_type': inputs['Soil_Type'],
-                'weather_summary': f"Temp: {inputs['Temparature']}°C, Humidity: {inputs['Humidity']}%"
-            }
+        res = {
+            'compatibility': 'Compatible' if is_comp else 'Incompatible',
+            'compatibility_reason': comp_r,
+            'quantity_status': q_stat,
+            'quantity_reason': q_reason,
+            'recommendations': recs,
+            'risk_score': round(risk, 1),
+            'status': "Low Risk" if risk <= 20 else "Moderate Risk" if risk <= 50 else "High Risk",
+            'suggested_fertilizer': alt
         }
 
-        if history_collection is not None:
-            history_entry = {
-                'user_id': str(current_user['_id']),
-                'timestamp': datetime.now(timezone.utc),
-                'input_data': inputs,
-                **result
-            }
-            history_collection.insert_one(history_entry)
+        history_collection.insert_one({
+            'user_id': str(current_user['_id']),
+            'timestamp': datetime.now(timezone.utc),
+            'input_data': inputs,
+            **res
+        })
+        return jsonify(res)
+    except Exception as e: return jsonify({'error': str(e)}), 500
 
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# ==================== HISTORY ENDPOINT ====================
 @app.route('/history', methods=['GET'])
 @token_required
 def get_history(current_user):
-    try:
-        if history_collection is None: return jsonify([])
-        records = list(history_collection.find({'user_id': str(current_user['_id'])}).sort('timestamp', -1).limit(20))
-        for record in records:
-            record['_id'] = str(record['_id'])
-            if 'timestamp' in record and hasattr(record['timestamp'], 'isoformat'):
-                record['timestamp'] = record['timestamp'].isoformat()
-        return jsonify(records)
-    except Exception as e:
-        return jsonify([])
+    records = list(history_collection.find({'user_id': str(current_user['_id'])}).sort('timestamp', -1).limit(20))
+    for r in records:
+        r['_id'] = str(r['_id'])
+        if isinstance(r.get('timestamp'), datetime): r['timestamp'] = r['timestamp'].isoformat()
+    return jsonify(records)
 
-# ==================== ANALYTICS DASHBOARD ====================
 @app.route('/farmer-analytics', methods=['GET'])
 @token_required
 def get_farmer_analytics(current_user):
     try:
+        # Crucial fix: filter by user_id string
         history = list(history_collection.find({'user_id': str(current_user['_id'])}).sort('timestamp', -1).limit(50))
-        total = len(history)
-        if total == 0:
-            return jsonify({'total_analyses': 0, 'message': 'No analysis data yet.'})
+        if not history: return jsonify({'total_analyses': 0})
 
-        compatible = sum(1 for h in history if h.get('compatibility') == 'Compatible')
+        # Calculations
+        comp_count = sum(1 for h in history if h.get('compatibility') == 'Compatible')
         
-        reversed_history = list(reversed(history))
-        dates = [h['timestamp'].strftime('%Y-%m-%d') for h in reversed_history]
-        risk_scores = [h.get('risk_score', 0) for h in reversed_history]
+        # Safe NPK Averages
+        n_vals = [h['input_data'].get('Nitrogen', 0) for h in history]
+        p_vals = [h['input_data'].get('Phosphorous', 0) for h in history]
+        k_vals = [h['input_data'].get('Potassium', 0) for h in history]
+        
+        # Time Series for Charts
+        chart_data = list(reversed(history))
+        dates = [h['timestamp'].strftime('%d %b') if isinstance(h['timestamp'], datetime) else "N/A" for h in chart_data]
+        risks = [h.get('risk_score', 0) for h in chart_data]
 
         return jsonify({
-            'total_analyses': total,
-            'success_rate': round((compatible / total * 100), 1),
-            'time_series': {'dates': dates, 'risk_scores': risk_scores},
+            'total_analyses': len(history),
+            'success_rate': round((comp_count / len(history) * 100), 1),
             'npk_averages': {
-                'nitrogen': round(sum(h['input_data']['Nitrogen'] for h in history) / total, 1),
-                'phosphorous': round(sum(h['input_data']['Phosphorous'] for h in history) / total, 1),
-                'potassium': round(sum(h['input_data']['Potassium'] for h in history) / total, 1)
-            }
+                'nitrogen': round(sum(n_vals)/len(n_vals), 1),
+                'phosphorous': round(sum(p_vals)/len(p_vals), 1),
+                'potassium': round(sum(k_vals)/len(k_vals), 1)
+            },
+            'time_series': {'dates': dates, 'risk_scores': risks}
         })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception as e: return jsonify({'error': str(e)}), 500
 
-# ==================== HELPERS & PDF ====================
 @app.route('/health', methods=['GET'])
 def health():
-    return jsonify({
-        'status': 'healthy',
-        'mongodb': 'connected' if history_collection is not None else 'disconnected',
-        'dataset_loaded': df is not None
-    })
+    return jsonify({'status': 'healthy', 'mongodb': 'connected' if history_collection is not None else 'disconnected', 'dataset_loaded': df is not None})
 
 @app.route('/fertilizers', methods=['GET'])
 def get_fertilizers():
-    if df is not None:
-        # Get unique values from the list of dicts
-        fertilizers = list(set(str(row.get('Fertilizer Name', '')).strip() for row in df if row.get('Fertilizer Name')))
-        return jsonify(sorted(fertilizers))
-    return jsonify(['Urea', 'DAP', '14-35-14', '28-28', '20-20', '17-17-17', '10-26-26'])
+    if df:
+        f_list = list(set(str(r.get('Fertilizer Name','')).strip() for r in df if r.get('Fertilizer Name')))
+        return jsonify(sorted(f_list))
+    return jsonify(list(QUANTITY_RANGES.keys()))
 
 @app.route('/generate-report', methods=['POST'])
 @token_required
 def generate_report(current_user):
-    try:
-        data = request.get_json()
-        result = data.get('result', {})
-        inputs = data.get('inputs', {})
-        farm = data.get('farm', {})
-        
-        # Professional HTML template
-        html_report = f"""<!DOCTYPE html><html><head><title>Report</title><style>body{{font-family:sans-serif;padding:40px;}}.header{{border-bottom:3px solid #27ae60;}}.status{{padding:10px;background:#27ae60;color:white;}}</style></head><body>
-        <div class="header"><h1>🌾 Fertilizer Analysis Report</h1><p>{datetime.now().strftime('%Y-%m-%d')}</p></div>
-        <h3>Farmer: {current_user.get('name')}</h3>
-        <p><strong>Crop:</strong> {inputs.get('Crop_Type')} | <strong>Soil:</strong> {farm.get('soil_type')}</p>
-        <div class="status">{result.get('status')}</div>
-        <h4>Recommendations:</h4><ul>{''.join([f'<li>{r}</li>' for r in result.get('recommendations', [])])}</ul>
-        <button onclick="window.print()">🖨️ Print Report</button></body></html>"""
-        
-        return html_report, 200, {'Content-Type': 'text/html'}
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    data = request.get_json()
+    res = data.get('result', {})
+    html = f"<html><body><h1>Report for {current_user.get('name')}</h1><p>Status: {res.get('status')}</p></body></html>"
+    return html, 200, {'Content-Type': 'text/html'}
 
 if __name__ == '__main__':
     load_data()
-    PORT = int(os.getenv('PORT', 5000))
-    app.run(host='0.0.0.0', port=PORT, debug=os.getenv('FLASK_DEBUG', 'False').lower() == 'true')
+    port = int(os.getenv('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
