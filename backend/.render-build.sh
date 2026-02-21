@@ -1,25 +1,7 @@
 #!/bin/bash
-set -e  # Exit on error
-
-# Ensure we're using Python 3.11
-export PYTHON_VERSION=3.11
-
-# Upgrade pip first
-python -m pip install --upgrade pip
-
-# Install dependencies with verbose output for debugging
-pip install --verbose -r requirements.txt
-
-# Verify critical imports
-python -c "
-import sys
-print(f'✅ Python version: {sys.version}')
-import flask
-import pymongo
-import pandas
-import numpy
-print('✅ All critical imports successful')
-print(f'✅ Flask: {flask.__version__}')
-print(f'✅ Pandas: {pandas.__version__}')
-print(f'✅ NumPy: {numpy.__version__}')
-"
+set -e
+export PIP_NO_INPUT=1
+export PIP_DISABLE_PIP_VERSION_CHECK=1
+pip install --upgrade pip
+pip install -r requirements.txt
+python -c "import flask, pymongo; print('✅ Critical imports successful')"

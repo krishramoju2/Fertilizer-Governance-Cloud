@@ -1,10 +1,8 @@
-# Use versions with pre-built wheels for Python 3.11
 Flask==3.0.0
 flask-cors==4.0.0
 pymongo[srv]==4.6.0
-pandas==2.1.4  # Has wheels for Python 3.11
-numpy==1.26.4  # Compatible with pandas 2.1.4
 python-dotenv==1.0.1
 PyJWT==2.8.0
 Werkzeug==3.0.1
 gunicorn==21.2.0
+# Removed: pandas, numpy (not needed at runtime after JSON conversion)
