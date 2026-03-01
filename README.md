@@ -1,4 +1,4 @@
-A full stack web application for intelligent fertilizer recommendation and farm analytics. Farmers can input soil, crop, and weather data to receive compatibility analysis and suggestions. Administrators can manage dropdown options (soil types, crops, fertilizers) and view analytics for all users. 
+**A full stack web application for intelligent fertilizer recommendation and farm** analytics. Farmers can input soil, crop, and weather data to receive compatibility **analysis and suggestions. Administrators can manage dropdown options (soil types,** crops, fertilizers) and view analytics for all users. 
 
 1. **User Authentication** - Register and login with JWT based authentication
 2. **Farm Profile** - Save soil type, farm size, location, primary crops.
@@ -18,3 +18,22 @@ A full stack web application for intelligent fertilizer recommendation and farm 
 7. **Admin Credentials:**
 email - admin@farm.com
 password - admin123
+
+**FRONTEND**
+--> React : UI Library
+--> Axios : HTTP Client for API Calls
+--> jsPDF : Generate PDF Reports
+
+**BACKEND**
+--> Flask : Python web framework
+--> PyJWT : JSON Web Token Authentication
+
+**DATABASE**
+--> MongoDB Atlas - Cloud NoSQL Database
+--> PyMongo - Official MongoDB Driver
+--> Collections: Users with credentials, farm details 
+                 History with analysis by users
+
+**DEPLOYMENT**
+--> Frontend - Vercel
+--> Backend - Render
