@@ -1704,7 +1704,7 @@ if __name__ == '__main__':
 
 
 
-'''from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
@@ -1871,19 +1871,37 @@ def token_required(f):
         return f(*args, **kwargs)
     return decorated
 
+# ==================== FIXED ADMIN_REQUIRED DECORATOR ====================
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        # First run token check
-        result = token_required(lambda **kw: (None, kw))( *args, **kwargs)
-        if isinstance(result, tuple):  # error response
-            return result
+        # Check DB connection first
+        if not check_db_connection():
+            return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
 
-        # Get current_user from kwargs (passed by token_required)
-        current_user = kwargs.get('current_user')
-        if not current_user or not current_user.get('is_admin', False):
+        token = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+        if not token:
+            return jsonify({'success': False, 'message': 'Token missing'}), 401
+
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = users_collection.find_one({'_id': ObjectId(data['user_id'])})
+            if not current_user:
+                return jsonify({'success': False, 'message': 'User not found'}), 401
+        except jwt.ExpiredSignatureError:
+            return jsonify({'success': False, 'message': 'Token expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'success': False, 'message': 'Invalid token'}), 401
+
+        # Admin check
+        if not current_user.get('is_admin', False):
             return jsonify({'success': False, 'message': 'Admin access required'}), 403
 
+        kwargs['current_user'] = current_user
         return f(*args, **kwargs)
     return decorated
 
@@ -2687,10 +2705,14 @@ def create_default_admin():
 # Call after DB init
 create_default_admin()
 
+# ==================== ADDITIONAL ALIAS FOR GUNICORN ====================
+# In case Gunicorn cannot find the 'app' attribute, we provide an alias.
+application = app
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('ENVIRONMENT', 'development') == 'development'
     logger.info(f"🚀 Starting server on port {port}")
     logger.info(f"🔧 Debug mode: {debug}")
     logger.info(f"💾 Database status: {'Connected' if DB_CONNECTED else 'Disconnected'}")
-    app.run(host='0.0.0.0', port=port, debug=debug)'''
+    app.run(host='0.0.0.0', port=port, debug=debug)
