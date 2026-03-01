@@ -1,3 +1,3 @@
-Admin Credentials:
+**Admin Credentials:
 email - admin@farm.com
-password - admin123
+password - admin123**
