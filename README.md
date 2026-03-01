@@ -1,3 +1,6 @@
+**Upcoming**
+Weather API Integration
+
 **A full stack web application for intelligent fertilizer recommendation and farm** analytics. Farmers can input soil, crop, and weather data to receive compatibility **analysis and suggestions. Administrators can manage dropdown options (soil types,** crops, fertilizers) and view analytics for all users. 
 
 1. **User Authentication** - Register and login with JWT based authentication
