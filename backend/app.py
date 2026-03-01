@@ -751,7 +751,7 @@ if __name__ == '__main__':
     
     app.run(host='0.0.0.0', port=port, debug=debug) '''
 
-from flask import Flask, request, jsonify
+'''from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
@@ -1700,4 +1700,4 @@ if __name__ == '__main__':
     logger.info(f"🚀 Starting server on port {port}")
     logger.info(f"🔧 Debug mode: {debug}")
     logger.info(f"💾 Database status: {'Connected' if DB_CONNECTED else 'Disconnected'}")
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run(host='0.0.0.0', port=port, debug=debug)'''
