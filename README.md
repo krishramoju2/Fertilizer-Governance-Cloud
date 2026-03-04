@@ -16,3 +16,4 @@
 7. **Admin Credentials:**
 email - admin@farm.com
 password - admin123
+8. **Weather Auto-Fill** – Automatically fetches real-time temperature & humidity based on registered location – pre-fills analysis fields (users can still override). Uses free Open-Meteo API, no key required. Falls back to 26°C, 45% if location invalid.
