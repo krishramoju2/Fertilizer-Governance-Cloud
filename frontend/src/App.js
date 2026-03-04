@@ -169,11 +169,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [cropTypes, setCropTypes] = useState([]);
   const [fertilizerNames, setFertilizerNames] = useState([]);
 
-  // ==================== CHANGED: Analysis inputs now use stored weather data ====================
+  // Analysis inputs - start with defaults
   const [inputs, setInputs] = useState({
-    Temparature: currentUser?.farm_details?.temperature || 26,  // <-- CHANGED: uses stored temp
-    Moisture: currentUser?.farm_details?.humidity || 45,        // <-- CHANGED: uses stored humidity
-    Soil_Type: currentUser?.farm_details?.soil_type || 'Loamy',
+    Temparature: 26,
+    Moisture: 45,
+    Soil_Type: 'Loamy',
     Crop_Type: 'Maize',
     Fertilizer_Name: 'Urea',
     Fertilizer_Quantity: 30
@@ -188,7 +188,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userAnalytics, setUserAnalytics] = useState(null);
   const [userHistory, setUserHistory] = useState([]);
-  const [adminManageType, setAdminManageType] = useState('soil'); // soil, crop, fertilizer
+  const [adminManageType, setAdminManageType] = useState('soil');
   const [newItem, setNewItem] = useState('');
 
   // Show message
@@ -196,6 +196,24 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     setMessage({ text, type });
     setTimeout(() => setMessage({ text: '', type: '' }), 5000);
   };
+
+  // ============ FIX: Update inputs when currentUser loads with weather data ============
+  useEffect(() => {
+    if (currentUser?.farm_details) {
+      console.log('Loading weather data:', {
+        temperature: currentUser.farm_details.temperature,
+        humidity: currentUser.farm_details.humidity,
+        soil_type: currentUser.farm_details.soil_type
+      });
+      
+      setInputs(prev => ({
+        ...prev,
+        Temparature: currentUser.farm_details.temperature || prev.Temparature,
+        Moisture: currentUser.farm_details.humidity || prev.Moisture,
+        Soil_Type: currentUser.farm_details.soil_type || prev.Soil_Type
+      }));
+    }
+  }, [currentUser]);
 
   // Fetch dropdown options
   const fetchConfig = useCallback(async () => {
@@ -285,7 +303,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // Generate PDF (unchanged)
+  // Generate PDF
   const generatePDF = () => {
     if (!result) return;
     const doc = new jsPDF();
