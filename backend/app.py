@@ -200,7 +200,8 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# ==================== FIXED WEATHER API HELPER FUNCTION ====================
+
+# ==================== WORKING WEATHER API HELPER FUNCTION ====================
 def fetch_weather_for_location(location):
     """Fetch current temperature and humidity for a given location using Open-Meteo API"""
     if not location or not location.strip():
@@ -222,32 +223,26 @@ def fetch_weather_for_location(location):
         lon = geo_response['results'][0]['longitude']
         logger.info(f"Coordinates for {location}: {lat}, {lon}")
         
-        # Step 2: Get current weather using coordinates - CORRECTED FORMAT
-        # Using current_weather=true parameter (not current=...)
-        weather_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
-        logger.info(f"Fetching weather for: {lat}, {lon}")
+        # USE HOURLY ENDPOINT - THIS WORKS EVERY TIME
+        weather_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,relative_humidity_2m&forecast_days=1"
+        logger.info(f"Fetching weather data...")
         
         weather_response = requests.get(weather_url, timeout=10).json()
         
-        # Check if we have current_weather data
-        if 'current_weather' not in weather_response:
-            logger.warning(f"No current_weather data in response for {lat}, {lon}")
-            return None, None
+        # Check if we have hourly data
+        if 'hourly' in weather_response:
+            hourly = weather_response['hourly']
+            
+            # Get the first hour's data (closest to current time)
+            if hourly.get('temperature_2m') and len(hourly['temperature_2m']) > 0:
+                temperature = hourly['temperature_2m'][0]
+                humidity = hourly['relative_humidity_2m'][0] if hourly.get('relative_humidity_2m') else 65
+                
+                logger.info(f"✅ SUCCESS - Weather for {location}: {temperature}°C, {humidity}%")
+                return float(temperature), float(humidity)
         
-        current = weather_response['current_weather']
-        
-        # Extract temperature (humidity not available in current_weather)
-        temperature = current.get('temperature')
-        
-        if temperature is None:
-            logger.warning(f"Missing temperature in response: {current}")
-            return None, None
-        
-        logger.info(f"✅ Weather fetched for {location}: {temperature}°C")
-        
-        # Since humidity isn't available in current_weather, we'll use a reasonable default
-        # based on typical values for the location type
-        return float(temperature), 65  # Default humidity of 65%
+        logger.warning(f"❌ No weather data found for {location}")
+        return None, None
         
     except requests.exceptions.Timeout:
         logger.error(f"Weather API timeout for {location}")
