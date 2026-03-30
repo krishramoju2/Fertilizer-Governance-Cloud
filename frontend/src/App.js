@@ -423,7 +423,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             onClick={() => setActiveTab('analysis')}
           >
             Analysis
-          </button?
+          </button> 
               
           <button
             style={styles.navButton(activeTab === 'ml')}
@@ -434,7 +434,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
 
               
-          </button>
+          
           <button
             style={styles.navButton(activeTab === 'analytics')}
             onClick={() => setActiveTab('analytics')}
