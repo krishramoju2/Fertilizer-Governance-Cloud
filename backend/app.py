@@ -690,6 +690,8 @@ def predict(**kwargs):
 @app.route('/ml/predict', methods=['POST', 'OPTIONS'])
 @token_required
 def ml_predict_route(**kwargs):
+    if request.method == 'OPTIONS':
+        return jsonify({'success': True}), 200
     try:
         current_user = kwargs['current_user']
         data = request.get_json()
