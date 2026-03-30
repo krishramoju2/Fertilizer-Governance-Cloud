@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # CORS configuration
-CORS(app, origins=["*"])
+CORS(app, supports_credentials=True)
 
 # Configuration
 SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_change_this')
