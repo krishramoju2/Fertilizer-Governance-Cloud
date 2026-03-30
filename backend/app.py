@@ -699,12 +699,12 @@ def ml_predict_route(**kwargs):
         farm_details = current_user.get('farm_details', {})
 
         input_data = {
-            'Temparature': float(data.get('Temparature', farm_details.get('temperature', 26))),
-            'Moisture': float(data.get('Moisture', farm_details.get('humidity', 45))),
-            'Soil_Type': data.get('Soil_Type', farm_details.get('soil_type', 'Loamy')),
-            'Crop_Type': data.get('Crop_Type', 'Maize'),
-            'Fertilizer_Name': data.get('Fertilizer_Name', 'Urea'),
-            'Fertilizer_Quantity': float(data.get('Fertilizer_Quantity', 30))
+            'Temparature': float(data.get('temperature', farm_details.get('temperature', 26))),
+            'Moisture': float(data.get('moisture', farm_details.get('humidity', 45))),
+            'Soil_Type': data.get('soil', farm_details.get('soil_type', 'Loamy')),
+            'Crop_Type': data.get('crop', 'Maize'),
+            'Fertilizer_Name': data.get('fertilizer', 'Urea'),
+            'Fertilizer_Quantity': float(data.get('quantity', 30))
         }
 
         # 👉 USE ML HERE INSTEAD OF DECISION ENGINE
