@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import traceback
 import urllib.parse
 import requests  # For weather API calls
+from ml_model import ml_predict
 
 # Load environment variables
 load_dotenv()
@@ -671,6 +672,7 @@ def predict(**kwargs):
             'user_id': current_user['_id'],
             'input_data': input_data,
             'result': result,
+            'model': 'decision',  # 🔥 ADD THIS
             'timestamp': datetime.datetime.utcnow()
         }
         history_collection.insert_one(history_entry)
@@ -682,6 +684,52 @@ def predict(**kwargs):
         }), 200
     except Exception as e:
         logger.error(f"Prediction error: {traceback.format_exc()}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# ==================== ML PREDICTION ROUTE ====================
+@app.route('/ml/predict', methods=['POST'])
+@token_required
+def ml_predict_route(**kwargs):
+    try:
+        current_user = kwargs['current_user']
+        data = request.get_json()
+
+        farm_details = current_user.get('farm_details', {})
+
+        input_data = {
+            'Temparature': float(data.get('Temparature', farm_details.get('temperature', 26))),
+            'Moisture': float(data.get('Moisture', farm_details.get('humidity', 45))),
+            'Soil_Type': data.get('Soil_Type', farm_details.get('soil_type', 'Loamy')),
+            'Crop_Type': data.get('Crop_Type', 'Maize'),
+            'Fertilizer_Name': data.get('Fertilizer_Name', 'Urea'),
+            'Fertilizer_Quantity': float(data.get('Fertilizer_Quantity', 30))
+        }
+
+        # 👉 USE ML HERE INSTEAD OF DECISION ENGINE
+        result = ml_predict(input_data)
+
+        if not result['success']:
+            return jsonify({'success': False, 'message': result.get('error')}), 400
+
+        # 👉 STORE SAME AS NORMAL HISTORY
+        history_entry = {
+            'user_id': current_user['_id'],
+            'input_data': input_data,
+            'result': result,
+            'model': 'ml',  # 🔥 IMPORTANT FOR ANALYTICS LATER
+            'timestamp': datetime.datetime.utcnow()
+        }
+
+        history_collection.insert_one(history_entry)
+
+        return jsonify({
+            'success': True,
+            'result': result,
+            'input': input_data
+        }), 200
+
+    except Exception as e:
+        logger.error(f"ML Prediction error: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
 # ==================== HISTORY ROUTES ====================
