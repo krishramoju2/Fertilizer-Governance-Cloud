@@ -26,7 +26,17 @@ export default function MLModel() {
   const runModel = async () => {
     setLoading(true);
     try {
-      const res = await axios.post(`${API_BASE}/ml/predict`, form);
+        const token = localStorage.getItem("token");
+  
+        const res = await axios.post(
+          `${API_BASE}/ml/predict`,
+          form,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
 
       if (res.data && res.data.success && res.data.result) {
         setResult(res.data.result);
