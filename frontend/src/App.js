@@ -3,7 +3,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import MLModel from './MLModel'; // First addition 
+import MLModel from './MLModel'; 
 
 // API Configuration
 const API_BASE = process.env.REACT_APP_API_URL || "https://fertilizer-backend-jj59.onrender.com";
@@ -429,7 +429,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             style={styles.navButton(activeTab === 'ml')}
             onClick={() => setActiveTab('ml')}
           >
-            ML Model //second change
+            ML Model 
           </button>   
 
 
@@ -641,7 +641,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
             <MLModel />
           </div>
-        )}  //third change
+        )}  
 
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
