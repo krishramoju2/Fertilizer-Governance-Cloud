@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const API_BASE = process.env.REACT_APP_API_URL || "https://fertilizer-backend-jj59.onrender.com";
 
@@ -14,18 +16,66 @@ export default function MLModel() {
   });
 
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ✅ SAME BEHAVIOUR AS DECISION TAB
   const runModel = async () => {
+    setLoading(true);
     try {
       const res = await axios.post(`${API_BASE}/ml/predict`, form);
-      setResult(res.data.result);
+
+      if (res.data && res.data.success && res.data.result) {
+        setResult(res.data.result);
+      } else {
+        setResult({ error: "❌ Invalid response from server" });
+      }
     } catch (err) {
       setResult({ error: "❌ Failed to run ML model" });
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // ✅ SAME PDF STRUCTURE AS ANALYSIS TAB
+  const generatePDF = () => {
+    if (!result || result.error) return;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Fertilizer Analysis Report (ML)", 14, 20);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [["Input Parameter", "Value"]],
+      body: [
+        ["Temperature (°C)", form.temperature],
+        ["Moisture (%)", form.moisture],
+        ["Soil Type", form.soil],
+        ["Crop Type", form.crop],
+        ["Fertilizer", form.fertilizer],
+        ["Quantity (kg/ha)", form.quantity]
+      ]
+    });
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 10,
+      head: [["Analysis Result", "Value"]],
+      body: [
+        ["Compatibility", result.overall_compatibility],
+        ["Score", result.overall_score + "%"],
+        ["Temperature Status", result.temperature_status],
+        ["Moisture Status", result.moisture_status],
+        ["Soil Compatibility", result.soil_compatibility],
+        ["Quantity Status", result.quantity_status]
+      ]
+    });
+
+    doc.save("ML_Analysis_Report.pdf");
   };
 
   return (
@@ -34,6 +84,7 @@ export default function MLModel() {
 
       <div style={styles.card}>
         <div style={styles.grid}>
+          
           <div>
             <label>Temperature (°C)</label>
             <input
@@ -56,7 +107,12 @@ export default function MLModel() {
 
           <div>
             <label>Soil Type</label>
-            <select name="soil" value={form.soil} onChange={handleChange} style={styles.input}>
+            <select
+              name="soil"
+              value={form.soil}
+              onChange={handleChange}
+              style={styles.input}
+            >
               <option>Loamy</option>
               <option>Sandy</option>
               <option>Clay</option>
@@ -65,7 +121,12 @@ export default function MLModel() {
 
           <div>
             <label>Crop Type</label>
-            <select name="crop" value={form.crop} onChange={handleChange} style={styles.input}>
+            <select
+              name="crop"
+              value={form.crop}
+              onChange={handleChange}
+              style={styles.input}
+            >
               <option>Maize</option>
               <option>Rice</option>
               <option>Wheat</option>
@@ -74,7 +135,12 @@ export default function MLModel() {
 
           <div>
             <label>Fertilizer</label>
-            <select name="fertilizer" value={form.fertilizer} onChange={handleChange} style={styles.input}>
+            <select
+              name="fertilizer"
+              value={form.fertilizer}
+              onChange={handleChange}
+              style={styles.input}
+            >
               <option>Urea</option>
               <option>DAP</option>
               <option>NPK</option>
@@ -90,10 +156,15 @@ export default function MLModel() {
               style={styles.input}
             />
           </div>
+
         </div>
 
-        <button style={styles.button} onClick={runModel}>
-          🔬 Analyze (ML)
+        <button
+          style={styles.button}
+          onClick={runModel}
+          disabled={loading}
+        >
+          {loading ? "Analyzing..." : "🔬 Analyze (ML)"}
         </button>
 
         {result && (
@@ -104,10 +175,17 @@ export default function MLModel() {
               <>
                 <p><b>Result:</b> {result.overall_compatibility}</p>
                 <p><b>Score:</b> {result.overall_score}%</p>
-                <p>🌡 {result.temperature_status}</p>
-                <p>💧 {result.moisture_status}</p>
-                <p>🌱 {result.soil_compatibility}</p>
-                <p>📦 {result.quantity_status}</p>
+                <p>🌡 Temp: {result.temperature_status}</p>
+                <p>💧 Moisture: {result.moisture_status}</p>
+                <p>🌱 Soil: {result.soil_compatibility}</p>
+                <p>📦 Quantity: {result.quantity_status}</p>
+
+                <button
+                  style={{ ...styles.button, marginTop: "10px", background: "#2980b9" }}
+                  onClick={generatePDF}
+                >
+                  📄 Download PDF
+                </button>
               </>
             )}
           </div>
