@@ -687,7 +687,7 @@ def predict(**kwargs):
         return jsonify({'success': False, 'message': str(e)}), 500
 
 # ==================== ML PREDICTION ROUTE ====================
-@app.route('/ml/predict', methods=['POST'])
+@app.route('/ml/predict', methods=['POST', 'OPTIONS'])
 @token_required
 def ml_predict_route(**kwargs):
     try:
