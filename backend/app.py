@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # CORS configuration
-CORS(app, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Configuration
 SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_change_this')
@@ -686,7 +686,6 @@ def predict(**kwargs):
 
 # ==================== ML PREDICTION ROUTE ====================
 @app.route('/ml/predict', methods=['POST', 'OPTIONS'])
-@token_required
 def ml_predict_route(current_user):
 
     if request.method == "OPTIONS":
