@@ -680,12 +680,13 @@ def predict(**kwargs):
         if not result['success']:
             return jsonify({'success': False, 'message': result.get('error', 'Analysis failed')}), 400
 
-        # Store in history
+        current_user = kwargs['current_user']
+        
         history_entry = {
             'user_id': current_user['_id'],
             'input_data': input_data,
             'result': result,
-            'model': 'decision',  # 🔥 ADD THIS
+            'model': 'ml',
             'timestamp': datetime.datetime.utcnow()
         }
         history_collection.insert_one(history_entry)
@@ -778,7 +779,6 @@ def get_history(**kwargs):
 def delete_history(record_id,**kwargs):
     try:
         current_user = kwargs['current_user']
-        record_id = kwargs.get('record_id')
 
         result = history_collection.delete_one({
             '_id': ObjectId(record_id),
