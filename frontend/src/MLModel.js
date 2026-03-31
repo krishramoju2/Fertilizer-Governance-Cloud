@@ -3,6 +3,10 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+const [soilTypes, setSoilTypes] = useState([]);
+const [cropTypes, setCropTypes] = useState([]);
+const [fertilizerTypes, setFertilizerTypes] = useState([]);
+
 
 const API_BASE = process.env.REACT_APP_API_URL || "https://fertilizer-backend-jj59.onrender.com";
 
@@ -21,8 +25,9 @@ export default function MLModel() {
 
   const [history, setHistory] = useState([]);
 
-  useEffect(() => {
+useEffect(() => {
   loadHistory();
+  loadConfig();
 }, []);
 
   const handleChange = (e) => {
@@ -60,6 +65,24 @@ export default function MLModel() {
   };
 
 
+const loadConfig = async () => {
+  try {
+    const [soilRes, cropRes, fertRes] = await Promise.all([
+      axios.get(`${API_BASE}/config/soil-types`),
+      axios.get(`${API_BASE}/config/crop-types`),
+      axios.get(`${API_BASE}/config/fertilizer-names`)
+    ]);
+
+    if (soilRes.data.success) setSoilTypes(soilRes.data.data);
+    if (cropRes.data.success) setCropTypes(cropRes.data.data);
+    if (fertRes.data.success) setFertilizerTypes(fertRes.data.data);
+
+  } catch (err) {
+    console.error("Failed to load config");
+  }
+};
+
+  
 const loadHistory = async () => {
   try {
     const token = localStorage.getItem("token");
@@ -152,9 +175,14 @@ const loadHistory = async () => {
               onChange={handleChange}
               style={styles.input}
             >
-              <option>Loamy</option>
-              <option>Sandy</option>
-              <option>Clay</option>
+                
+            <select name="soil" value={form.soil} onChange={handleChange} style={styles.input}>
+              {soilTypes.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+
+            </select>
+              
             </select>
           </div>
 
@@ -166,9 +194,13 @@ const loadHistory = async () => {
               onChange={handleChange}
               style={styles.input}
             >
-              <option>Maize</option>
-              <option>Rice</option>
-              <option>Wheat</option>
+            <select name="crop" value={form.crop} onChange={handleChange} style={styles.input}>
+              {cropTypes.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
+              
             </select>
           </div>
 
@@ -180,9 +212,14 @@ const loadHistory = async () => {
               onChange={handleChange}
               style={styles.input}
             >
-              <option>Urea</option>
-              <option>DAP</option>
-              <option>NPK</option>
+
+            <select name="fertilizer" value={form.fertilizer} onChange={handleChange} style={styles.input}>
+              {fertilizerTypes.map((f) => (
+                <option key={f} value={f}>{f}</option>
+              ))}
+            </select>
+
+                
             </select>
           </div>
 
