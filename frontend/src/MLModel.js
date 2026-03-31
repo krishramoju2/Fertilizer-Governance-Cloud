@@ -3,9 +3,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const [soilTypes, setSoilTypes] = useState([]);
-const [cropTypes, setCropTypes] = useState([]);
-const [fertilizerTypes, setFertilizerTypes] = useState([]);
+
 
 
 const API_BASE = process.env.REACT_APP_API_URL || "https://fertilizer-backend-jj59.onrender.com";
@@ -22,8 +20,12 @@ export default function MLModel() {
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const [history, setHistory] = useState([]);
+
+  const [soilTypes, setSoilTypes] = useState([]);
+  const [cropTypes, setCropTypes] = useState([]);
+  const [fertilizerTypes, setFertilizerTypes] = useState([]);
+
 
 useEffect(() => {
   loadHistory();
@@ -169,58 +171,39 @@ const loadHistory = async () => {
 
           <div>
             <label>Soil Type</label>
-            <select
-              name="soil"
-              value={form.soil}
-              onChange={handleChange}
-              style={styles.input}
-            >
-                
-            <select name="soil" value={form.soil} onChange={handleChange} style={styles.input}>
-              {soilTypes.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
 
-            </select>
+          <select name="soil" value={form.soil} onChange={handleChange} style={styles.input}>
+          {soilTypes.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+          </select>
               
-            </select>
           </div>
 
           <div>
             <label>Crop Type</label>
-            <select
-              name="crop"
-              value={form.crop}
-              onChange={handleChange}
-              style={styles.input}
-            >
+
+
             <select name="crop" value={form.crop} onChange={handleChange} style={styles.input}>
-              {cropTypes.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
+            {cropTypes.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
             </select>
+              
 
               
-            </select>
+
           </div>
 
           <div>
             <label>Fertilizer</label>
-            <select
-              name="fertilizer"
-              value={form.fertilizer}
-              onChange={handleChange}
-              style={styles.input}
-            >
 
-            <select name="fertilizer" value={form.fertilizer} onChange={handleChange} style={styles.input}>
-              {fertilizerTypes.map((f) => (
-                <option key={f} value={f}>{f}</option>
-              ))}
-            </select>
-
-                
-            </select>
+          <select name="fertilizer" value={form.fertilizer} onChange={handleChange} style={styles.input}>
+            {fertilizerTypes.map((f) => (
+              <option key={f} value={f}>{f}</option>
+            ))}
+          </select>
+              
           </div>
 
           <div>
