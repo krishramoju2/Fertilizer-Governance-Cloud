@@ -27,7 +27,7 @@ model.fit(X, y)
 # ================= ML PREDICT =================
 def ml_predict(data):
     try:
-        temp = float(data.get("Temparature", 26))
+        temp = float(data.get("Temperature", 26))
         moist = float(data.get("Moisture", 45))
         soil = soil_map.get(data.get("Soil_Type", "Loamy"), 1)
         crop = crop_map.get(data.get("Crop_Type", "Maize"), 0)
