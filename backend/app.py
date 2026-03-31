@@ -704,11 +704,12 @@ def predict(**kwargs):
 
 @app.route('/ml/predict', methods=['POST', 'OPTIONS'])
 def ml_predict_route():
+
     if request.method == "OPTIONS":
         return jsonify({"success": True}), 200
 
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
 
         input_data = {
             'Temperature': float(data.get('temperature', 26)),
@@ -721,6 +722,17 @@ def ml_predict_route():
 
         result = ml_predict(input_data)
 
+        # 🔥 ADD THIS BLOCK
+        history_entry = {
+            'user_id': "test_user",
+            'input_data': input_data,
+            'result': result,
+            'model': 'ml',
+            'timestamp': datetime.datetime.utcnow()
+        }
+
+        history_collection.insert_one(history_entry)
+
         return jsonify({
             "success": True,
             "result": result
@@ -728,7 +740,6 @@ def ml_predict_route():
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
-
 
 # ==================== HISTORY ROUTES ====================
 @app.route('/history', methods=['GET'])
