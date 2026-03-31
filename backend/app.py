@@ -156,11 +156,27 @@ def token_required(f):
             return jsonify({"message": "Token missing"}), 401
 
         try:
-            current_user = "user"  # or your decode logic
+            current_user = {
+                "_id": "test_user",
+                "farm_details": {
+                    "temperature": 26,
+                    "humidity": 45,
+                    "soil_type": "Loamy"
+                }
+            }
         except:
             return jsonify({"message": "Invalid token"}), 401
 
-        return f(current_user, *args, **kwargs)
+        kwargs['current_user'] = {
+            "_id": "test_user",
+            "farm_details": {
+                "temperature": 26,
+                "humidity": 45,
+                "soil_type": "Loamy"
+            }
+        }
+        
+        return f(*args, **kwargs)
 
     return decorated
 
@@ -650,7 +666,7 @@ def predict(**kwargs):
 
         # Prepare input data - using stored weather as defaults
         input_data = {
-            'Temparature': float(data.get('Temparature', farm_details.get('temperature', 26))),
+            'Temperature': float(data.get('Temperature', farm_details.get('temperature', 26))),
             'Moisture': float(data.get('Moisture', farm_details.get('humidity', 45))),
             'Soil_Type': data.get('Soil_Type', farm_details.get('soil_type', 'Loamy')),
             'Crop_Type': data.get('Crop_Type', 'Maize'),
@@ -695,7 +711,7 @@ def ml_predict_route():
         data = request.get_json()
 
         input_data = {
-            'Temparature': float(data.get('temperature', 26)),
+            'Temperature': float(data.get('temperature', 26)),
             'Moisture': float(data.get('moisture', 45)),
             'Soil_Type': data.get('soil', 'Loamy'),
             'Crop_Type': data.get('crop', 'Maize'),
@@ -747,7 +763,7 @@ def get_history(**kwargs):
 
 @app.route('/history/<record_id>', methods=['DELETE'])
 @token_required
-def delete_history(**kwargs):
+def delete_history(record_id,**kwargs):
     try:
         current_user = kwargs['current_user']
         record_id = kwargs.get('record_id')
