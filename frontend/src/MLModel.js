@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+
 
 const API_BASE = process.env.REACT_APP_API_URL || "https://fertilizer-backend-jj59.onrender.com";
 
@@ -17,6 +18,8 @@ export default function MLModel() {
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const [history, setHistory] = useState([]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,6 +43,8 @@ export default function MLModel() {
 
       if (res.data && res.data.success && res.data.result) {
         setResult(res.data.result);
+        await loadHistory();
+
       } else {
         setResult({ error: "❌ Invalid response from server" });
       }
@@ -49,6 +54,26 @@ export default function MLModel() {
       setLoading(false);
     }
   };
+
+
+const loadHistory = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(`${API_BASE}/history`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (res.data && res.data.success) {
+      setHistory(res.data.history);
+    }
+  } catch (err) {
+    console.error("Failed to load history");
+  }
+};
+  
 
   // ✅ SAME PDF STRUCTURE AS ANALYSIS TAB
   const generatePDF = () => {
