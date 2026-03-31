@@ -173,7 +173,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   // Analysis inputs - start with defaults
   const [inputs, setInputs] = useState({
-    Temparature: 26,
+    Temperature: 26,
     Moisture: 45,
     Soil_Type: 'Loamy',
     Crop_Type: 'Maize',
@@ -210,7 +210,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       
       setInputs(prev => ({
         ...prev,
-        Temparature: currentUser.farm_details.temperature || prev.Temparature,
+        Temperature: currentUser.farm_details.temperature || prev.Temperature,
         Moisture: currentUser.farm_details.humidity || prev.Moisture,
         Soil_Type: currentUser.farm_details.soil_type || prev.Soil_Type
       }));
@@ -328,7 +328,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       startY: 65,
       head: [['Parameter', 'Value']],
       body: [
-        ['Temperature', `${inputs.Temparature}°C`],
+        ['Temperature', `${inputs.Temperature}°C`],
         ['Moisture', `${inputs.Moisture}%`],
         ['Soil Type', inputs.Soil_Type],
         ['Crop Type', inputs.Crop_Type],
@@ -481,8 +481,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   <input
                     type="number"
                     style={styles.input}
-                    value={inputs.Temparature}
-                    onChange={(e) => setInputs({...inputs, Temparature: e.target.value})}
+                    value={inputs.Temperature}
+                    onChange={(e) => setInputs({...inputs, Temperature: e.target.value})}
                     step="0.1"
                     min="0"
                     max="50"
