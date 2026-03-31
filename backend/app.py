@@ -138,8 +138,7 @@ def check_db_connection():
     return DB_CONNECTED
 
 # ==================== AUTH MIDDLEWARE ====================
-def token_required(f):
-    @wraps(f)
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
