@@ -684,9 +684,10 @@ def predict(**kwargs):
         return jsonify({'success': False, 'message': str(e)}), 500
 
 # ==================== ML PREDICTION ROUTE ====================
-@app.route('/ml/predict', methods=['POST', 'OPTIONS'])
-def ml_predict_route(current_user):
 
+
+@app.route('/ml/predict', methods=['POST', 'OPTIONS'])
+def ml_predict_route():
     if request.method == "OPTIONS":
         return jsonify({"success": True}), 200
 
@@ -704,14 +705,6 @@ def ml_predict_route(current_user):
 
         result = ml_predict(input_data)
 
-        # ✅ SAVE TO DB (for history + analytics)
-        db.predictions.insert_one({
-            "user": current_user,
-            "model": "ml",
-            "input": input_data,
-            "result": result
-        })
-
         return jsonify({
             "success": True,
             "result": result
@@ -719,6 +712,8 @@ def ml_predict_route(current_user):
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
 # ==================== HISTORY ROUTES ====================
 @app.route('/history', methods=['GET'])
 @token_required
