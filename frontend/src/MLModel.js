@@ -21,6 +21,10 @@ export default function MLModel() {
 
   const [history, setHistory] = useState([]);
 
+  useEffect(() => {
+  loadHistory();
+}, []);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
