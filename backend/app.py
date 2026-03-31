@@ -703,7 +703,8 @@ def predict(**kwargs):
 
 
 @app.route('/ml/predict', methods=['POST', 'OPTIONS'])
-def ml_predict_route():
+@token_required
+def ml_predict_route(**kwargs):
 
     if request.method == "OPTIONS":
         return jsonify({"success": True}), 200
