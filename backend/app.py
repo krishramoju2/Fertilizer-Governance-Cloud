@@ -724,9 +724,11 @@ def ml_predict_route(**kwargs):
 
         result = ml_predict(input_data)
 
-        # 🔥 ADD THIS BLOCK
+
+        current_user = kwargs['current_user']
+        
         history_entry = {
-            'user_id': "test_user",
+            'user_id': current_user['_id'],   # ✅ FIXED
             'input_data': input_data,
             'result': result,
             'model': 'ml',
