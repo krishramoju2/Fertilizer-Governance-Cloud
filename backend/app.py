@@ -722,8 +722,20 @@ def ml_predict_route(**kwargs):
             'Fertilizer_Quantity': float(data.get('quantity', 30))
         }
 
-        result = ml_predict(input_data)
+        
 
+        ml_result = ml_predict(input_data)
+
+        # 🔥 Normalize ML output to match decision format
+        result = {
+            "overall_compatibility": ml_result.get("overall_compatibility", "Moderately Compatible"),
+            "overall_score": ml_result.get("overall_score", 60),
+            "temperature_status": ml_result.get("temperature_status", "N/A"),
+            "moisture_status": ml_result.get("moisture_status", "N/A"),
+            "soil_compatibility": ml_result.get("soil_compatibility", "Average"),
+            "quantity_status": ml_result.get("quantity_status", "Optimal"),
+            "success": True
+        }
 
         current_user = kwargs['current_user']
         
