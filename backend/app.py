@@ -360,7 +360,7 @@ class FertilizerAnalyzer:
         """Main analysis function with fallback for unknown entries"""
         try:
             # Extract inputs with defaults
-            temperature = float(data.get('Temparature', 26))
+            temperature = float(data.get('Temperature', 26))
             moisture = float(data.get('Moisture', 45))
             soil_type = data.get('Soil_Type', 'Loamy')
             crop_type = data.get('Crop_Type', 'Maize')
