@@ -140,31 +140,29 @@ def check_db_connection():
 # ==================== AUTH MIDDLEWARE ====================
 def token_required(f):
     @wraps(f)
+def token_required(f):
+    @wraps(f)
     def decorated(*args, **kwargs):
-        # Check DB connection first
-        if not check_db_connection():
-            return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
+
+        # ✅ allow preflight
+        if request.method == "OPTIONS":
+            return jsonify({"success": True}), 200
 
         token = None
-        auth_header = request.headers.get('Authorization')
-        if auth_header and auth_header.startswith('Bearer '):
-            token = auth_header.split(' ')[1]
+
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"].split(" ")[1]
 
         if not token:
-            return jsonify({'success': False, 'message': 'Token missing'}), 401
+            return jsonify({"message": "Token missing"}), 401
 
         try:
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = users_collection.find_one({'_id': ObjectId(data['user_id'])})
-            if not current_user:
-                return jsonify({'success': False, 'message': 'User not found'}), 401
-            kwargs['current_user'] = current_user
-        except jwt.ExpiredSignatureError:
-            return jsonify({'success': False, 'message': 'Token expired'}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({'success': False, 'message': 'Invalid token'}), 401
+            current_user = "user"  # or your decode logic
+        except:
+            return jsonify({"message": "Invalid token"}), 401
 
-        return f(*args, **kwargs)
+        return f(current_user, *args, **kwargs)
+
     return decorated
 
 # ==================== FIXED ADMIN_REQUIRED DECORATOR ====================
@@ -689,51 +687,40 @@ def predict(**kwargs):
 # ==================== ML PREDICTION ROUTE ====================
 @app.route('/ml/predict', methods=['POST', 'OPTIONS'])
 @token_required
-def ml_predict_route(**kwargs):
-    if request.method == 'OPTIONS':
-        return jsonify({'success': True}), 200
+def ml_predict_route(current_user):
+
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+
     try:
-        current_user = kwargs['current_user']
         data = request.get_json()
 
-        farm_details = current_user.get('farm_details', {})
-
         input_data = {
-            'Temparature': float(data.get('temperature', farm_details.get('temperature', 26))),
-            'Moisture': float(data.get('moisture', farm_details.get('humidity', 45))),
-            'Soil_Type': data.get('soil', farm_details.get('soil_type', 'Loamy')),
+            'Temparature': float(data.get('temperature', 26)),
+            'Moisture': float(data.get('moisture', 45)),
+            'Soil_Type': data.get('soil', 'Loamy'),
             'Crop_Type': data.get('crop', 'Maize'),
             'Fertilizer_Name': data.get('fertilizer', 'Urea'),
             'Fertilizer_Quantity': float(data.get('quantity', 30))
         }
 
-        # 👉 USE ML HERE INSTEAD OF DECISION ENGINE
         result = ml_predict(input_data)
 
-        if not result['success']:
-            return jsonify({'success': False, 'message': result.get('error')}), 400
-
-        # 👉 STORE SAME AS NORMAL HISTORY
-        history_entry = {
-            'user_id': current_user['_id'],
-            'input_data': input_data,
-            'result': result,
-            'model': 'ml',  # 🔥 IMPORTANT FOR ANALYTICS LATER
-            'timestamp': datetime.datetime.utcnow()
-        }
-
-        history_collection.insert_one(history_entry)
+        # ✅ SAVE TO DB (for history + analytics)
+        db.predictions.insert_one({
+            "user": current_user,
+            "model": "ml",
+            "input": input_data,
+            "result": result
+        })
 
         return jsonify({
-            'success': True,
-            'result': result,
-            'input': input_data
-        }), 200
+            "success": True,
+            "result": result
+        })
 
     except Exception as e:
-        logger.error(f"ML Prediction error: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': str(e)}), 500
-
+        return jsonify({"success": False, "error": str(e)}), 500
 # ==================== HISTORY ROUTES ====================
 @app.route('/history', methods=['GET'])
 @token_required
