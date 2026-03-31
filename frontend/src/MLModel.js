@@ -230,8 +230,34 @@ const loadHistory = async () => {
           </div>
         )}
       </div>
+
+
+      {/* 🔥 ADD HERE */}
+      {history.length > 0 && (
+        <div style={{ marginTop: "30px" }}>
+          <h3>Recent Analyses</h3>
+      
+          {history.slice(0, 5).map((item) => (
+            <div key={item.id} style={{
+              background: "#fff",
+              padding: "10px",
+              marginBottom: "10px",
+              borderRadius: "6px"
+            }}>
+              <p><b>{item.crop_type}</b> - {item.fertilizer}</p>
+              <p>Score: {item.score}%</p>
+              <p>Status: {item.compatibility}</p>
+            </div>
+          ))}
+      
+        </div>
+      )}
+          
     </div>
   );
+
+
+
 }
 
 const styles = {
