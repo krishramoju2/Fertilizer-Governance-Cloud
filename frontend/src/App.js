@@ -877,17 +877,17 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </div>
           </div>
         )}
-      </main>
-    </div>
-
-    {activeTab === 'chat' && (
+           {activeTab === 'chat' && (
     <div style={styles.card}>
       <h2 style={styles.cardTitle}>Farm Chatbot</h2>
       <Chatbot />
     </div>
   )}
-  );
-}
+      </main>
+    </div>
+
+ 
+
 
 // Styles (completely unchanged)
 const styles = {
