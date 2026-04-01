@@ -879,6 +879,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         )}
       </main>
     </div>
+
+    {activeTab === 'chat' && (
+    <div style={styles.card}>
+      <h2 style={styles.cardTitle}>Farm Chatbot</h2>
+      <Chatbot />
+    </div>
+  )}
   );
 }
 
