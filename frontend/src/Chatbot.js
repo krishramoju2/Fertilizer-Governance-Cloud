@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../services/api";
+import axios from 'axios';
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
@@ -18,9 +18,9 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-      const res = await api.post("/chat", {
-        message: input
-      });
+        const res = await axios.post("https://fertilizer-backend-jj59.onrender.com/chat", {
+          message: input
+        });
 
       const botMessage = {
         sender: "bot",
