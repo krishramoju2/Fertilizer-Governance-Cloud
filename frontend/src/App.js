@@ -5,6 +5,12 @@ import autoTable from 'jspdf-autotable';
 
 import MLModel from './MLModel'; 
 
+import Chatbot from "./components/Chatbot";
+
+<Route path="/chat" element={<Chatbot />} />
+
+
+
 // API Configuration
 const API_BASE = process.env.REACT_APP_API_URL || "https://fertilizer-backend-jj59.onrender.com";
 
