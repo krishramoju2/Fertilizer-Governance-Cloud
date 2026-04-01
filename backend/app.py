@@ -509,18 +509,16 @@ def chatbot(**kwargs):
             input_data["Fertilizer_Name"] = "NPK"
 
         # ---------------- SMART NUMBER EXTRACTION ----------------
+        import re
 
-        # Temperature (look for "temp", "temperature", "°c")
         temp_match = re.search(r'(temp|temperature).*?(\d+)', message)
         if temp_match:
             input_data["Temperature"] = float(temp_match.group(2))
         else:
-            # fallback: number followed by c
             temp_match = re.search(r'(\d+)\s*°?c', message)
             if temp_match:
                 input_data["Temperature"] = float(temp_match.group(1))
 
-        # Moisture (look for %, moisture keyword)
         moisture_match = re.search(r'(moisture).*?(\d+)', message)
         if moisture_match:
             input_data["Moisture"] = float(moisture_match.group(2))
@@ -529,23 +527,38 @@ def chatbot(**kwargs):
             if percent_match:
                 input_data["Moisture"] = float(percent_match.group(1))
 
-        # Quantity (look for kg)
         qty_match = re.search(r'(\d+)\s*(kg|kg/ha)', message)
         if qty_match:
             input_data["Fertilizer_Quantity"] = float(qty_match.group(1))
 
-        # ---------------- FALLBACK (IF NOTHING FOUND) ----------------
+        # ---------------- FALLBACK ----------------
         numbers = list(map(float, re.findall(r'\d+', message)))
 
         if not temp_match and len(numbers) >= 1:
             input_data["Temperature"] = numbers[0]
+
         if not moisture_match and len(numbers) >= 2:
             input_data["Moisture"] = numbers[1]
+
         if not qty_match and len(numbers) >= 3:
             input_data["Fertilizer_Quantity"] = numbers[2]
 
+        # ---------------- 🔥 ENCODING FIX ----------------
+        soil_map = {"Loamy": 0, "Sandy": 1, "Clayey": 2}
+        crop_map = {"Wheat": 0, "Paddy": 1, "Cotton": 2, "Maize": 3}
+        fertilizer_map = {"Urea": 0, "DAP": 1, "NPK": 2}
+
+        encoded_input = [
+            soil_map.get(input_data["Soil_Type"], 0),
+            crop_map.get(input_data["Crop_Type"], 0),
+            input_data["Temperature"],
+            input_data["Moisture"],
+            fertilizer_map.get(input_data["Fertilizer_Name"], 0),
+            input_data["Fertilizer_Quantity"]
+        ]
+
         # ---------------- ML PREDICTION ----------------
-        ml_result = ml_predict(input_data)
+        ml_result = ml_predict(encoded_input)
 
         # ---------------- RESPONSE ----------------
         reply = f"""
@@ -570,7 +583,6 @@ def chatbot(**kwargs):
             "success": False,
             "error": str(e)
         })
-
 
 @app.route('/', methods=['GET'])
 def home():
