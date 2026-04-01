@@ -13,6 +13,7 @@ import traceback
 import urllib.parse
 import requests  # For weather API calls
 from ml_model import ml_predict
+import re
 
 # Load environment variables
 load_dotenv()
@@ -459,6 +460,42 @@ class FertilizerAnalyzer:
             }
 
 # ==================== ROUTES ====================
+
+@app.route('/chat', methods=['POST'])
+@token_required
+def chatbot(**kwargs):
+    try:
+        data = request.get_json()
+        message = data.get("message", "")
+
+        # 🔥 Extract all inputs
+        input_data = extract_inputs(message)
+
+        # 🔥 ML prediction ONLY
+        ml_result = ml_predict(input_data)
+
+        # 🔥 Clean response
+        reply = f"""
+                🌱 Compatibility: {ml_result['overall_compatibility']}
+                📊 Score: {ml_result['overall_score']}
+                
+                🌡 Temperature: {input_data['Temperature']}°C
+                💧 Moisture: {input_data['Moisture']}%
+                🌱 Soil: {input_data['Soil_Type']}
+                🌾 Crop: {input_data['Crop_Type']}
+                🧪 Fertilizer: {input_data['Fertilizer_Name']}
+                📦 Quantity: {input_data['Fertilizer_Quantity']} kg/ha
+                """
+
+        return jsonify({
+            "success": True,
+            "reply": reply.strip()
+        })
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
 @app.route('/', methods=['GET'])
 def home():
     db_status = "connected" if check_db_connection() else "disconnected"
@@ -1139,6 +1176,52 @@ def create_default_admin():
 
 # Call after DB init
 create_default_admin()
+
+
+def extract_inputs(message):
+    message = message.lower()
+
+    data = {
+        "Temperature": 26,
+        "Moisture": 45,
+        "Soil_Type": "Loamy",
+        "Crop_Type": "Maize",
+        "Fertilizer_Name": "Urea",
+        "Fertilizer_Quantity": 30
+    }
+
+    # 🌡 Temperature
+    temp_match = re.search(r'(\d+)\s*(°c|c|temp|degree)', message)
+    if temp_match:
+        data["Temperature"] = float(temp_match.group(1))
+
+    # 💧 Moisture
+    moist_match = re.search(r'moisture\s*(\d+)', message)
+    if moist_match:
+        data["Moisture"] = float(moist_match.group(1))
+
+    # 📦 Quantity
+    qty_match = re.search(r'(\d+)\s*(kg)', message)
+    if qty_match:
+        data["Fertilizer_Quantity"] = float(qty_match.group(1))
+
+    # 🌱 Soil
+    for soil in ["sandy", "loamy", "clayey", "black", "red"]:
+        if soil in message:
+            data["Soil_Type"] = soil.capitalize()
+
+    # 🌾 Crop
+    for crop in ["maize","sugarcane","cotton","wheat","paddy",
+                 "barley","millets","pulses","ground nuts","oil seeds","tobacco"]:
+        if crop in message:
+            data["Crop_Type"] = crop.title()
+
+    # 🧪 Fertilizer
+    for fert in ["urea","dap","14-35-14","28-28","17-17-17","20-20","10-26-26"]:
+        if fert in message:
+            data["Fertilizer_Name"] = fert.upper()
+
+    return data
 
 # ==================== ADDITIONAL ALIAS FOR GUNICORN ====================
 application = app
