@@ -3,11 +3,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import MLModel from './MLModel'; 
 
-import Chatbot from "./components/Chatbot";
-
-<Route path="/chat" element={<Chatbot />} />
 
 
 
