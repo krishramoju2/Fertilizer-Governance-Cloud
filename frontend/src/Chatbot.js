@@ -18,9 +18,17 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-        const res = await axios.post("https://fertilizer-backend-jj59.onrender.com/chat", {
-          message: input
-        });
+      const token = localStorage.getItem("token");
+      
+      const res = await axios.post(
+        "https://fertilizer-backend-jj59.onrender.com/chat",
+        { message: input },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
       const botMessage = {
         sender: "bot",
