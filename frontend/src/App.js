@@ -886,7 +886,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       </main>
     </div>
 
- 
+ );
+} 
 
 
 // Styles (completely unchanged)
