@@ -15,6 +15,7 @@ import requests  # For weather API calls
 from ml_model import ml_predict
 import re
 
+
 # Load environment variables
 load_dotenv()
 
@@ -461,31 +462,103 @@ class FertilizerAnalyzer:
 
 # ==================== ROUTES ====================
 
+
+
 @app.route('/chat', methods=['POST'])
 @token_required
 def chatbot(**kwargs):
     try:
         data = request.get_json()
-        message = data.get("message", "")
+        message = data.get("message", "").lower()
 
-        # 🔥 Extract all inputs
-        input_data = extract_inputs(message)
+        # ---------------- DEFAULT VALUES ----------------
+        input_data = {
+            "Temperature": 26,
+            "Moisture": 45,
+            "Soil_Type": "Loamy",
+            "Crop_Type": "Maize",
+            "Fertilizer_Name": "Urea",
+            "Fertilizer_Quantity": 30
+        }
 
-        # 🔥 ML prediction ONLY
+        # ---------------- TEXT DETECTION ----------------
+        # Crop
+        if "wheat" in message:
+            input_data["Crop_Type"] = "Wheat"
+        elif "rice" in message or "paddy" in message:
+            input_data["Crop_Type"] = "Paddy"
+        elif "cotton" in message:
+            input_data["Crop_Type"] = "Cotton"
+        elif "maize" in message:
+            input_data["Crop_Type"] = "Maize"
+
+        # Soil
+        if "loamy" in message:
+            input_data["Soil_Type"] = "Loamy"
+        elif "sandy" in message:
+            input_data["Soil_Type"] = "Sandy"
+        elif "clayey" in message:
+            input_data["Soil_Type"] = "Clayey"
+
+        # Fertilizer
+        if "urea" in message:
+            input_data["Fertilizer_Name"] = "Urea"
+        elif "dap" in message:
+            input_data["Fertilizer_Name"] = "DAP"
+        elif "npk" in message:
+            input_data["Fertilizer_Name"] = "NPK"
+
+        # ---------------- SMART NUMBER EXTRACTION ----------------
+
+        # Temperature (look for "temp", "temperature", "°c")
+        temp_match = re.search(r'(temp|temperature).*?(\d+)', message)
+        if temp_match:
+            input_data["Temperature"] = float(temp_match.group(2))
+        else:
+            # fallback: number followed by c
+            temp_match = re.search(r'(\d+)\s*°?c', message)
+            if temp_match:
+                input_data["Temperature"] = float(temp_match.group(1))
+
+        # Moisture (look for %, moisture keyword)
+        moisture_match = re.search(r'(moisture).*?(\d+)', message)
+        if moisture_match:
+            input_data["Moisture"] = float(moisture_match.group(2))
+        else:
+            percent_match = re.search(r'(\d+)\s*%', message)
+            if percent_match:
+                input_data["Moisture"] = float(percent_match.group(1))
+
+        # Quantity (look for kg)
+        qty_match = re.search(r'(\d+)\s*(kg|kg/ha)', message)
+        if qty_match:
+            input_data["Fertilizer_Quantity"] = float(qty_match.group(1))
+
+        # ---------------- FALLBACK (IF NOTHING FOUND) ----------------
+        numbers = list(map(float, re.findall(r'\d+', message)))
+
+        if not temp_match and len(numbers) >= 1:
+            input_data["Temperature"] = numbers[0]
+        if not moisture_match and len(numbers) >= 2:
+            input_data["Moisture"] = numbers[1]
+        if not qty_match and len(numbers) >= 3:
+            input_data["Fertilizer_Quantity"] = numbers[2]
+
+        # ---------------- ML PREDICTION ----------------
         ml_result = ml_predict(input_data)
 
-        # 🔥 Clean response
+        # ---------------- RESPONSE ----------------
         reply = f"""
-                🌱 Compatibility: {ml_result['overall_compatibility']}
-                📊 Score: {ml_result['overall_score']}
-                
-                🌡 Temperature: {input_data['Temperature']}°C
-                💧 Moisture: {input_data['Moisture']}%
-                🌱 Soil: {input_data['Soil_Type']}
-                🌾 Crop: {input_data['Crop_Type']}
-                🧪 Fertilizer: {input_data['Fertilizer_Name']}
-                📦 Quantity: {input_data['Fertilizer_Quantity']} kg/ha
-                """
+        🌱 Compatibility: {ml_result['overall_compatibility']}
+        📊 Score: {ml_result['overall_score']}
+        
+        🌡 Temperature: {input_data['Temperature']}°C
+        💧 Moisture: {input_data['Moisture']}%
+        🌱 Soil: {input_data['Soil_Type']}
+        🌾 Crop: {input_data['Crop_Type']}
+        🧪 Fertilizer: {input_data['Fertilizer_Name']}
+        📦 Quantity: {input_data['Fertilizer_Quantity']} kg/ha
+        """
 
         return jsonify({
             "success": True,
@@ -493,7 +566,10 @@ def chatbot(**kwargs):
         })
 
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
 
 
 @app.route('/', methods=['GET'])
