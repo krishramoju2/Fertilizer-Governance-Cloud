@@ -451,6 +451,14 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               Admin
             </button>
           )}
+
+          <button
+            style={styles.navButton(activeTab === 'chat')}
+            onClick={() => setActiveTab('chat')}
+          >
+            Chatbot
+          </button>
+            
           <button
             style={styles.navButton(false, true)}
             onClick={() => {
@@ -461,6 +469,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           >
             Logout
           </button>
+
+          
         </nav>
       </header>
 
