@@ -627,16 +627,14 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       <th>Fertilizer</th>
                       <th>Compatibility</th>
                       <th>Score</th>
-                      <th>Confidence</th>   {/* NEW */}
-                      <th>Trees</th>        {/* NEW */}
-                      <th>Model</th>        {/* NEW */}
                     </tr>
                   </thead>
                   <tbody>
-                    {history.map((item, i) => {
+                    {history
+                      .filter(item => item.model === "decision")
+                      .map((item, i) => {
                       const input = item.input_data || {};
                       const result = item.result || {};
-                      const dashboard = item.dashboard || {};
                   
                       return (
                         <tr key={i}>
@@ -657,18 +655,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   
                           <td style={styles.td}>{result.overall_score}%</td>
                   
-                          {/* ✅ DASHBOARD DATA */}
-                          <td style={styles.td}>
-                            {dashboard.confidence ? `${dashboard.confidence}%` : "N/A"}
-                          </td>
                   
-                          <td style={styles.td}>
-                            {dashboard.n_trees || "N/A"}
-                          </td>
-                  
-                          <td style={styles.td}>
-                            {dashboard.model_name || "N/A"}
-                          </td>
                         </tr>
                       );
                     })}
