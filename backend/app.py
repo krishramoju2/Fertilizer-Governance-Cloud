@@ -820,6 +820,7 @@ def ml_predict_route(**kwargs):
             'input_data': input_data,
             'result': result,
             'model': 'ml',
+            'dashboard': dashboard, 
             'timestamp': datetime.datetime.utcnow()
         }
 
