@@ -19,6 +19,9 @@ export default function MLModel() {
   });
 
   const [result, setResult] = useState(null);
+
+  const [dashboard, setDashboard] = useState(null);
+  
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
 
