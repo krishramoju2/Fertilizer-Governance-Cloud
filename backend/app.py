@@ -1194,10 +1194,14 @@ def extract_inputs(message):
         "Fertilizer_Quantity": 30
     }
 
-    # 🌡 Temperature
-    temp_match = re.search(r'(\d+)\s*(°c|c|temp|degree)', message)
+
+    temp_match = re.search(r'(temp|temperature).*?(\d+)', message)
     if temp_match:
-        data["Temperature"] = float(temp_match.group(1))
+        data["Temperature"] = float(temp_match.group(2))
+    else:
+        temp_match = re.search(r'(\d+)\s*°?c', message)
+        if temp_match:
+            data["Temperature"] = float(temp_match.group(1))
 
     moist_match = re.search(r'(moisture\s*(\d+))|(\d+\s*%)', message)
     if moist_match:
@@ -1225,7 +1229,7 @@ def extract_inputs(message):
     # 🧪 Fertilizer
     for fert in ["urea","dap","14-35-14","28-28","17-17-17","20-20","10-26-26"]:
         if fert in message:
-            data["Fertilizer_Name"] = fert.upper()
+            data["Fertilizer_Name"] = fert.capitalize()
 
     return data
 
