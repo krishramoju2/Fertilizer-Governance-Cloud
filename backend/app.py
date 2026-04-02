@@ -16,6 +16,8 @@ from ml_model import ml_predict
 import re
 
 
+from ml_model import get_model_dashboard
+
 # Load environment variables
 load_dotenv()
 
@@ -477,6 +479,8 @@ def chatbot(**kwargs):
         # ✅ Use analyzer (more reliable)
         ml_result = FertilizerAnalyzer.analyze(input_data)
 
+        dashboard = get_model_dashboard(ml_model, encoded_input)
+
         # ---------------- 🧠 FORMAT SUGGESTIONS ----------------
         suggestions = ml_result.get("suggestions", [])
         suggestion_text = "\n".join(suggestions) if suggestions else "✅ No suggestions available"
@@ -499,7 +503,8 @@ def chatbot(**kwargs):
 
         return jsonify({
             "success": True,
-            "reply": reply.strip()
+            "reply": reply.strip(),
+            "ml_dashboard": dashboard   # 👈 ADD THIS LINE
         })
 
     except Exception as e:
