@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from pymongo import MongoClient
+from pymongo import MongoCliente
 from bson import ObjectId
 import datetime
 import jwt
-import os
+import ose
 import hashlib
 from functools import wraps
 import logging
@@ -478,7 +478,6 @@ def chatbot(**kwargs):
         # ✅ Use analyzer (more reliable)
         ml_result = FertilizerAnalyzer.analyze(input_data)
 
-        dashboard = get_model_dashboard(ml_model, encoded_input)
 
         # ---------------- 🧠 FORMAT SUGGESTIONS ----------------
         suggestions = ml_result.get("suggestions", [])
@@ -502,8 +501,7 @@ def chatbot(**kwargs):
 
         return jsonify({
             "success": True,
-            "reply": reply.strip(),
-            "ml_dashboard": dashboard   # 👈 ADD THIS LINE
+            "reply": reply.strip()
         })
 
     except Exception as e:
@@ -852,10 +850,9 @@ def get_history(**kwargs):
         for item in history:
             formatted_history.append({
                 'id': str(item['_id']),
-                'crop_type': item['input_data']['Crop_Type'],
-                'fertilizer': item['input_data']['Fertilizer_Name'],
-                'compatibility': item['result']['overall_compatibility'],
-                'score': item['result']['overall_score'],
+                'input_data': item.get('input_data', {}),
+                'result': item.get('result', {}),
+                'dashboard': item.get('dashboard', {}),   # 🔥 ADD THIS
                 'timestamp': item['timestamp'].isoformat() if item.get('timestamp') else None
             })
 
