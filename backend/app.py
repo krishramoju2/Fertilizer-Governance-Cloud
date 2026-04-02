@@ -500,6 +500,16 @@ def chatbot(**kwargs):
             "success": False,
             "error": str(e)
         })
+
+
+
+
+
+
+
+
+
+
 @app.route('/', methods=['GET'])
 def home():
     db_status = "connected" if check_db_connection() else "disconnected"
