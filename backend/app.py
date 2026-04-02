@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 import datetime
 import jwt
-import ose
+import os
 import hashlib
 from functools import wraps
 import logging
