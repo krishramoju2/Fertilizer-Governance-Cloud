@@ -638,9 +638,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   
                       return (
                         <tr key={i}>
-                          <td style={styles.td}>{input.Crop_Type}</td>
-                  
-                          <td style={styles.td}>{input.Fertilizer_Name}</td>
+                        <td style={styles.td}>
+                          {input.Crop_Type || input.crop || "N/A"}
+                        </td>
+                        
+                        <td style={styles.td}>
+                          {input.Fertilizer_Name || input.fertilizer || "N/A"}
+                        </td>
                   
                           <td
                             style={{
@@ -650,7 +654,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                                 : '#e67e22'
                             }}
                           >
-                            {result.overall_compatibility}
+                            {result.overall_compatibility || "N/A"}
                           </td>
                   
                           <td style={styles.td}>{result.overall_score}%</td>
