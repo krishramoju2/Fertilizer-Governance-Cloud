@@ -558,7 +558,27 @@ def chatbot(**kwargs):
         ]
 
         # ---------------- ML PREDICTION ----------------
-        ml_result = ml_predict(encoded_input)
+
+        prediction = ml_predict(encoded_input)
+        
+        # Fix output format
+        if isinstance(prediction, dict):
+            ml_result = prediction
+        else:
+            score = int(prediction)
+        
+            if score >= 80:
+                compatibility = "Highly Compatible"
+            elif score >= 50:
+                compatibility = "Moderately Compatible"
+            else:
+                compatibility = "Not Compatible"
+        
+            ml_result = {
+                "overall_score": score,
+                "overall_compatibility": compatibility
+            }
+                
 
         # ---------------- RESPONSE ----------------
         reply = f"""
