@@ -302,18 +302,32 @@ const loadHistory = async () => {
         <div style={{ marginTop: "30px" }}>
           <h3>Recent Analyses</h3>
       
-          {history.slice(0, 5).map((item) => (
-            <div key={item.id} style={{
-              background: "#fff",
-              padding: "10px",
-              marginBottom: "10px",
-              borderRadius: "6px"
-            }}>
-              <p><b>{item.crop_type}</b> - {item.fertilizer}</p>
-              <p>Score: {item.score}%</p>
-              <p>Status: {item.compatibility}</p>
-            </div>
-          ))}
+      {history.slice(0, 5).map((item) => {
+        const input = item.input_data || {};
+        const result = item.result || {};
+        const dashboard = item.dashboard || {};
+      
+        return (
+          <div key={item.id} style={{
+            background: "#fff",
+            padding: "10px",
+            marginBottom: "10px",
+            borderRadius: "6px"
+          }}>
+            {/* ✅ BASIC INFO */}
+            <p><b>{input.Crop_Type || "N/A"}</b> - {input.Fertilizer_Name || "N/A"}</p>
+      
+            <p>Score: {result.overall_score ?? "N/A"}%</p>
+      
+            <p>Status: {result.overall_compatibility || "N/A"}</p>
+      
+            {/* ✅ DASHBOARD DATA */}
+            <p>Model: {dashboard.model_name || "N/A"}</p>
+            <p>Trees: {dashboard.n_trees || "N/A"}</p>
+            <p>Confidence: {dashboard.confidence ?? "N/A"}%</p>
+          </div>
+        );
+      })}
       
         </div>
       )}
