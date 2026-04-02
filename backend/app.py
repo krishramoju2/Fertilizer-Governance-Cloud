@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import traceback
 import urllib.parse
 import requests  # For weather API calls
-from ml_model import ml_predict
+from ml_model import ml_predict, get_model_dashboard, model
 import re
 
 
