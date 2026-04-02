@@ -1220,16 +1220,49 @@ def extract_inputs(message):
         if soil in message:
             data["Soil_Type"] = soil.capitalize()
 
-    # 🌾 Crop
-    for crop in ["maize","sugarcane","cotton","wheat","paddy",
-                 "barley","millets","pulses","ground nuts","oil seeds","tobacco"]:
-        if crop in message:
-            data["Crop_Type"] = crop.title()
 
-    # 🧪 Fertilizer
-    for fert in ["urea","dap","14-35-14","28-28","17-17-17","20-20","10-26-26"]:
-        if fert in message:
-            data["Fertilizer_Name"] = fert.capitalize()
+
+    
+
+    # 🌾 Crop (FIXED)
+    if "wheat" in message:
+        data["Crop_Type"] = "Wheat"
+    elif "rice" in message or "paddy" in message:
+        data["Crop_Type"] = "Paddy"
+    elif "cotton" in message:
+        data["Crop_Type"] = "Cotton"
+    elif "maize" in message:
+        data["Crop_Type"] = "Maize"
+    elif "sugarcane" in message:
+        data["Crop_Type"] = "Sugarcane"
+    elif "barley" in message:
+        data["Crop_Type"] = "Barley"
+
+
+
+
+
+
+
+    
+        
+    # 🧪 Fertilizer (FIXED)
+    if "urea" in message:
+        data["Fertilizer_Name"] = "Urea"
+    elif "dap" in message:
+        data["Fertilizer_Name"] = "DAP"
+    elif "npk" in message:
+        data["Fertilizer_Name"] = "NPK"
+    elif "14-35-14" in message:
+        data["Fertilizer_Name"] = "14-35-14"
+    elif "17-17-17" in message:
+        data["Fertilizer_Name"] = "17-17-17"
+    elif "10-26-26" in message:
+        data["Fertilizer_Name"] = "10-26-26"
+
+
+
+    
 
         # 🔥 FALLBACK NUMBER EXTRACTION (VERY IMPORTANT)
     numbers = list(map(float, re.findall(r'\d+', message)))
