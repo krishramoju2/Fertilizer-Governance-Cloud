@@ -1298,11 +1298,13 @@ def extract_inputs(message):
     if temp_match:
         data["Temperature"] = float(temp_match.group(1))
 
-    # 💧 Moisture
-    moist_match = re.search(r'moisture\s*(\d+)', message)
+    moist_match = re.search(r'(moisture\s*(\d+))|(\d+\s*%)', message)
     if moist_match:
-        data["Moisture"] = float(moist_match.group(1))
-
+        if moist_match.group(2):
+            data["Moisture"] = float(moist_match.group(2))
+        else:
+            data["Moisture"] = float(re.search(r'\d+', moist_match.group(0)).group())
+        
     # 📦 Quantity
     qty_match = re.search(r'(\d+)\s*(kg)', message)
     if qty_match:
