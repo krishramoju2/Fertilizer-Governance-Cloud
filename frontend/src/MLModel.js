@@ -57,6 +57,12 @@ useEffect(() => {
 
       if (res.data && res.data.success && res.data.result) {
         setResult(res.data.result);
+        
+        // ✅ ADD THIS LINE (IMPORTANT)
+        if (res.data.ml_dashboard) {
+          setDashboard(res.data.ml_dashboard);
+        }
+        
         await loadHistory();
 
       } else {
@@ -254,6 +260,42 @@ const loadHistory = async () => {
         )}
       </div>
 
+            {/* ✅ ML DASHBOARD */}
+      {dashboard && (
+        <div style={{
+          marginTop: "20px",
+          background: "#eef6ff",
+          padding: "15px",
+          borderRadius: "8px"
+        }}>
+          <h3>🧠 ML Dashboard</h3>
+      
+          <p><b>🌳 Model:</b> {dashboard.model_name}</p>
+          <p><b>🌲 Trees:</b> {dashboard.n_trees}</p>
+          <p><b>📊 Features:</b> {dashboard.n_features}</p>
+          <p><b>🎯 Confidence:</b> {dashboard.confidence}%</p>
+      
+          <h4>📈 Feature Importance:</h4>
+      
+          {dashboard.feature_importance && dashboard.feature_importance.map((val, i) => {
+            const names = ["Soil", "Crop", "Temperature", "Moisture", "Fertilizer", "Quantity"];
+      
+            return (
+              <div key={i} style={{ marginBottom: "8px" }}>
+                <span>{names[i]}</span>
+                <div style={{
+                  height: "8px",
+                  width: `${val * 100}%`,
+                  background: "#3498db",
+                  borderRadius: "4px",
+                  marginTop: "3px"
+                }} />
+                <small>{(val * 100).toFixed(1)}%</small>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* 🔥 ADD HERE */}
       {history.length > 0 && (
