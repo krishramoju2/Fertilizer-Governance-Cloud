@@ -471,115 +471,35 @@ def chatbot(**kwargs):
         data = request.get_json()
         message = data.get("message", "").lower()
 
-        # ---------------- DEFAULT VALUES ----------------
-
-        # 🔥 USE SINGLE SOURCE OF TRUTH
+        # ✅ ONLY parser (single source of truth)
         input_data = extract_inputs(message)
 
-        # ---------------- TEXT DETECTION ----------------
-        # Crop
-        if "wheat" in message:
-            input_data["Crop_Type"] = "Wheat"
-        elif "rice" in message or "paddy" in message:
-            input_data["Crop_Type"] = "Paddy"
-        elif "cotton" in message:
-            input_data["Crop_Type"] = "Cotton"
-        elif "maize" in message:
-            input_data["Crop_Type"] = "Maize"
+        # ✅ ML prediction (send structured input, NOT encoded)
+        prediction = ml_predict(input_data)
 
-        # Soil
-        if "loamy" in message:
-            input_data["Soil_Type"] = "Loamy"
-        elif "sandy" in message:
-            input_data["Soil_Type"] = "Sandy"
-        elif "clayey" in message:
-            input_data["Soil_Type"] = "Clayey"
-
-        # Fertilizer
-        if "urea" in message:
-            input_data["Fertilizer_Name"] = "Urea"
-        elif "dap" in message:
-            input_data["Fertilizer_Name"] = "DAP"
-        elif "npk" in message:
-            input_data["Fertilizer_Name"] = "NPK"
-
-        # ---------------- SMART NUMBER EXTRACTION ----------------
-        import re
-
-        temp_match = re.search(r'(temp|temperature).*?(\d+)', message)
-        if temp_match:
-            input_data["Temperature"] = float(temp_match.group(2))
-        else:
-            temp_match = re.search(r'(\d+)\s*°?c', message)
-            if temp_match:
-                input_data["Temperature"] = float(temp_match.group(1))
-
-        moisture_match = re.search(r'(moisture).*?(\d+)', message)
-        if moisture_match:
-            input_data["Moisture"] = float(moisture_match.group(2))
-        else:
-            percent_match = re.search(r'(\d+)\s*%', message)
-            if percent_match:
-                input_data["Moisture"] = float(percent_match.group(1))
-
-        qty_match = re.search(r'(\d+)\s*(kg|kg/ha)', message)
-        if qty_match:
-            input_data["Fertilizer_Quantity"] = float(qty_match.group(1))
-
-        # ---------------- FALLBACK ----------------
-        numbers = list(map(float, re.findall(r'\d+', message)))
-
-        if not temp_match and len(numbers) >= 1:
-            input_data["Temperature"] = numbers[0]
-
-        if not moisture_match and len(numbers) >= 2:
-            input_data["Moisture"] = numbers[1]
-
-        if not qty_match and len(numbers) >= 3:
-            input_data["Fertilizer_Quantity"] = numbers[2]
-
-        # ---------------- 🔥 ENCODING FIX ----------------
-        soil_map = {"Loamy": 0, "Sandy": 1, "Clayey": 2}
-        crop_map = {"Wheat": 0, "Paddy": 1, "Cotton": 2, "Maize": 3}
-        fertilizer_map = {"Urea": 0, "DAP": 1, "NPK": 2}
-
-        encoded_input = [
-            soil_map.get(input_data["Soil_Type"], 0),
-            crop_map.get(input_data["Crop_Type"], 0),
-            input_data["Temperature"],
-            input_data["Moisture"],
-            fertilizer_map.get(input_data["Fertilizer_Name"], 0),
-            input_data["Fertilizer_Quantity"]
-        ]
-
-        # ---------------- ML PREDICTION ----------------
-
-        prediction = ml_predict(encoded_input)
-        
-        # Fix output format
+        # ✅ Handle ML output safely
         if isinstance(prediction, dict):
             ml_result = prediction
         else:
             score = int(prediction)
-        
+
             if score >= 80:
                 compatibility = "Highly Compatible"
             elif score >= 50:
                 compatibility = "Moderately Compatible"
             else:
                 compatibility = "Not Compatible"
-        
+
             ml_result = {
                 "overall_score": score,
                 "overall_compatibility": compatibility
             }
-                
 
-        # ---------------- RESPONSE ----------------
+        # ✅ RESPONSE
         reply = f"""
-        🌱 Compatibility: {ml_result['overall_compatibility']}
-        📊 Score: {ml_result['overall_score']}
-        
+        🌱 Compatibility: {ml_result.get('overall_compatibility', 'Unknown')}
+        📊 Score: {ml_result.get('overall_score', 0)}
+
         🌡 Temperature: {input_data['Temperature']}°C
         💧 Moisture: {input_data['Moisture']}%
         🌱 Soil: {input_data['Soil_Type']}
