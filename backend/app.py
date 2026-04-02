@@ -789,6 +789,20 @@ def ml_predict_route(**kwargs):
 
         ml_result = ml_predict(input_data)
 
+
+        # ===== ENCODE INPUT FOR DASHBOARD =====
+        temp = input_data['Temperature']
+        moist = input_data['Moisture']
+        soil = soil_map.get(input_data['Soil_Type'], 1)
+        crop = crop_map.get(input_data['Crop_Type'], 0)
+        fert = fert_map.get(input_data['Fertilizer_Name'], 0)
+        qty = input_data['Fertilizer_Quantity']
+        
+        encoded_input = [temp, moist, soil, crop, fert, qty]
+        
+        # ===== GET DASHBOARD =====
+        dashboard = get_model_dashboard(model, encoded_input)
+
         # 🔥 Normalize ML output to match decision format
         result = {
             "overall_compatibility": ml_result.get("overall_compatibility", "Moderately Compatible"),
@@ -814,7 +828,8 @@ def ml_predict_route(**kwargs):
 
         return jsonify({
             "success": True,
-            "result": result
+            "result": result,
+            "ml_dashboard": dashboard   # 🚀 THIS LINE MAKES IT VISIBLE
         })
 
     except Exception as e:
