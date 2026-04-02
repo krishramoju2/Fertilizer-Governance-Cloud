@@ -629,18 +629,47 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         <th style={styles.th}>Score</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {history.map((item, i) => (
+                   <tbody>
+                    {history.map((item, i) => {
+                      const input = item.input_data || {};
+                      const result = item.result || {};
+                      const dashboard = item.dashboard || {};
+                  
+                      return (
                         <tr key={i}>
-                          <td style={styles.td}>{item.crop_type}</td>
-                          <td style={styles.td}>{item.fertilizer}</td>
-                          <td style={{ ...styles.td, color: item.compatibility?.includes('Highly') ? '#27ae60' : '#e67e22' }}>
-                            {item.compatibility}
+                          <td style={styles.td}>{input.Crop_Type}</td>
+                  
+                          <td style={styles.td}>{input.Fertilizer_Name}</td>
+                  
+                          <td
+                            style={{
+                              ...styles.td,
+                              color: result.overall_compatibility?.includes('Highly')
+                                ? '#27ae60'
+                                : '#e67e22'
+                            }}
+                          >
+                            {result.overall_compatibility}
                           </td>
-                          <td style={styles.td}>{item.score}%</td>
+                  
+                          <td style={styles.td}>{result.overall_score}%</td>
+                  
+                          {/* ✅ DASHBOARD DATA */}
+                          <td style={styles.td}>
+                            {dashboard.confidence ? `${dashboard.confidence}%` : "N/A"}
+                          </td>
+                  
+                          <td style={styles.td}>
+                            {dashboard.n_trees || "N/A"}
+                          </td>
+                  
+                          <td style={styles.td}>
+                            {dashboard.model_name || "N/A"}
+                          </td>
                         </tr>
-                      ))}
-                    </tbody>
+                      );
+                    })}
+                  </tbody>
                   </table>
                 )}
               </div>
