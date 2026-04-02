@@ -12,8 +12,7 @@ from dotenv import load_dotenv
 import traceback
 import urllib.parse
 import requests  # For weather API calls
-from ml_model import ml_predict, get_model_dashboard, model
-import re
+from ml_model import ml_predict, get_model_dashboard, model, soil_map, crop_map, fert_map
 
 
 from ml_model import get_model_dashboard
