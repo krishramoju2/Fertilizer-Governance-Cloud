@@ -104,6 +104,7 @@ def ml_predict(data):
                 "ML-based prediction used",
                 "Adjust inputs for better compatibility"
             ]
+        }
 
 def get_model_dashboard(model, encoded_input):
     try:
