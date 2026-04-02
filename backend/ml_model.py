@@ -61,7 +61,6 @@ y = [generate_label(x[0], x[1], x[5]) for x in X]
 model = RandomForestClassifier(n_estimators=120, random_state=42)
 model.fit(X, y)
 
-# ================= ML PREDICT =================
 def ml_predict(data):
     try:
         temp = float(data.get("Temperature", 26))
@@ -71,11 +70,9 @@ def ml_predict(data):
         fert = fert_map.get(data.get("Fertilizer_Name", "Urea"), 0)
         qty = float(data.get("Fertilizer_Quantity", 30))
 
-        # ML prediction probability
         proba = model.predict_proba([[temp, moist, soil, crop, fert, qty]])[0][1]
         score = int(proba * 100)
 
-        # Final classification
         if score >= 75:
             overall = "Highly Compatible"
         elif score >= 50:
@@ -83,7 +80,6 @@ def ml_predict(data):
         else:
             overall = "Not Compatible"
 
-        # Dynamic status (VERY IMPORTANT)
         temp_status = "Optimal" if 25 <= temp <= 32 else "Not Optimal"
         moisture_status = "Optimal" if 35 <= moist <= 50 else "Not Optimal"
         soil_status = "Good" if soil == 1 else "Average"
@@ -105,9 +101,9 @@ def ml_predict(data):
                 "Adjust inputs for better compatibility"
             ]
         }
-    
-      except Exception as e:
-            return {"success": False, "error": str(e)}
+
+    except Exception as e:   # ✅ aligned with try
+        return {"success": False, "error": str(e)}
 
 
 def get_model_dashboard(model, encoded_input):
