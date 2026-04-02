@@ -630,9 +630,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {history
-                      .filter(item => item.model === "decision")
-                      .map((item, i) => {
+                  
+                      {history.map((item, i) => {
                       const input = item.input_data || {};
                       const result = item.result || {};
                   
@@ -657,8 +656,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             {result.overall_compatibility || "N/A"}
                           </td>
                   
-                          <td style={styles.td}>{result.overall_score}%</td>
-                  
+                          <td style={styles.td}>
+                          {result.overall_score !== undefined ? `${result.overall_score}%` : "N/A"}
+                          </td>                  
                   
                         </tr>
                       );
