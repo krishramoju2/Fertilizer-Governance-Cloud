@@ -621,15 +621,18 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   <p style={styles.emptyText}>No analyses yet</p>
                 ) : (
                   <table style={styles.table}>
-                    <thead>
-                      <tr>
-                        <th style={styles.th}>Crop</th>
-                        <th style={styles.th}>Fertilizer</th>
-                        <th style={styles.th}>Status</th>
-                        <th style={styles.th}>Score</th>
-                      </tr>
-                    </thead>
-                   <tbody>
+                  <thead>
+                    <tr>
+                      <th>Crop</th>
+                      <th>Fertilizer</th>
+                      <th>Compatibility</th>
+                      <th>Score</th>
+                      <th>Confidence</th>   {/* NEW */}
+                      <th>Trees</th>        {/* NEW */}
+                      <th>Model</th>        {/* NEW */}
+                    </tr>
+                  </thead>
+                  <tbody>
                     {history.map((item, i) => {
                       const input = item.input_data || {};
                       const result = item.result || {};
