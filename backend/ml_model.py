@@ -105,6 +105,10 @@ def ml_predict(data):
                 "Adjust inputs for better compatibility"
             ]
         }
+    
+      except Exception as e:
+            return {"success": False, "error": str(e)}
+
 
 def get_model_dashboard(model, encoded_input):
     try:
