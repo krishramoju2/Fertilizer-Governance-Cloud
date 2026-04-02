@@ -472,14 +472,9 @@ def chatbot(**kwargs):
         message = data.get("message", "").lower()
 
         # ---------------- DEFAULT VALUES ----------------
-        input_data = {
-            "Temperature": 26,
-            "Moisture": 45,
-            "Soil_Type": "Loamy",
-            "Crop_Type": "Maize",
-            "Fertilizer_Name": "Urea",
-            "Fertilizer_Quantity": 30
-        }
+
+        # 🔥 USE SINGLE SOURCE OF TRUTH
+        input_data = extract_inputs(message)
 
         # ---------------- TEXT DETECTION ----------------
         # Crop
