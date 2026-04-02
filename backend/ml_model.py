@@ -117,7 +117,3 @@ def get_model_dashboard(model, encoded_input):
         }
     except:
         return {}
-        }
-
-    except Exception as e:
-        return {"success": False, "error": str(e)}
