@@ -471,29 +471,11 @@ def chatbot(**kwargs):
         data = request.get_json()
         message = data.get("message", "").lower()
 
-        # ✅ ONLY parser (single source of truth)
+        # ✅ Parse input
         input_data = extract_inputs(message)
 
-        # ✅ ML prediction (send structured input, NOT encoded)
-        prediction = ml_predict(input_data)
-
-        # ✅ Handle ML output safely
-        if isinstance(prediction, dict):
-            ml_result = prediction
-        else:
-            score = int(prediction)
-
-            if score >= 80:
-                compatibility = "Highly Compatible"
-            elif score >= 50:
-                compatibility = "Moderately Compatible"
-            else:
-                compatibility = "Not Compatible"
-
-            ml_result = {
-                "overall_score": score,
-                "overall_compatibility": compatibility
-            }
+        # ✅ Use analyzer (more reliable)
+        ml_result = FertilizerAnalyzer.analyze(input_data)
 
         # ✅ RESPONSE
         reply = f"""
@@ -518,7 +500,6 @@ def chatbot(**kwargs):
             "success": False,
             "error": str(e)
         })
-
 @app.route('/', methods=['GET'])
 def home():
     db_status = "connected" if check_db_connection() else "disconnected"
