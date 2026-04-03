@@ -1,0 +1,4 @@
+token_required
+admin_required
+hash_password
+check_password
