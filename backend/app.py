@@ -570,7 +570,7 @@ def internal_error(error):
 # ==================== CREATE DEFAULT ADMIN ====================
 def create_default_admin():
     """Create default admin user if no admin exists"""
-    if not DB_CONNECTED:
+    if not check_db_connection():
         return
     try:
         admin_email = os.environ.get('ADMIN_EMAIL', 'admin@farm.com')
@@ -607,5 +607,5 @@ if __name__ == '__main__':
     debug = os.environ.get('ENVIRONMENT', 'development') == 'development'
     logger.info(f"🚀 Starting server on port {port}")
     logger.info(f"🔧 Debug mode: {debug}")
-    logger.info(f"💾 Database status: {'Connected' if DB_CONNECTED else 'Disconnected'}")
+    logger.info(f"💾 Database status: {'Connected' if check_db_connection() else 'Disconnected'}")
     app.run(host='0.0.0.0', port=port, debug=debug)
