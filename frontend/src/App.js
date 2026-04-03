@@ -637,13 +637,15 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   
                       return (
                         <tr key={i}>
-                        <td style={styles.td}>
-                          {input.Crop_Type || input.crop || "N/A"}
-                        </td>
+
+                          <td style={styles.td}>
+                            {input.Crop_Type || input.crop || item.crop || "N/A"}
+                          </td>
+                          
+                          <td style={styles.td}>
+                            {input.Fertilizer_Name || input.fertilizer || item.fertilizer || "N/A"}
+                          </td>
                         
-                        <td style={styles.td}>
-                          {input.Fertilizer_Name || input.fertilizer || "N/A"}
-                        </td>
                   
                           <td
                             style={{
