@@ -865,6 +865,7 @@ def get_history(**kwargs):
                 'input_data': item.get('input_data', {}),
                 'result': item.get('result', {}),
                 'dashboard': item.get('dashboard', {}),   # 🔥 ADD THIS
+                'model': item.get('model', 'unknown'),
                 'timestamp': item['timestamp'].isoformat() if item.get('timestamp') else None
             })
 
@@ -918,16 +919,26 @@ def get_analytics(**kwargs):
 
         # Calculate statistics
         total = len(history)
-        compatible_count = sum(1 for h in history if 'Highly Compatible' in h['result']['overall_compatibility'])
-        avg_score = sum(h['result']['overall_score'] for h in history) / total
+        
+        compatible_count = sum(
+            1 for h in history
+            if 'Highly Compatible' in h.get('result', {}).get('overall_compatibility', '')
+        )        
+
+        scores = [h.get('result', {}).get('overall_score', 0) for h in history]
+        avg_score = sum(scores) / total if total > 0 else 0
 
         # Crop distribution
         crops = {}
         fertilizers = {}
+        
         for h in history:
-            crop = h['input_data']['Crop_Type']
+            input_data = h.get('input_data', {})
+            
+            crop = input_data.get('Crop_Type') or input_data.get('crop') or "Unknown"
             crops[crop] = crops.get(crop, 0) + 1
-            fert = h['input_data']['Fertilizer_Name']
+        
+            fert = input_data.get('Fertilizer_Name') or input_data.get('fertilizer') or "Unknown"
             fertilizers[fert] = fertilizers.get(fert, 0) + 1
 
         # Time series for last 7 entries
@@ -939,7 +950,8 @@ def get_analytics(**kwargs):
                 time_labels.append(h['timestamp'].strftime('%d/%m'))
             else:
                 time_labels.append('N/A')
-            time_scores.append(h['result']['overall_score'])
+                
+            time_scores.append(h.get('result', {}).get('overall_score', 0))
 
         return jsonify({
             'success': True,
