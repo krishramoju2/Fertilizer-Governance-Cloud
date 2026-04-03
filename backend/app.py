@@ -28,6 +28,9 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+
+app.register_blueprint(history_bp)
+
 # CORS configuration
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
