@@ -81,4 +81,17 @@ def admin_required(f):
 
 
 hash_password
+
+
+
+# ==================== PASSWORD UTILITIES ====================
+def hash_password(password):
+    """Simple password hashing using SHA-256"""
+    salt = "farmadvisor_salt_2026"
+    hash_object = hashlib.sha256((password + salt).encode('utf-8'))
+    return hash_object.hexdigest()
+
+
+
+
 check_password
