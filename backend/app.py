@@ -1,5 +1,6 @@
 from routes.history_routes import history_bp
 from routes.auth_routes import auth_bp
+from routes.predict_routes import predict_bp
 
 
 from utils.auth import token_required
@@ -55,6 +56,8 @@ app = Flask(__name__)
 
 app.register_blueprint(history_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(predict_bp)
+
 
 # CORS configuration
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
