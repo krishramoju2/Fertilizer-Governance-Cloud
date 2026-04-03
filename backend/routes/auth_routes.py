@@ -7,8 +7,7 @@ import logging
 # DB + utils
 from models.db import users_collection, check_db_connection
 from utils.auth import hash_password, check_password
-from services.weather_service import fetch_weather_for_location
-
+from app import fetch_weather_for_location
 logger = logging.getLogger(__name__)
 
 # ✅ Blueprint
