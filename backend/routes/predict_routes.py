@@ -1,5 +1,5 @@
 # ==================== PREDICTION ROUTE ====================
-@app.route('/predict', methods=['POST'])
+@predict_bp.route('/predict', methods=['POST'])
 @token_required
 def predict(**kwargs):
     try:
