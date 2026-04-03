@@ -2,7 +2,7 @@ from routes.history_routes import history_bp
 from routes.auth_routes import auth_bp
 from routes.predict_routes import predict_bp
 from routes.ml_routes import ml_bp
-
+from routes.chat_routes import chat_bp
 
 
 
@@ -61,6 +61,8 @@ app.register_blueprint(history_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(predict_bp)
 app.register_blueprint(ml_bp)
+app.register_blueprint(chat_bp)
+
 
 # CORS configuration
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
