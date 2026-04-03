@@ -3,6 +3,7 @@ from routes.auth_routes import auth_bp
 from routes.predict_routes import predict_bp
 from routes.ml_routes import ml_bp
 from routes.chat_routes import chat_bp
+from routes.config_routes import config_bp
 
 
 
@@ -62,6 +63,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(predict_bp)
 app.register_blueprint(ml_bp)
 app.register_blueprint(chat_bp)
+app.register_blueprint(config_bp)
 
 
 # CORS configuration
@@ -162,27 +164,7 @@ def health():
         'timestamp': datetime.datetime.now().isoformat()
     })
 
-# ==================== PUBLIC CONFIG ENDPOINTS ====================
-@app.route('/config/soil-types', methods=['GET'])
-def get_soil_types():
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'DB error'}), 503
-    config = config_collection.find_one({'_id': 'dropdowns'})
-    return jsonify({'success': True, 'data': config.get('soil_types', []) if config else []})
 
-@app.route('/config/crop-types', methods=['GET'])
-def get_crop_types():
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'DB error'}), 503
-    config = config_collection.find_one({'_id': 'dropdowns'})
-    return jsonify({'success': True, 'data': config.get('crop_types', []) if config else []})
-
-@app.route('/config/fertilizer-names', methods=['GET'])
-def get_fertilizer_names():
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'DB error'}), 503
-    config = config_collection.find_one({'_id': 'dropdowns'})
-    return jsonify({'success': True, 'data': config.get('fertilizer_names', []) if config else []})
 
 
 
