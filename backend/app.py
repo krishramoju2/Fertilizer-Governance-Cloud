@@ -2,6 +2,10 @@ from routes.history_routes import history_bp
 from routes.auth_routes import auth_bp
 from routes.predict_routes import predict_bp
 
+predict_bp = Blueprint('history', __name__)
+auth_bp = Blueprint('auth', __name__)
+predict_bp = Blueprint('predict', __name__)
+
 
 from utils.auth import token_required
 from utils.auth import admin_required
