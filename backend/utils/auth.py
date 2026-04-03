@@ -1,4 +1,4 @@
-token_required
+
 
 # ==================== AUTH MIDDLEWARE ====================
 
@@ -43,7 +43,7 @@ def token_required(f):
 
     return decorated
 
-admin_required
+
 
 # ==================== FIXED ADMIN_REQUIRED DECORATOR ====================
 def admin_required(f):
@@ -80,7 +80,7 @@ def admin_required(f):
     return decorated
 
 
-hash_password
+
 
 
 
@@ -94,4 +94,9 @@ def hash_password(password):
 
 
 
-check_password
+
+
+
+def check_password(plain_password, hashed_password):
+    """Check if plain password matches hashed password"""
+    return hash_password(plain_password) == hashed_password
