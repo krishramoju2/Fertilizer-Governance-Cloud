@@ -13,6 +13,13 @@ from models.db import (
     check_db_connection
 )
 
+
+from services.analyzer import FertilizerAnalyzer
+
+
+
+
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
