@@ -741,24 +741,28 @@ def predict(**kwargs):
             return jsonify({'success': False, 'message': result.get('error', 'Analysis failed')}), 400
 
         current_user = kwargs['current_user']
+
+        
         
         history_entry = {
             'user_id': current_user['_id'],
-            
-            # ✅ SAME STRUCTURE AS ML
+        
+            # 🔥 THIS IS WHAT YOU ARE MISSING
             'input_data': {
                 'Crop_Type': data.get('crop'),
                 'Fertilizer_Name': data.get('fertilizer')
             },
-            
+        
             'result': {
                 'overall_score': result.get('overall_score', result.get('score', 0)),
                 'overall_compatibility': result.get('overall_compatibility', result.get('compatibility', 'N/A'))
             },
         
-            'model': 'decision',   # 🔥 IMPORTANT
+            'model': 'decision',
             'timestamp': datetime.datetime.utcnow()
         }
+
+        
 
         
         history_collection.insert_one(history_entry)
