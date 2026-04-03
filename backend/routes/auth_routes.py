@@ -1,15 +1,29 @@
+from flask import Blueprint, request, jsonify, current_app
+import datetime
+import jwt
+import traceback
+import logging
 
-# ==================== AUTH ROUTES ====================
-@app.route('/register', methods=['POST'])
+# DB + utils
+from models.db import users_collection, check_db_connection
+from utils.auth import hash_password, check_password
+from services.weather_service import fetch_weather_for_location
+
+logger = logging.getLogger(__name__)
+
+# ✅ Blueprint
+auth_bp = Blueprint('auth', __name__)
+
+
+# ==================== REGISTER ====================
+@auth_bp.route('/register', methods=['POST'])
 def register():
-    # Check DB connection
     if not check_db_connection():
         return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
 
     try:
         data = request.get_json()
 
-        # Validate input
         if not data:
             return jsonify({'success': False, 'message': 'No data provided'}), 400
 
@@ -19,20 +33,15 @@ def register():
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
 
-        # Check if user exists
         if users_collection.find_one({'email': email}):
             return jsonify({'success': False, 'message': 'Email already registered'}), 400
 
-        # Hash password
         hashed_password = hash_password(password)
-        
-        # Get location from registration data
+
         location = data.get('location', '').strip()
-        
-        # Fetch weather data for the location
+
         temperature, humidity = fetch_weather_for_location(location)
-        
-        # Create user with farm details, is_admin defaults to False
+
         user = {
             'email': email,
             'password': hashed_password,
@@ -42,7 +51,6 @@ def register():
                 'farm_size': float(data.get('farm_size', 1)),
                 'location': location,
                 'primary_crops': data.get('primary_crops', []),
-                # Weather data fields
                 'temperature': temperature if temperature is not None else 26,
                 'humidity': humidity if humidity is not None else 45,
                 'last_weather_update': datetime.datetime.utcnow().isoformat() if temperature else None
@@ -54,12 +62,12 @@ def register():
         result = users_collection.insert_one(user)
         user_id = str(result.inserted_id)
 
-        # Generate token
+        # ✅ FIX: use current_app instead of app
         token = jwt.encode({
             'user_id': user_id,
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }, app.config['SECRET_KEY'])
+        }, current_app.config['SECRET_KEY'])
 
         return jsonify({
             'success': True,
@@ -72,18 +80,21 @@ def register():
                 'is_admin': False
             }
         }), 201
+
     except Exception as e:
         logger.error(f"Registration error: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': f'Registration failed: {str(e)}'}), 500
 
-@app.route('/login', methods=['POST'])
+
+# ==================== LOGIN ====================
+@auth_bp.route('/login', methods=['POST'])
 def login():
-    # Check DB connection
     if not check_db_connection():
         return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
 
     try:
         data = request.get_json()
+
         if not data:
             return jsonify({'success': False, 'message': 'No data provided'}), 400
 
@@ -93,17 +104,16 @@ def login():
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
 
-        # Find user
         user = users_collection.find_one({'email': email})
+
         if not user or not check_password(password, user['password']):
             return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
-        # Generate token
         token = jwt.encode({
             'user_id': str(user['_id']),
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }, app.config['SECRET_KEY'])
+        }, current_app.config['SECRET_KEY'])
 
         return jsonify({
             'success': True,
@@ -116,6 +126,7 @@ def login():
                 'is_admin': user.get('is_admin', False)
             }
         }), 200
+
     except Exception as e:
         logger.error(f"Login error: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': f'Login failed: {str(e)}'}), 500
