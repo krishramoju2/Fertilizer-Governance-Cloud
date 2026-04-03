@@ -1,4 +1,6 @@
 from routes.history_routes import history_bp
+from routes.auth_routes import auth_bp
+
 
 from utils.auth import token_required
 from utils.auth import admin_required
@@ -52,6 +54,7 @@ app = Flask(__name__)
 
 
 app.register_blueprint(history_bp)
+app.register_blueprint(auth_bp)
 
 # CORS configuration
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
