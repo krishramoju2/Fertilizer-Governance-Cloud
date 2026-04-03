@@ -5,6 +5,14 @@ from utils.auth import admin_required
 from utils.auth import hash_password
 from utils.auth import check_password
 
+
+from models.db import (
+    users_collection,
+    history_collection,
+    config_collection,
+    check_db_connection
+)
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -43,103 +51,7 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_change_this')
 app.config['SECRET_KEY'] = SECRET_KEY
 
-# ==================== MONGODB CONNECTION WITH PROPER AUTH ====================
-def get_mongo_connection():
-    """Establish MongoDB connection with proper authentication"""
-    try:
-        # Your MongoDB credentials - UPDATE THESE!
-        username = "krishramoju"          # Your MongoDB username
-        password = "Krish161205"          # Your MongoDB password
-        cluster = "cluster0.svleqvv.mongodb.net"
-        database = "fertilizer_db"
 
-        # URL encode the password to handle special characters
-        encoded_password = urllib.parse.quote_plus(password)
-
-        # Construct connection string properly
-        mongo_uri = f"mongodb+srv://{username}:{encoded_password}@{cluster}/{database}?retryWrites=true&w=majority&appName=Cluster0"
-
-        logger.info(f"Attempting to connect to MongoDB...")
-
-        # Create client with timeout
-        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
-
-        # Test connection
-        client.admin.command('ping')
-        logger.info("✅ MongoDB ping successful")
-
-        # Get database
-        db = client[database]
-
-        # Create collections
-        users_collection = db['users']
-        history_collection = db['history']
-        config_collection = db['config']      # Collection for dynamic dropdowns
-
-        # Create indexes (with error handling)
-        try:
-            users_collection.create_index('email', unique=True)
-            logger.info("✅ Created email index")
-        except Exception as e:
-            logger.warning(f"Index creation warning (may already exist): {e}")
-
-        try:
-            history_collection.create_index([('user_id', 1), ('timestamp', -1)])
-            logger.info("✅ Created history index")
-        except Exception as e:
-            logger.warning(f"Index creation warning: {e}")
-
-        # Initialize config if not exists
-        init_config(config_collection)
-
-        logger.info("✅ MongoDB connection successful")
-        return client, db, users_collection, history_collection, config_collection
-    except Exception as e:
-        logger.error(f"❌ MongoDB connection failed: {e}")
-        logger.error(traceback.format_exc())
-        raise
-
-def init_config(config_collection):
-    """Initialize configuration document with default dropdown values"""
-    try:
-        config = config_collection.find_one({'_id': 'dropdowns'})
-        if not config:
-            default_config = {
-                '_id': 'dropdowns',
-                'soil_types': ['Loamy', 'Sandy', 'Clayey', 'Black', 'Red'],
-                'crop_types': ['Maize', 'Sugarcane', 'Cotton', 'Wheat', 'Paddy',
-                               'Barley', 'Millets', 'Pulses', 'Ground Nuts', 'Oil seeds', 'Tobacco'],
-                'fertilizer_names': ['Urea', 'DAP', '14-35-14', '28-28', '17-17-17', '20-20', '10-26-26']
-            }
-            config_collection.insert_one(default_config)
-            logger.info("✅ Initialized config dropdowns")
-        else:
-            logger.info("✅ Config already exists")
-    except Exception as e:
-        logger.error(f"Error initializing config: {e}")
-
-# Initialize MongoDB connection
-try:
-    client, db, users_collection, history_collection, config_collection = get_mongo_connection()
-    DB_CONNECTED = True
-except Exception as e:
-    logger.critical(f"Failed to connect to MongoDB: {e}")
-    client = db = users_collection = history_collection = config_collection = None
-    DB_CONNECTED = False
-
-
-
-# ==================== HELPER FUNCTIONS ====================
-def serialize_doc(doc):
-    """Convert MongoDB document to JSON serializable format"""
-    if doc:
-        doc['_id'] = str(doc['_id'])
-    return doc
-
-def check_db_connection():
-    """Check if database is connected"""
-    global DB_CONNECTED
-    return DB_CONNECTED
 
 
 
