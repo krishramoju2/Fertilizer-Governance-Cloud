@@ -1,47 +1,57 @@
+from flask import Blueprint, request, jsonify
 
-@app.route('/chat', methods=['POST'])
+# Auth
+from utils.auth import token_required
+
+# Helpers + Services
+from utils.helpers import extract_inputs
+from services.analyzer import FertilizerAnalyzer
+
+# ✅ Create Blueprint
+chat_bp = Blueprint('chat', __name__)
+
+# ==================== CHAT ROUTE ====================
+@chat_bp.route('/chat', methods=['POST'])
 @token_required
 def chatbot(**kwargs):
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
         message = data.get("message", "").lower()
 
         # ✅ Parse input
         input_data = extract_inputs(message)
 
-        # ✅ Use analyzer (more reliable)
+        # ✅ Run analyzer
         ml_result = FertilizerAnalyzer.analyze(input_data)
-
 
         # ---------------- 🧠 FORMAT SUGGESTIONS ----------------
         suggestions = ml_result.get("suggestions", [])
         suggestion_text = "\n".join(suggestions) if suggestions else "✅ No suggestions available"
-        
+
         # ---------------- RESPONSE ----------------
         reply = f"""
-        🌱 Compatibility: {ml_result.get('overall_compatibility', 'Unknown')}
-        📊 Score: {ml_result.get('overall_score', 0)}
-        
-        🌡 Temperature: {input_data['Temperature']}°C
-        💧 Moisture: {input_data['Moisture']}%
-        🌱 Soil: {input_data['Soil_Type']}
-        🌾 Crop: {input_data['Crop_Type']}
-        🧪 Fertilizer: {input_data['Fertilizer_Name']}
-        📦 Quantity: {input_data['Fertilizer_Quantity']} kg/ha
-        
-        🧠 Smart Advice:
-        {suggestion_text}
+🌱 Compatibility: {ml_result.get('overall_compatibility', 'Unknown')}
+📊 Score: {ml_result.get('overall_score', 0)}
+
+🌡 Temperature: {input_data.get('Temperature')}°C
+💧 Moisture: {input_data.get('Moisture')}%
+🌱 Soil: {input_data.get('Soil_Type')}
+🌾 Crop: {input_data.get('Crop_Type')}
+🧪 Fertilizer: {input_data.get('Fertilizer_Name')}
+📦 Quantity: {input_data.get('Fertilizer_Quantity')} kg/ha
+
+🧠 Smart Advice:
+{suggestion_text}
         """
 
         return jsonify({
             "success": True,
             "reply": reply.strip()
-        })
+        }), 200
 
     except Exception as e:
         return jsonify({
             "success": False,
             "error": str(e)
-        })
-
+        }), 500
 
