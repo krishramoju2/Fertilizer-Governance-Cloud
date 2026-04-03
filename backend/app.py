@@ -5,6 +5,8 @@ from utils.auth import admin_required
 from utils.auth import hash_password
 from utils.auth import check_password
 
+from utils.helpers import extract_inputs
+
 
 from models.db import (
     users_collection,
