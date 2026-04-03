@@ -7,7 +7,6 @@ import logging
 # DB + utils
 from models.db import users_collection, check_db_connection
 from utils.auth import hash_password, check_password
-from app import fetch_weather_for_location
 logger = logging.getLogger(__name__)
 
 # ✅ Blueprint
@@ -38,8 +37,9 @@ def register():
         hashed_password = hash_password(password)
 
         location = data.get('location', '').strip()
-
-        temperature, humidity = fetch_weather_for_location(location)
+        
+        temperature = data.get('temperature')
+        humidity = data.get('humidity')
 
         user = {
             'email': email,
