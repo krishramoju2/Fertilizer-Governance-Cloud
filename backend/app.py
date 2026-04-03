@@ -1,5 +1,10 @@
 from routes.history_routes import history_bp
 
+from utils.auth import token_required
+from utils.auth import admin_required
+from utils.auth import hash_password
+from utils.auth import check_password
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
