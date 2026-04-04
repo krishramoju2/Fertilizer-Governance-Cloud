@@ -204,23 +204,7 @@ def update_farm(**kwargs):
 
 
 
-@app.route('/history/<record_id>', methods=['DELETE'])
-@token_required
-def delete_history(record_id,**kwargs):
-    try:
-        current_user = kwargs['current_user']
 
-        result = history_collection.delete_one({
-            '_id': ObjectId(record_id),
-            'user_id': current_user['_id']
-        })
-
-        if result.deleted_count == 0:
-            return jsonify({'success': False, 'message': 'Record not found'}), 404
-
-        return jsonify({'success': True, 'message': 'Record deleted'}), 200
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
 
 # ==================== ANALYTICS ROUTE ====================
 @app.route('/analytics', methods=['GET'])
