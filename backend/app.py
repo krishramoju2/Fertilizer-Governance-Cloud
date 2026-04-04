@@ -5,7 +5,7 @@ from routes.ml_routes import ml_bp
 from routes.chat_routes import chat_bp
 from routes.config_routes import config_bp
 from routes.analytics_routes import analytics_bp
-
+from routes.admin_routes import admin_bp
 
 
 from utils.auth import token_required
@@ -66,6 +66,7 @@ app.register_blueprint(ml_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(config_bp)
 app.register_blueprint(analytics_bp)
+app.register_blueprint(admin_bp)
 
 
 # CORS configuration
