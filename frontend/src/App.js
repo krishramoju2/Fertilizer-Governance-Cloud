@@ -61,34 +61,49 @@ function App() {
   });
   
   return (
+
+    
     <Dashboard
-      currentUser={currentUser}
-      setToken={setToken}
-      setCurrentUser={setCurrentUser}
-      message={message}
-      inputs={inputs}
-      setInputs={setInputs}
-      soilTypes={soilTypes}
-      cropTypes={cropTypes}
-      fertilizerNames={fertilizerNames}
-      handleAnalyze={handleAnalyze}
-      loading={loading}
-      result={result}
-      history={history}
-      analytics={analytics}
-      generatePDF={generatePDF}
-      adminManageType={adminManageType}
-      setAdminManageType={setAdminManageType}
-      newItem={newItem}
-      setNewItem={setNewItem}
-      handleAddItem={handleAddItem}
-      handleRemoveItem={handleRemoveItem}
-      users={users}
-      selectedUserId={selectedUserId}
-      handleSelectUser={handleSelectUser}
-      userAnalytics={userAnalytics}
-      userHistory={userHistory}
-    />
+    token={token}
+    setToken={setToken}
+  
+    message={message}
+    setMessage={setMessage}
+  
+    soilTypes={soilTypes}
+    setSoilTypes={setSoilTypes}
+  
+    cropTypes={cropTypes}
+    setCropTypes={setCropTypes}
+  
+    fertilizerNames={fertilizerNames}
+    setFertilizerNames={setFertilizerNames}
+  
+    loading={loading}
+    setLoading={setLoading}
+  
+    result={result}
+    setResult={setResult}
+  
+    history={history}
+    setHistory={setHistory}
+  
+    analytics={analytics}
+    setAnalytics={setAnalytics}
+  
+    users={users}
+    setUsers={setUsers}
+  
+    selectedUserId={selectedUserId}
+    setSelectedUserId={setSelectedUserId}
+  
+    userAnalytics={userAnalytics}
+    setUserAnalytics={setUserAnalytics}
+  
+    userHistory={userHistory}
+    setUserHistory={setUserHistory}
+  />
+    
   );
 }
 
