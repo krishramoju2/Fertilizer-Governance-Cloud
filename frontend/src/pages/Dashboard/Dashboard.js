@@ -2,17 +2,39 @@ import React, { useState } from "react";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 
-
 const Dashboard = ({
-  message, setMessage,
-  inputs, setInputs,
-  soilTypes, setSoilTypes,
-  cropTypes, setCropTypes,
-  fertilizerNames, setFertilizerNames,
-  loading, setLoading,
-  result, setResult,
-  history, setHistory,
-  analytics, setAnalytics
+  currentUser,
+  setToken,
+  setCurrentUser,
+
+  message,
+  setMessage,
+
+  inputs,
+  setInputs,
+
+  soilTypes,
+  setSoilTypes,
+
+  cropTypes,
+  setCropTypes,
+
+  fertilizerNames,
+  setFertilizerNames,
+
+  loading,
+  setLoading,
+
+  result,
+  setResult,
+
+  history,
+  setHistory,
+
+  analytics,
+  setAnalytics,
+
+  handleAnalyze
 }) => {
 
 
