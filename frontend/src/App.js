@@ -55,15 +55,33 @@ function App() {
     currentUser={currentUser}
     setToken={setToken}
     setCurrentUser={setCurrentUser}
+  
     message={message}
+    setMessage={setMessage}
+  
     inputs={inputs}
     setInputs={setInputs}
+  
     soilTypes={soilTypes}
+    setSoilTypes={setSoilTypes}
+  
     cropTypes={cropTypes}
+    setCropTypes={setCropTypes}
+  
     fertilizerNames={fertilizerNames}
-    handleAnalyze={handleAnalyze}
+    setFertilizerNames={setFertilizerNames}
+  
     loading={loading}
+    setLoading={setLoading}
+  
     result={result}
+    setResult={setResult}
+  
+    history={history}
+    setHistory={setHistory}
+  
+    analytics={analytics}
+    setAnalytics={setAnalytics}
   />
 
     
