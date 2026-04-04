@@ -24,7 +24,6 @@ function App() {
   const [history, setHistory] = useState([]);
   const [analytics, setAnalytics] = useState({});
 
-  const [adminManageType, setAdminManageType] = useState("");
 
  
 
