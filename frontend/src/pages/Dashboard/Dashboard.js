@@ -4,7 +4,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
-
+import api from "../../services/api";
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [activeTab, setActiveTab] = useState('analysis');
