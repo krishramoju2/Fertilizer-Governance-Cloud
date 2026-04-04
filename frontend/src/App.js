@@ -46,11 +46,7 @@ function App() {
     loading,
     result,
     history,
-    analytics,
-    users,
-    selectedUserId,
-    userAnalytics,
-    userHistory
+    analytics
   });
   
   return (
