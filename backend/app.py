@@ -202,36 +202,7 @@ def update_farm(**kwargs):
 
 
 
-# ==================== HISTORY ROUTES ====================
-@app.route('/history', methods=['GET'])
-@token_required
-def get_history(**kwargs):
-    try:
-        current_user = kwargs['current_user']
 
-        # Get last 20 entries
-        history = list(history_collection.find(
-            {'user_id': current_user['_id']}
-        ).sort('timestamp', -1).limit(20))
-
-        # Format for response
-        formatted_history = []
-        for item in history:
-            formatted_history.append({
-                'id': str(item['_id']),
-                'input_data': item.get('input_data', {}),
-                'result': item.get('result', {}),
-                'dashboard': item.get('dashboard', {}),   # 🔥 ADD THIS
-                'model': item.get('model', 'unknown'),
-                'timestamp': item['timestamp'].isoformat() if item.get('timestamp') else None
-            })
-
-        return jsonify({
-            'success': True,
-            'history': formatted_history
-        }), 200
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/history/<record_id>', methods=['DELETE'])
 @token_required
