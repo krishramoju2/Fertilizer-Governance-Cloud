@@ -62,47 +62,21 @@ function App() {
   
   return (
 
-    
-    <Dashboard
-    token={token}
+  <Dashboard
+    currentUser={currentUser}
     setToken={setToken}
-  
+    setCurrentUser={setCurrentUser}
     message={message}
-    setMessage={setMessage}
-  
+    inputs={inputs}
+    setInputs={setInputs}
     soilTypes={soilTypes}
-    setSoilTypes={setSoilTypes}
-  
     cropTypes={cropTypes}
-    setCropTypes={setCropTypes}
-  
     fertilizerNames={fertilizerNames}
-    setFertilizerNames={setFertilizerNames}
-  
+    handleAnalyze={handleAnalyze}
     loading={loading}
-    setLoading={setLoading}
-  
     result={result}
-    setResult={setResult}
-  
-    history={history}
-    setHistory={setHistory}
-  
-    analytics={analytics}
-    setAnalytics={setAnalytics}
-  
-    users={users}
-    setUsers={setUsers}
-  
-    selectedUserId={selectedUserId}
-    setSelectedUserId={setSelectedUserId}
-  
-    userAnalytics={userAnalytics}
-    setUserAnalytics={setUserAnalytics}
-  
-    userHistory={userHistory}
-    setUserHistory={setUserHistory}
   />
+
     
   );
 }
