@@ -43,7 +43,23 @@ function App() {
   const handleAddItem = () => {};
   const handleRemoveItem = () => {};
   const handleSelectUser = () => {};
-
+  
+  console.log({
+    token,
+    message,
+    soilTypes,
+    cropTypes,
+    fertilizerNames,
+    loading,
+    result,
+    history,
+    analytics,
+    users,
+    selectedUserId,
+    userAnalytics,
+    userHistory
+  });
+  
   return (
     <Dashboard
       currentUser={currentUser}
