@@ -4,18 +4,15 @@ import MLModel from "../../components/ML/MLModel";
 
 
 const Dashboard = ({
-  currentUser,
-  setToken,
-  setCurrentUser,
-  message,
-  inputs,
-  setInputs,
-  soilTypes,
-  cropTypes,
-  fertilizerNames,
-  handleAnalyze,
-  loading,
-  result
+  message, setMessage,
+  inputs, setInputs,
+  soilTypes, setSoilTypes,
+  cropTypes, setCropTypes,
+  fertilizerNames, setFertilizerNames,
+  loading, setLoading,
+  result, setResult,
+  history, setHistory,
+  analytics, setAnalytics
 }) => {
 
 
