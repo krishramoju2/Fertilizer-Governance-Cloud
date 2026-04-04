@@ -81,59 +81,6 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 
 
-# ==================== FIXED WEATHER API HELPER FUNCTION ====================
-def fetch_weather_for_location(location):
-    """Fetch current temperature and humidity for a given location using Open-Meteo API"""
-    if not location or not location.strip():
-        logger.warning("No location provided")
-        return None, None
-    
-    try:
-        # Step 1: Geocoding - convert location name to coordinates
-        geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={location}&count=1"
-        logger.info(f"Fetching coordinates for: {location}")
-        
-        geo_response = requests.get(geo_url, timeout=10).json()
-        
-        if not geo_response.get('results'):
-            logger.warning(f"No coordinates found for location: {location}")
-            return None, None
-        
-        lat = geo_response['results'][0]['latitude']
-        lon = geo_response['results'][0]['longitude']
-        logger.info(f"Coordinates for {location}: {lat}, {lon}")
-        
-        # USE THE EXACT WORKING FORMAT FROM YOUR TEST
-        weather_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m"
-        logger.info(f"Fetching weather data...")
-        
-        weather_response = requests.get(weather_url, timeout=10).json()
-        
-        # Check if we have current data (matches your JSON structure)
-        if 'current' in weather_response:
-            current = weather_response['current']
-            temperature = current.get('temperature_2m')
-            humidity = current.get('relative_humidity_2m')
-            
-            if temperature is not None:
-                logger.info(f"✅ SUCCESS - Weather for {location}: {temperature}°C, {humidity}%")
-                return float(temperature), float(humidity) if humidity else 65
-        
-        logger.warning(f"❌ No weather data found for {location}")
-        logger.debug(f"Response received: {weather_response}")
-        return None, None
-        
-    except requests.exceptions.Timeout:
-        logger.error(f"Weather API timeout for {location}")
-        return None, None
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Weather API request error for {location}: {e}")
-        return None, None
-    except Exception as e:
-        logger.error(f"Unexpected error in weather fetch for {location}: {e}")
-        logger.error(traceback.format_exc())
-        return None, None
-
 
 
 # ==================== ROUTES ====================
