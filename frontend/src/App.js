@@ -81,6 +81,9 @@ function App() {
   
     analytics={analytics}
     setAnalytics={setAnalytics}
+
+    handleAnalyze={handleAnalyze}
+      
   />
 
     
