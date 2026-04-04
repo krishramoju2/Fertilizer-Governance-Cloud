@@ -107,3 +107,54 @@ return (
     </div>
   </div>
 );
+
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    background: "#f5f5f5"
+  },
+  card: {
+    background: "white",
+    padding: "30px",
+    borderRadius: "10px",
+    width: "300px",
+    boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+  },
+  title: {
+    marginBottom: "20px",
+    textAlign: "center"
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  },
+  input: {
+    padding: "10px",
+    borderRadius: "5px",
+    border: "1px solid #ccc"
+  },
+  button: {
+    padding: "10px",
+    background: "#1a472a",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer"
+  },
+  switch: {
+    marginTop: "10px",
+    background: "none",
+    border: "none",
+    color: "#007bff",
+    cursor: "pointer"
+  },
+  error: {
+    color: "red",
+    marginBottom: "10px",
+    textAlign: "center"
+  }
+};
