@@ -49,14 +49,16 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
     }
   };
 
-  return (
-    <div>
-      <h2>{isLogin ? "Login" : "Register"}</h2>
+return (
+  <div style={styles.container}>
+    <div style={styles.card}>
+      <h2 style={styles.title}>{isLogin ? "Login" : "Register"}</h2>
 
-      {error && <p>{error}</p>}
+      {error && <p style={styles.error}>{error}</p>}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={styles.form}>
         <input
+          style={styles.input}
           placeholder="Email"
           onChange={(e) =>
             setFormData({ ...formData, email: e.target.value })
@@ -64,6 +66,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         />
 
         <input
+          style={styles.input}
           type="password"
           placeholder="Password"
           onChange={(e) =>
@@ -74,6 +77,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         {!isLogin && (
           <>
             <input
+              style={styles.input}
               placeholder="Name"
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
@@ -81,6 +85,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
             />
 
             <select
+              style={styles.input}
               value={formData.soil_type}
               onChange={(e) =>
                 setFormData({ ...formData, soil_type: e.target.value })
@@ -93,12 +98,12 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
           </>
         )}
 
-        <button>Submit</button>
+        <button style={styles.button}>Submit</button>
       </form>
 
-      <button onClick={() => setIsLogin(!isLogin)}>
+      <button style={styles.switch} onClick={() => setIsLogin(!isLogin)}>
         Switch to {isLogin ? "Register" : "Login"}
       </button>
     </div>
-  );
-}
+  </div>
+);
