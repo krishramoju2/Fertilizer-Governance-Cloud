@@ -25,24 +25,17 @@ function App() {
   const [analytics, setAnalytics] = useState({});
 
   const [adminManageType, setAdminManageType] = useState("");
-  const [newItem, setNewItem] = useState("");
 
-  const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState(null);
-  const [userAnalytics, setUserAnalytics] = useState(null);
-  const [userHistory, setUserHistory] = useState([]);
+ 
 
   const handleAnalyze = () => {
     console.log("Analyze clicked");
   };
 
-  const generatePDF = () => {
-    console.log("PDF");
-  };
 
-  const handleAddItem = () => {};
-  const handleRemoveItem = () => {};
-  const handleSelectUser = () => {};
+  
+
+  
   
   console.log({
     token,
