@@ -281,7 +281,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <button
             style={{
             padding: "8px 12px",
-            background: activeTab === 'ml' ? "#2e7d32" : "#ccc"
+            background: activeTab === 'ml' ? "#2e7d32" : "#ccc",
             color: "white",
             border: "none",
             borderRadius: "5px",
@@ -298,7 +298,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <button
             style={{
             padding: "8px 12px",
-            background: activeTab === 'analytics' ? "#2e7d32" : "#ccc"
+            background: activeTab === 'analytics' ? "#2e7d32" : "#ccc",
             color: "white",
             border: "none",
             borderRadius: "5px",
@@ -313,7 +313,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             <button
             style={{
             padding: "8px 12px",
-            background: activeTab === 'admin' ? "#2e7d32" : "#ccc"
+            background: activeTab === 'admin' ? "#2e7d32" : "#ccc",
             color: "white",
             border: "none",
             borderRadius: "5px",
@@ -328,7 +328,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <button
             style={{
             padding: "8px 12px",
-            background: activeTab === 'chat' ? "#2e7d32" : "#ccc"
+            background: activeTab === 'chat' ? "#2e7d32" : "#ccc",
             color: "white",
             border: "none",
             borderRadius: "5px",
