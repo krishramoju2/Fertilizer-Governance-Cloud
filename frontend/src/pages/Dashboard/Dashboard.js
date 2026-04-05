@@ -24,6 +24,72 @@ const styles = {
     gap: "20px"
   },
 
+  title: { fontSize: "20px", fontWeight: "bold" },
+  welcome: { fontSize: "14px" },
+  
+  errorMessage: { color: "red", margin: "10px 0" },
+  successMessage: { color: "green", margin: "10px 0" },
+  
+  resultCard: { background: "white", padding: "20px", borderRadius: "10px", marginBottom: "20px" },
+  resultHeader: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  resultTitle: { fontSize: "18px", fontWeight: "bold" },
+  
+  scoreCircle: { textAlign: "center" },
+  scoreNumber: { fontSize: "20px", fontWeight: "bold" },
+  scoreLabel: { fontSize: "12px" },
+  
+  resultGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" },
+  resultItem: { padding: "10px", border: "1px solid #eee" },
+  resultLabel: { fontWeight: "bold" },
+  resultValue: { display: "block" },
+  resultDetail: { fontSize: "12px", color: "#777" },
+  
+  suggestionsBox: { marginTop: "10px" },
+  suggestionsTitle: { fontWeight: "bold" },
+  suggestion: { fontSize: "14px" },
+  
+  pdfButton: { marginTop: "10px", padding: "10px", background: "#2e7d32", color: "white", border: "none" },
+  
+  historyCard: { marginTop: "20px" },
+  emptyText: { color: "#777" },
+  
+  adminContainer: { marginTop: "20px" },
+  adminTitle: { fontSize: "20px", fontWeight: "bold" },
+  adminTabs: { display: "flex", gap: "10px", marginBottom: "10px" },
+  
+  adminTab: (active) => ({
+    padding: "8px",
+    background: active ? "#2e7d32" : "#ccc",
+    color: "white",
+    border: "none",
+    cursor: "pointer"
+  }),
+  
+  adminContent: {},
+  manageSection: {},
+  addItemRow: { display: "flex", gap: "10px", marginBottom: "10px" },
+  addButton: { padding: "8px", background: "#2e7d32", color: "white", border: "none" },
+  
+  itemList: { listStyle: "none", padding: 0 },
+  listItem: { display: "flex", justifyContent: "space-between", padding: "5px 0" },
+  removeButton: { background: "red", color: "white", border: "none" },
+  
+  userSection: {},
+  userGrid: { display: "flex", gap: "20px" },
+  userList: { width: "30%" },
+  
+  userCard: (active) => ({
+    padding: "10px",
+    border: "1px solid #ccc",
+    marginBottom: "5px",
+    background: active ? "#eee" : "white",
+    cursor: "pointer"
+  }),
+  
+  userBadge: { fontSize: "10px", color: "#fff", background: "#333", padding: "2px 5px" },
+  
+  userDetails: { flex: 1 },
+  
   summaryCard: {
     background: "white",
     padding: "20px",
