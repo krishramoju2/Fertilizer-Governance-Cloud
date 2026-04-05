@@ -49,65 +49,75 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
     }
   };
 
-return (
-  <div style={styles.container}>
-    <div style={styles.card}>
-      <h2 style={styles.title}>{isLogin ? "Login" : "Register"}</h2>
+  return (
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>{isLogin ? "Login" : "Register"}</h2>
 
-      {error && <p style={styles.error}>{error}</p>}
+        {error && <p style={styles.error}>{error}</p>}
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          style={styles.input}
-          placeholder="Email"
-          onChange={(e) =>
-            setFormData({ ...formData, email: e.target.value })
-          }
-        />
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input
+            style={styles.input}
+            placeholder="Email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+          />
 
-        <input
-          style={styles.input}
-          type="password"
-          placeholder="Password"
-          onChange={(e) =>
-            setFormData({ ...formData, password: e.target.value })
-          }
-        />
+          <input
+            style={styles.input}
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+          />
 
-        {!isLogin && (
-          <>
-            <input
-              style={styles.input}
-              placeholder="Name"
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
+          {!isLogin && (
+            <>
+              <input
+                style={styles.input}
+                placeholder="Name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
 
-            <select
-              style={styles.input}
-              value={formData.soil_type}
-              onChange={(e) =>
-                setFormData({ ...formData, soil_type: e.target.value })
-              }
-            >
-              {soilTypes.map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-          </>
-        )}
+              <select
+                style={styles.input}
+                value={formData.soil_type}
+                onChange={(e) =>
+                  setFormData({ ...formData, soil_type: e.target.value })
+                }
+              >
+                {soilTypes.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </>
+          )}
 
-        <button style={styles.button}>Submit</button>
-      </form>
+          <button type="submit" style={styles.button}>
+            {isLogin ? "Login" : "Register"}
+          </button>
+        </form>
 
-      <button style={styles.switch} onClick={() => setIsLogin(!isLogin)}>
-        Switch to {isLogin ? "Register" : "Login"}
-      </button>
+        <button
+          style={styles.switch}
+          onClick={() => setIsLogin(!isLogin)}
+        >
+          Switch to {isLogin ? "Register" : "Login"}
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+} // ✅ THIS WAS MISSING
 
+/* ✅ STYLES OUTSIDE COMPONENT */
 const styles = {
   container: {
     display: "flex",
