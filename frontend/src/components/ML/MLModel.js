@@ -48,6 +48,16 @@ export default function MLModel() {
       <div style={styles.card}>
         <h2>ML Model Prediction</h2>
 
+        {/* 🔥 DESCRIPTION BOX */}
+        <div style={styles.infoBox}>
+          <p style={styles.description}>
+            This section uses a machine learning model to predict fertilizer 
+            compatibility based on environmental and crop conditions. 
+            It provides intelligent predictions, confidence scores, 
+            and model insights to support better decision-making.
+          </p>
+        </div>
+
         <input
           style={styles.input}
           placeholder="Temperature"
@@ -138,11 +148,9 @@ export default function MLModel() {
             const input = item.input_data || {};
             const res = item.result || {};
 
-            // ✅ FIXED FIELD MAPPING
             const temperature = input.temperature || input.Temperature;
             const moisture = input.moisture || input.Moisture;
             const quantity = input.quantity || input.Quantity;
-
             const crop = input.crop || input.Crop_Type;
             const fertilizer = input.fertilizer || input.Fertilizer_Name;
 
@@ -156,11 +164,9 @@ export default function MLModel() {
                 <p>
                   <strong>{crop || "N/A"}</strong> - {fertilizer || "N/A"}
                 </p>
-
                 <p>Temp: {temperature || "N/A"}°C</p>
                 <p>Moisture: {moisture || "N/A"}%</p>
                 <p>Qty: {quantity || "N/A"}</p>
-
                 <p>Prediction: {prediction || "N/A"}</p>
                 <p>Confidence: {confidence || "N/A"}</p>
                 <p>Score: {score || "N/A"}</p>
@@ -188,6 +194,22 @@ const styles = {
     width: "350px",
     boxShadow: "0 0 10px rgba(0,0,0,0.1)"
   },
+
+  /* 🔥 NEW STYLES */
+  infoBox: {
+    background: "#f0f7f4",
+    padding: "10px",
+    borderRadius: "6px",
+    marginBottom: "12px",
+    borderLeft: "4px solid #1a472a"
+  },
+  description: {
+    fontSize: "13.5px",
+    color: "#444",
+    margin: 0,
+    lineHeight: "1.4"
+  },
+
   input: {
     width: "100%",
     padding: "10px",
