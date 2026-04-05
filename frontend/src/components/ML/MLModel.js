@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 
 export default function MLModel() {
@@ -12,12 +12,33 @@ export default function MLModel() {
   });
 
   const [result, setResult] = useState(null);
+  const [history, setHistory] = useState([]);
+
+  // ✅ LOAD HISTORY (same as analysis tab)
+  const loadHistory = async () => {
+    try {
+      const res = await api.get("/history");
+      if (res.data.success) {
+        setHistory(res.data.history || []);
+      }
+    } catch {
+      console.log("Failed to load history");
+    }
+  };
+
+  // ✅ run once
+  useEffect(() => {
+    loadHistory();
+  }, []);
 
   const runModel = async () => {
     try {
       const res = await api.post("/ml/predict", form);
       if (res.data.success) {
         setResult(res.data.result);
+
+        // ✅ refresh history after prediction
+        loadHistory();
       }
     } catch {
       alert("Prediction failed");
@@ -96,12 +117,48 @@ export default function MLModel() {
           Run Model
         </button>
 
+        {/* RESULT */}
         {result && (
           <div style={styles.result}>
             <h3>Result</h3>
             <p><strong>Prediction:</strong> {result.prediction || "N/A"}</p>
             <p><strong>Confidence:</strong> {result.confidence || "N/A"}</p>
           </div>
+        )}
+      </div>
+
+      {/* ✅ HISTORY SECTION (THIS WAS MISSING) */}
+      <div style={{ ...styles.card, marginTop: "20px" }}>
+        <h3>Recent ML Analyses</h3>
+
+        {history.length === 0 ? (
+          <p>No history yet</p>
+        ) : (
+          history.slice(0, 5).map((item, i) => {
+            const input = item.input_data || {};
+            const result = item.result || {};
+
+            return (
+              <div key={i} style={styles.historyItem}>
+                <p>
+                  <strong>
+                    {input.crop || input.Crop_Type || "N/A"}
+                  </strong>{" "}
+                  - {input.fertilizer || input.Fertilizer_Name || "N/A"}
+                </p>
+
+                <p>Temp: {input.temperature || "N/A"}°C</p>
+                <p>Moisture: {input.moisture || "N/A"}%</p>
+                <p>Qty: {input.quantity || "N/A"}</p>
+
+                <p>
+                  Score: {result.overall_score !== undefined
+                    ? result.overall_score + "%"
+                    : "N/A"}
+                </p>
+              </div>
+            );
+          })
         )}
       </div>
     </div>
@@ -112,7 +169,8 @@ const styles = {
   container: {
     padding: "20px",
     display: "flex",
-    justifyContent: "center"
+    flexDirection: "column",
+    alignItems: "center"
   },
   card: {
     background: "white",
@@ -141,6 +199,12 @@ const styles = {
     marginTop: "15px",
     padding: "10px",
     background: "#f5f5f5",
+    borderRadius: "5px"
+  },
+  historyItem: {
+    padding: "10px",
+    marginTop: "10px",
+    background: "#f9f9f9",
     borderRadius: "5px"
   }
 };
