@@ -12,6 +12,64 @@ const styles = {
     minHeight: "100vh"
   },
 
+  analyticsContainer: {
+  display: "flex",
+  flexDirection: "column",
+  gap: "20px"
+},
+
+  summaryGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "20px"
+  },
+
+  summaryCard: {
+    background: "white",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+    textAlign: "center"
+  },
+  
+  summaryValue: {
+    fontSize: "24px",
+    fontWeight: "700",
+    color: "#1a472a"
+  },
+  
+  summaryLabel: {
+    fontSize: "14px",
+    color: "#777",
+    marginTop: "5px"
+  },
+  
+  chartList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    marginTop: "10px"
+  },
+  
+  chartItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px"
+  },
+  
+  chartBar: {
+    flex: 1,
+    height: "10px",
+    background: "#eee",
+    borderRadius: "5px",
+    overflow: "hidden"
+  },
+  
+  chartFill: {
+    height: "100%",
+    background: "linear-gradient(135deg, #2e7d32, #66bb6a)"
+  },
+
   label: {
     display: "block",
     marginBottom: "5px",
