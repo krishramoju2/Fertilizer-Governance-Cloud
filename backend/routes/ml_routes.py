@@ -61,9 +61,8 @@ def ml_predict_route(**kwargs):
         # ===== DASHBOARD =====
         dashboard = get_model_dashboard(model, encoded_input)
 
-        # ✅ FIXED RESULT (MATCHES FRONTEND EXACTLY)
+        # ✅ FIXED RESULT (FRONTEND COMPATIBLE)
         result = {
-            # 🔥 REQUIRED FIELDS (frontend expects these)
             "prediction": (
                 ml_result.get("prediction")
                 or ml_result.get("overall_compatibility")
@@ -76,14 +75,15 @@ def ml_predict_route(**kwargs):
             ),
             "overall_score": ml_result.get("overall_score", 60),
 
-            # 🔥 FROM DASHBOARD
+            # ✅ FIXED TREES (handles all cases)
             "num_trees": (
                 dashboard.get("num_trees")
-                if isinstance(dashboard, dict)
-                else "N/A"
-            ),
+                or dashboard.get("trees")
+                or dashboard.get("n_estimators")
+                or "N/A"
+            ) if isinstance(dashboard, dict) else "N/A",
 
-            # ✅ OPTIONAL EXTRA (safe to keep)
+            # optional extras
             "temperature_status": ml_result.get("temperature_status", "N/A"),
             "moisture_status": ml_result.get("moisture_status", "N/A"),
             "soil_compatibility": ml_result.get("soil_compatibility", "Average"),
@@ -92,13 +92,23 @@ def ml_predict_route(**kwargs):
             "success": True
         }
 
-        # ✅ Save to history (NOW CORRECT)
+        # ✅ Save to history (CRITICAL FIX HERE)
         current_user = kwargs['current_user']
 
         history_entry = {
             'user_id': current_user['_id'],
-            'input_data': input_data,
-            'result': result,  # ✅ FIXED STRUCTURE
+
+            # ✅ FIXED FORMAT FOR FRONTEND
+            'input_data': {
+                "temperature": input_data['Temperature'],
+                "moisture": input_data['Moisture'],
+                "soil": input_data['Soil_Type'],
+                "crop": input_data['Crop_Type'],
+                "fertilizer": input_data['Fertilizer_Name'],
+                "quantity": input_data['Fertilizer_Quantity']
+            },
+
+            'result': result,
             'model': 'ml',
             'dashboard': dashboard,
             'timestamp': datetime.datetime.utcnow()
@@ -106,7 +116,7 @@ def ml_predict_route(**kwargs):
 
         history_collection.insert_one(history_entry)
 
-        # ✅ RESPONSE (FRONTEND WILL NOW WORK PERFECTLY)
+        # ✅ RESPONSE
         return jsonify({
             "success": True,
             "result": result,
