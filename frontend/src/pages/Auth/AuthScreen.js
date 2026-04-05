@@ -114,47 +114,53 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    background: "#f5f5f5"
+    background: "linear-gradient(135deg, #1a472a, #66bb6a)"
   },
   card: {
     background: "white",
-    padding: "30px",
-    borderRadius: "10px",
-    width: "300px",
-    boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+    padding: "40px",
+    borderRadius: "15px",
+    width: "350px",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+    textAlign: "center"
   },
   title: {
     marginBottom: "20px",
-    textAlign: "center"
+    color: "#1a472a",
+    fontSize: "24px",
+    fontWeight: "600"
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px"
+    gap: "12px"
   },
   input: {
-    padding: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ccc"
+    padding: "12px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    fontSize: "14px"
   },
   button: {
-    padding: "10px",
-    background: "#1a472a",
+    padding: "12px",
+    background: "linear-gradient(135deg, #2e7d32, #66bb6a)",
     color: "white",
     border: "none",
-    borderRadius: "5px",
-    cursor: "pointer"
+    borderRadius: "8px",
+    fontWeight: "600",
+    cursor: "pointer",
+    marginTop: "10px"
   },
   switch: {
-    marginTop: "10px",
+    marginTop: "15px",
     background: "none",
     border: "none",
-    color: "#007bff",
-    cursor: "pointer"
+    color: "#2e7d32",
+    cursor: "pointer",
+    fontWeight: "500"
   },
   error: {
     color: "red",
-    marginBottom: "10px",
-    textAlign: "center"
+    marginBottom: "10px"
   }
 };
