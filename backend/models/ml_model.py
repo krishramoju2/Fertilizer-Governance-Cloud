@@ -110,7 +110,7 @@ def get_model_dashboard(model, encoded_input):
     try:
         return {
             "model_name": "Random Forest",
-            "n_trees": len(model.estimators_),
+            "num_trees": len(model.estimators_),
             "n_features": len(encoded_input),
             "feature_importance": model.feature_importances_.tolist(),
             "confidence": round(max(model.predict_proba([encoded_input])[0]) * 100, 2)
