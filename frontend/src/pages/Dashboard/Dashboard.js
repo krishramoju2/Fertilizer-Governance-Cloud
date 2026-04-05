@@ -5,7 +5,38 @@ import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 
-
+const styles = {
+  app: {
+    padding: "20px",
+    background: "#f5f5f5",
+    minHeight: "100vh"
+  },
+  header: {
+    background: "#1a472a",
+    color: "white",
+    padding: "15px",
+    marginBottom: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  nav: {
+    display: "flex",
+    gap: "10px"
+  },
+  main: {
+    marginTop: "20px"
+  },
+  card: {
+    background: "white",
+    padding: "20px",
+    borderRadius: "10px"
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse"
+  }
+};
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [activeTab, setActiveTab] = useState('analysis');
