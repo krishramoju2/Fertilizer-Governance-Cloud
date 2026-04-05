@@ -537,12 +537,15 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         
                   
                           <td
-                            style={{
-                              ...styles.td,
-                              color: result.overall_compatibility?.includes('Highly')
-                                ? '#27ae60'
-                                : '#e67e22'
-                            }}
+
+                          style={{
+                          padding: "10px",
+                          borderBottom: "1px solid #ddd",
+                          color: result.overall_compatibility?.includes('Highly')
+                            ? '#27ae60'
+                            : '#e67e22'
+                        }}
+                            
                           >
                             {result.overall_compatibility || "N/A"}
                           </td>
