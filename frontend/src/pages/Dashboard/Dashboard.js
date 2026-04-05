@@ -522,37 +522,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       const input = item.input_data || {};
                       const result = item.result || {};
 
-                      const styles = {
-                        app: {
-                          padding: "20px",
-                          background: "#f5f5f5",
-                          minHeight: "100vh"
-                        },
-                        header: {
-                          background: "#1a472a",
-                          color: "white",
-                          padding: "15px",
-                          marginBottom: "20px",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center"
-                        },
-                        card: {
-                          background: "white",
-                          padding: "20px",
-                          borderRadius: "10px",
-                          boxShadow: "0 0 10px rgba(0,0,0,0.1)"
-                        },
-                        button: {
-                          padding: "8px 12px",
-                          margin: "5px",
-                          border: "none",
-                          borderRadius: "5px",
-                          background: "#1a472a",
-                          color: "white",
-                          cursor: "pointer"
-                        }
-                      };
+
                   
                       return (
                         <tr key={i}>
