@@ -14,7 +14,7 @@ export default function MLModel() {
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
 
-  // ✅ LOAD HISTORY
+  // LOAD HISTORY
   const loadHistory = async () => {
     try {
       const res = await api.get("/history");
@@ -35,9 +35,7 @@ export default function MLModel() {
       const res = await api.post("/ml/predict", form);
       if (res.data.success) {
         setResult(res.data.result);
-
-        // refresh history
-        loadHistory();
+        loadHistory(); // refresh history
       }
     } catch {
       alert("Prediction failed");
@@ -121,15 +119,15 @@ export default function MLModel() {
         {result && (
           <div style={styles.result}>
             <h3>Result</h3>
-            <p><strong>Prediction:</strong> {result.prediction || "N/A"}</p>
-            <p><strong>Confidence:</strong> {result.confidence || "N/A"}</p>
-            <p><strong>Score:</strong> {result.overall_score || "N/A"}</p>
-            <p><strong>Trees:</strong> {result.num_trees || "N/A"}</p>
+            <p><strong>Prediction:</strong> {result.prediction || result.Prediction || "N/A"}</p>
+            <p><strong>Confidence:</strong> {result.confidence || result.Confidence || "N/A"}</p>
+            <p><strong>Score:</strong> {result.overall_score || result.score || "N/A"}</p>
+            <p><strong>Trees:</strong> {result.num_trees || result.trees || "N/A"}</p>
           </div>
         )}
       </div>
 
-      {/* ✅ HISTORY SECTION */}
+      {/* HISTORY */}
       <div style={{ ...styles.card, marginTop: "20px" }}>
         <h3>Recent ML Analyses</h3>
 
@@ -140,24 +138,33 @@ export default function MLModel() {
             const input = item.input_data || {};
             const res = item.result || {};
 
+            // ✅ FIXED FIELD MAPPING
+            const temperature = input.temperature || input.Temperature;
+            const moisture = input.moisture || input.Moisture;
+            const quantity = input.quantity || input.Quantity;
+
+            const crop = input.crop || input.Crop_Type;
+            const fertilizer = input.fertilizer || input.Fertilizer_Name;
+
+            const prediction = res.prediction || res.Prediction;
+            const confidence = res.confidence || res.Confidence;
+            const score = res.overall_score || res.score;
+            const trees = res.num_trees || res.trees;
+
             return (
               <div key={i} style={styles.historyItem}>
                 <p>
-                  <strong>
-                    {input.crop || input.Crop_Type || "N/A"}
-                  </strong>{" "}
-                  - {input.fertilizer || input.Fertilizer_Name || "N/A"}
+                  <strong>{crop || "N/A"}</strong> - {fertilizer || "N/A"}
                 </p>
 
-                <p>Temp: {input.temperature || "N/A"}°C</p>
-                <p>Moisture: {input.moisture || "N/A"}%</p>
-                <p>Qty: {input.quantity || "N/A"}</p>
+                <p>Temp: {temperature || "N/A"}°C</p>
+                <p>Moisture: {moisture || "N/A"}%</p>
+                <p>Qty: {quantity || "N/A"}</p>
 
-                {/* ✅ ML DETAILS */}
-                <p>Prediction: {res.prediction || "N/A"}</p>
-                <p>Confidence: {res.confidence || "N/A"}</p>
-                <p>Score: {res.overall_score || "N/A"}</p>
-                <p>Trees: {res.num_trees || "N/A"}</p>
+                <p>Prediction: {prediction || "N/A"}</p>
+                <p>Confidence: {confidence || "N/A"}</p>
+                <p>Score: {score || "N/A"}</p>
+                <p>Trees: {trees || "N/A"}</p>
               </div>
             );
           })
