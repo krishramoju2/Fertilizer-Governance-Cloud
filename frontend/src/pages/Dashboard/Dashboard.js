@@ -579,8 +579,20 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
-        {activeTab === 'analysis' && (
+
+      {activeTab === 'analysis' && (
+        <>
+          <div style={styles.card}>
+            <h2 style={styles.cardTitle}>🔬 Farm Analysis</h2>
+            <p style={styles.description}>
+              Enter your farm conditions like temperature, moisture, soil type, crop, 
+              and fertilizer details. This tool will analyze compatibility and suggest 
+              improvements to maximize yield and efficiency.
+            </p>
+          </div>
+      
           <div style={styles.analysisGrid}>
+        
             {/* Input Section */}
             <div style={styles.card}>
               <h2 style={styles.cardTitle}>Farm Inputs</h2>
