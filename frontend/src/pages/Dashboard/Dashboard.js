@@ -513,11 +513,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       return (
                         <tr key={i}>
 
-                          <td style={styles.td}>
+                          <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
                             {input.Crop_Type || input.crop || item.crop || "N/A"}
                           </td>
                           
-                          <td style={styles.td}>
+                          <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
                             {input.Fertilizer_Name || input.fertilizer || item.fertilizer || "N/A"}
                           </td>
                         
@@ -533,7 +533,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             {result.overall_compatibility || "N/A"}
                           </td>
                   
-                          <td style={styles.td}>
+                          <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
                           {result.overall_score !== undefined ? `${result.overall_score}%` : "N/A"}
                           </td>                  
                   
@@ -748,19 +748,19 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             <table style={styles.table}>
                               <thead>
                                 <tr>
-                                  <th style={styles.th}>Crop</th>
-                                  <th style={styles.th}>Fertilizer</th>
-                                  <th style={styles.th}>Status</th>
-                                  <th style={styles.th}>Score</th>
+                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Crop</th>
+                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Fertilizer</th>
+                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Status</th>
+                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Score</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {userHistory.map((item, i) => (
                                   <tr key={i}>
-                                    <td style={styles.td}>{item.crop_type}</td>
-                                    <td style={styles.td}>{item.fertilizer}</td>
-                                    <td style={styles.td}>{item.compatibility}</td>
-                                    <td style={styles.td}>{item.score}%</td>
+                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.crop_type}</td>
+                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.fertilizer}</td>
+                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.compatibility}</td>
+                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.score}%</td>
                                   </tr>
                                 ))}
                               </tbody>
