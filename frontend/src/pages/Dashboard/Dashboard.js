@@ -6,6 +6,11 @@ import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 
+const styles = new Proxy({}, {
+  get: () => ({})
+});
+
+
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [activeTab, setActiveTab] = useState('analysis');
   const [loading, setLoading] = useState(false);
