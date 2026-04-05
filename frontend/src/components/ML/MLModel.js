@@ -14,7 +14,7 @@ export default function MLModel() {
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
 
-  // ✅ LOAD HISTORY (same as analysis tab)
+  // ✅ LOAD HISTORY
   const loadHistory = async () => {
     try {
       const res = await api.get("/history");
@@ -22,11 +22,10 @@ export default function MLModel() {
         setHistory(res.data.history || []);
       }
     } catch {
-      console.log("Failed to load history");
+      console.log("History load failed");
     }
   };
 
-  // ✅ run once
   useEffect(() => {
     loadHistory();
   }, []);
@@ -37,7 +36,7 @@ export default function MLModel() {
       if (res.data.success) {
         setResult(res.data.result);
 
-        // ✅ refresh history after prediction
+        // refresh history
         loadHistory();
       }
     } catch {
@@ -47,6 +46,7 @@ export default function MLModel() {
 
   return (
     <div style={styles.container}>
+      {/* MAIN CARD */}
       <div style={styles.card}>
         <h2>ML Model Prediction</h2>
 
@@ -123,11 +123,13 @@ export default function MLModel() {
             <h3>Result</h3>
             <p><strong>Prediction:</strong> {result.prediction || "N/A"}</p>
             <p><strong>Confidence:</strong> {result.confidence || "N/A"}</p>
+            <p><strong>Score:</strong> {result.overall_score || "N/A"}</p>
+            <p><strong>Trees:</strong> {result.num_trees || "N/A"}</p>
           </div>
         )}
       </div>
 
-      {/* ✅ HISTORY SECTION (THIS WAS MISSING) */}
+      {/* ✅ HISTORY SECTION */}
       <div style={{ ...styles.card, marginTop: "20px" }}>
         <h3>Recent ML Analyses</h3>
 
@@ -136,7 +138,7 @@ export default function MLModel() {
         ) : (
           history.slice(0, 5).map((item, i) => {
             const input = item.input_data || {};
-            const result = item.result || {};
+            const res = item.result || {};
 
             return (
               <div key={i} style={styles.historyItem}>
@@ -151,11 +153,11 @@ export default function MLModel() {
                 <p>Moisture: {input.moisture || "N/A"}%</p>
                 <p>Qty: {input.quantity || "N/A"}</p>
 
-                <p>
-                  Score: {result.overall_score !== undefined
-                    ? result.overall_score + "%"
-                    : "N/A"}
-                </p>
+                {/* ✅ ML DETAILS */}
+                <p>Prediction: {res.prediction || "N/A"}</p>
+                <p>Confidence: {res.confidence || "N/A"}</p>
+                <p>Score: {res.overall_score || "N/A"}</p>
+                <p>Trees: {res.num_trees || "N/A"}</p>
               </div>
             );
           })
