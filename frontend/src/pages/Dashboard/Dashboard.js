@@ -342,7 +342,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <button
             style={{
             padding: "8px 12px",
-            background: "#e74c3c"
+            background: "#e74c3c",
             color: "white",
             border: "none",
             borderRadius: "5px",
