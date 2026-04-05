@@ -11,6 +11,14 @@ const styles = {
     background: "#f5f5f5",
     minHeight: "100vh"
   },
+
+  label: {
+    display: "block",
+    marginBottom: "5px",
+    fontWeight: "500",
+    color: "#333"
+  },
+  
   header: {
     background: "#1a472a",
     color: "white",
@@ -24,18 +32,65 @@ const styles = {
     display: "flex",
     gap: "10px"
   },
+
+  analyzeButton: {
+    marginTop: "20px",
+    width: "100%",
+    padding: "12px",
+    background: "linear-gradient(135deg, #2e7d32, #66bb6a)",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "16px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "0.3s"
+  },
+  
   main: {
     marginTop: "20px"
   },
   card: {
     background: "white",
-    padding: "20px",
-    borderRadius: "10px"
+    padding: "25px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
   },
+  analysisGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "20px"
+  },
+
+  inputGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "15px",
+    marginTop: "10px"
+  },
+
+  input: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+    outline: "none",
+    transition: "0.2s",
+  },
+  
+  cardTitle: {
+    fontSize: "18px",
+    fontWeight: "600",
+    marginBottom: "10px",
+    color: "#1a472a"
+  },
+  
   table: {
     width: "100%",
     borderCollapse: "collapse"
   }
+  
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
