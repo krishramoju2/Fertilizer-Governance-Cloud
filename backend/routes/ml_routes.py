@@ -35,7 +35,7 @@ def ml_predict_route(**kwargs):
     try:
         data = request.get_json() or {}
 
-        # ✅ SAFE INPUT HANDLING (prevents crashes)
+        # ✅ SAFE INPUT
         input_data = {
             'Temperature': float(data.get('temperature') or 26),
             'Moisture': float(data.get('moisture') or 45),
@@ -61,24 +61,44 @@ def ml_predict_route(**kwargs):
         # ===== DASHBOARD =====
         dashboard = get_model_dashboard(model, encoded_input)
 
-        # ✅ NORMALIZED RESULT (frontend-safe)
+        # ✅ FIXED RESULT (MATCHES FRONTEND EXACTLY)
         result = {
-            "overall_compatibility": ml_result.get("overall_compatibility", "Moderately Compatible"),
+            # 🔥 REQUIRED FIELDS (frontend expects these)
+            "prediction": (
+                ml_result.get("prediction")
+                or ml_result.get("overall_compatibility")
+                or "N/A"
+            ),
+            "confidence": (
+                ml_result.get("confidence")
+                or ml_result.get("overall_score")
+                or 0
+            ),
             "overall_score": ml_result.get("overall_score", 60),
+
+            # 🔥 FROM DASHBOARD
+            "num_trees": (
+                dashboard.get("num_trees")
+                if isinstance(dashboard, dict)
+                else "N/A"
+            ),
+
+            # ✅ OPTIONAL EXTRA (safe to keep)
             "temperature_status": ml_result.get("temperature_status", "N/A"),
             "moisture_status": ml_result.get("moisture_status", "N/A"),
             "soil_compatibility": ml_result.get("soil_compatibility", "Average"),
             "quantity_status": ml_result.get("quantity_status", "Optimal"),
+
             "success": True
         }
 
-        # ✅ Save to history
+        # ✅ Save to history (NOW CORRECT)
         current_user = kwargs['current_user']
 
         history_entry = {
             'user_id': current_user['_id'],
             'input_data': input_data,
-            'result': result,
+            'result': result,  # ✅ FIXED STRUCTURE
             'model': 'ml',
             'dashboard': dashboard,
             'timestamp': datetime.datetime.utcnow()
@@ -86,7 +106,7 @@ def ml_predict_route(**kwargs):
 
         history_collection.insert_one(history_entry)
 
-        # ✅ RESPONSE
+        # ✅ RESPONSE (FRONTEND WILL NOW WORK PERFECTLY)
         return jsonify({
             "success": True,
             "result": result,
