@@ -12,6 +12,13 @@ const styles = {
     minHeight: "100vh"
   },
 
+    description: {
+    fontSize: "14px",
+    color: "#555",
+    marginTop: "5px",
+    lineHeight: "1.5"
+  },
+
   analyticsContainer: {
   display: "flex",
   flexDirection: "column",
