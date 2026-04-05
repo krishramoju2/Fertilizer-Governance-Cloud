@@ -5,9 +5,6 @@ import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 
-const styles = new Proxy({}, {
-  get: () => ({})
-});
 
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -268,14 +265,28 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         </div>
         <nav style={styles.nav}>
           <button
-            style={styles.navButton(activeTab === 'analysis')}
+            style={{
+            padding: "8px 12px",
+            background: activeTab === 'analysis' ? "#2e7d32" : "#ccc",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
             onClick={() => setActiveTab('analysis')}
           >
             Analysis
           </button> 
               
           <button
-            style={styles.navButton(activeTab === 'ml')}
+            style={{
+            padding: "8px 12px",
+            background: activeTab === 'ml' ? "#2e7d32" : "#ccc"
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
             onClick={() => setActiveTab('ml')}
           >
             ML Model 
@@ -285,14 +296,29 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               
           
           <button
-            style={styles.navButton(activeTab === 'analytics')}
+            style={{
+            padding: "8px 12px",
+            background: activeTab === 'analytics' ? "#2e7d32" : "#ccc"
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
             onClick={() => setActiveTab('analytics')}
           >
             Analytics
           </button>
+
           {currentUser?.is_admin && (
             <button
-              style={styles.navButton(activeTab === 'admin')}
+            style={{
+            padding: "8px 12px",
+            background: activeTab === 'admin' ? "#2e7d32" : "#ccc"
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
               onClick={() => setActiveTab('admin')}
             >
               Admin
@@ -300,14 +326,28 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           )}
 
           <button
-            style={styles.navButton(activeTab === 'chat')}
+            style={{
+            padding: "8px 12px",
+            background: activeTab === 'chat' ? "#2e7d32" : "#ccc"
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
             onClick={() => setActiveTab('chat')}
           >
             Chatbot
           </button>
             
           <button
-            style={styles.navButton(false, true)}
+            style={{
+            padding: "8px 12px",
+            background: "#e74c3c"
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
             onClick={() => {
               localStorage.removeItem('token');
               setToken(null);
