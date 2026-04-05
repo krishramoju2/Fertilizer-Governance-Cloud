@@ -597,6 +597,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               improvements to maximize yield and efficiency.
             </p>
           </div>
+
+        </>
       
           <div style={styles.analysisGrid}>
         
