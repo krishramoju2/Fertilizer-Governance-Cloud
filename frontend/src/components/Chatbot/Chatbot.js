@@ -35,6 +35,15 @@ export default function Chatbot() {
       <div style={styles.card}>
         <h2>Chat Assistant</h2>
 
+        {/* 🔥 NEW DESCRIPTION BOX */}
+        <div style={styles.infoBox}>
+          <p style={styles.description}>
+            Interact with an AI-powered assistant to get instant agricultural guidance. 
+            Ask questions about fertilizers, crops, or predictions, and receive 
+            quick, intelligent responses to support your decisions.
+          </p>
+        </div>
+
         <div style={styles.chatBox}>
           {messages.map((m, i) => (
             <div
@@ -42,8 +51,7 @@ export default function Chatbot() {
               style={{
                 ...styles.message,
                 alignSelf: m.sender === "user" ? "flex-end" : "flex-start",
-                background:
-                  m.sender === "user" ? "#1a472a" : "#e5e5e5",
+                background: m.sender === "user" ? "#1a472a" : "#e5e5e5",
                 color: m.sender === "user" ? "white" : "black"
               }}
             >
@@ -83,6 +91,22 @@ const styles = {
     display: "flex",
     flexDirection: "column"
   },
+
+  /* 🔥 NEW STYLES */
+  infoBox: {
+    background: "#f0f7f4",
+    padding: "10px",
+    borderRadius: "6px",
+    marginBottom: "12px",
+    borderLeft: "4px solid #1a472a"
+  },
+  description: {
+    fontSize: "13.5px",
+    color: "#444",
+    margin: 0,
+    lineHeight: "1.4"
+  },
+
   chatBox: {
     height: "300px",
     overflowY: "auto",
