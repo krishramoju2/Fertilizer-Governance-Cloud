@@ -709,7 +709,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               </div>
       
               {/* ================= RESULT + HISTORY ================= */}
-              <div>
+              {/* Results + History Section */}
+              <div style={styles.rightPanel}>
                 {/* RESULT */}
                 {result && (
                   <div style={styles.resultCard}>
@@ -827,7 +828,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   )}
                 </div>
               </div>
-            </div>
+            
           </>
         )}
       </main>
