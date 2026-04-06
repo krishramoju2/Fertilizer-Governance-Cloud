@@ -34,12 +34,12 @@ Higher value → smoother and more stable predictions.
 
 
 
-Chatbot Sample Test Cases
+**Chatbot Sample Test Cases**
 
-Temperature 30, moisture 60, soil loamy, crop wheat, urea 40 kg ; 
-Temp 25°C and moisture 50%, growing maize with NPK 30 kg ; 
-28°C, 45% moisture, sandy soil, rice crop, using DAP 35 kg ; 
+a)Temperature 30, moisture 60, soil loamy, crop wheat, urea 40 kg ; 
+b)Temp 25°C and moisture 50%, growing maize with NPK 30 kg ; 
+c)28°C, 45% moisture, sandy soil, rice crop, using DAP 35 kg ; 
 
-It is hot with high moisture, I am growing rice in clayey soil using urea ; 
-Weather is cool and low moisture, crop is wheat, fertilizer DAP 25 kg ; 
-Warm climate, medium moisture, maize crop with NPK fertilizer ; 
+d)It is hot with high moisture, I am growing rice in clayey soil using urea ; 
+e)Weather is cool and low moisture, crop is wheat, fertilizer DAP 25 kg ; 
+f)Warm climate, medium moisture, maize crop with NPK fertilizer ; 
