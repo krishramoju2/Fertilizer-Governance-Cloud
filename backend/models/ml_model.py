@@ -1,26 +1,21 @@
-
-
-
 # ml_model.py
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
 
 # ================= ENCODING =================
 soil_map = {"Sandy": 0, "Loamy": 1, "Clayey": 2, "Black": 3, "Red": 4}
-
 crop_map = {
     "Maize": 0, "Sugarcane": 1, "Cotton": 2, "Wheat": 3, "Paddy": 4,
     "Barley": 5, "Millets": 6, "Pulses": 7,
     "Ground Nuts": 8, "Oil seeds": 9, "Tobacco": 10
 }
-
 fert_map = {
     "Urea": 0, "DAP": 1, "14-35-14": 2,
     "28-28": 3, "17-17-17": 4, "20-20": 5, "10-26-26": 6
 }
 
 # ================= DATASET =================
-# Format: [temp, moisture, soil, crop, fert, quantity]
 X = [
     [26,38,0,0,0,37],[29,45,1,1,1,12],[34,62,3,2,2,7],[32,34,4,10,3,22],
     [28,46,2,4,0,35],[26,35,0,5,4,12],[25,64,4,2,5,9],[33,50,1,3,0,41],
@@ -57,10 +52,26 @@ def generate_label(temp, moisture, qty):
 
 y = [generate_label(x[0], x[1], x[5]) for x in X]
 
-# ================= MODEL =================
-model = RandomForestClassifier(n_estimators=120, random_state=42)
-model.fit(X, y)
+# ================= MODEL WITH TUNING =================
+param_grid = {
+    "n_estimators": [100, 150, 200],
+    "max_depth": [None, 5, 10],
+    "min_samples_split": [2, 5],
+    "min_samples_leaf": [1, 2]
+}
 
+grid = GridSearchCV(
+    RandomForestClassifier(random_state=42),
+    param_grid,
+    cv=3,
+    n_jobs=-1
+)
+
+grid.fit(X, y)
+
+model = grid.best_estimator_
+
+# ================= PREDICTION =================
 def ml_predict(data):
     try:
         temp = float(data.get("Temperature", 26))
@@ -98,18 +109,18 @@ def ml_predict(data):
             "quantity_range": "35 - 45 kg/ha",
             "suggestions": [
                 "ML-based prediction used",
-                "Adjust inputs for better compatibility"
+                "Model optimized with hyperparameter tuning"
             ]
         }
 
-    except Exception as e:   # ✅ aligned with try
+    except Exception as e:
         return {"success": False, "error": str(e)}
 
-
+# ================= DASHBOARD =================
 def get_model_dashboard(model, encoded_input):
     try:
         return {
-            "model_name": "Random Forest",
+            "model_name": "Random Forest (Tuned)",
             "num_trees": len(model.estimators_),
             "n_features": len(encoded_input),
             "feature_importance": model.feature_importances_.tolist(),
