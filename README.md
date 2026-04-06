@@ -28,7 +28,6 @@ Lower values prevent overfitting, while higher values allow more complex learnin
 c) **min_samples_split**
 Minimum number of data points needed to split a node into two.
 Higher value → fewer splits → simpler model.
-
 d) **min_samples_leaf**
 Minimum number of data points allowed in a final node (leaf).
 Higher value → smoother and more stable predictions.
