@@ -1,3 +1,7 @@
+
+
+
+
 import React, { useState, useEffect, useCallback } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -18,7 +22,7 @@ const styles = {
     gap: "20px"
   },
 
-    description: {
+  description: {
     fontSize: "14px",
     color: "#555",
     marginTop: "5px",
@@ -26,10 +30,10 @@ const styles = {
   },
 
   analyticsContainer: {
-  display: "flex",
-  flexDirection: "column",
-  gap: "20px"
-},
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px"
+  },
 
   summaryGrid: {
     display: "grid",
@@ -61,9 +65,9 @@ const styles = {
   suggestionsTitle: { fontWeight: "bold" },
   suggestion: { fontSize: "14px" },
   
-  pdfButton: { marginTop: "10px", padding: "10px", background: "#2e7d32", color: "white", border: "none" },
+  pdfButton: { marginTop: "10px", padding: "10px", background: "#2e7d32", color: "white", border: "none", cursor: "pointer" },
   
-  historyCard: { marginTop: "20px" },
+  historyCard: { marginTop: "20px", background: "white", padding: "20px", borderRadius: "10px" },
   emptyText: { color: "#777" },
   
   adminContainer: { marginTop: "20px" },
@@ -71,35 +75,37 @@ const styles = {
   adminTabs: { display: "flex", gap: "10px", marginBottom: "10px" },
   
   adminTab: (active) => ({
-    padding: "8px",
+    padding: "8px 16px",
     background: active ? "#2e7d32" : "#ccc",
     color: "white",
     border: "none",
+    borderRadius: "5px",
     cursor: "pointer"
   }),
   
   adminContent: {},
   manageSection: {},
   addItemRow: { display: "flex", gap: "10px", marginBottom: "10px" },
-  addButton: { padding: "8px", background: "#2e7d32", color: "white", border: "none" },
+  addButton: { padding: "8px 16px", background: "#2e7d32", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" },
   
   itemList: { listStyle: "none", padding: 0 },
-  listItem: { display: "flex", justifyContent: "space-between", padding: "5px 0" },
-  removeButton: { background: "red", color: "white", border: "none" },
+  listItem: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid #eee" },
+  removeButton: { background: "red", color: "white", border: "none", borderRadius: "3px", padding: "2px 8px", cursor: "pointer" },
   
   userSection: {},
   userGrid: { display: "flex", gap: "20px" },
-  userList: { width: "30%" },
+  userList: { width: "30%", maxHeight: "400px", overflowY: "auto" },
   
   userCard: (active) => ({
     padding: "10px",
     border: "1px solid #ccc",
     marginBottom: "5px",
-    background: active ? "#eee" : "white",
+    borderRadius: "5px",
+    background: active ? "#e8f5e9" : "white",
     cursor: "pointer"
   }),
   
-  userBadge: { fontSize: "10px", color: "#fff", background: "#333", padding: "2px 5px" },
+  userBadge: { fontSize: "10px", color: "#fff", background: "#333", padding: "2px 5px", borderRadius: "3px", display: "inline-block", marginTop: "5px" },
   
   userDetails: { flex: 1 },
   
@@ -159,15 +165,18 @@ const styles = {
   header: {
     background: "#1a472a",
     color: "white",
-    padding: "15px",
+    padding: "15px 20px",
     marginBottom: "20px",
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    borderRadius: "8px"
   },
+  
   nav: {
     display: "flex",
-    gap: "10px"
+    gap: "10px",
+    flexWrap: "wrap"
   },
 
   analyzeButton: {
@@ -187,12 +196,15 @@ const styles = {
   main: {
     marginTop: "20px"
   },
+  
   card: {
     background: "white",
     padding: "25px",
     borderRadius: "12px",
     boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
+    marginBottom: "20px"
   },
+  
   analysisGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
@@ -214,6 +226,7 @@ const styles = {
     fontSize: "14px",
     outline: "none",
     transition: "0.2s",
+    boxSizing: "border-box"
   },
   
   cardTitle: {
@@ -226,8 +239,20 @@ const styles = {
   table: {
     width: "100%",
     borderCollapse: "collapse"
-  }
+  },
   
+  th: {
+    padding: "10px",
+    textAlign: "left",
+    borderBottom: "2px solid #ddd",
+    fontWeight: "600"
+  },
+  
+  td: {
+    padding: "10px",
+    textAlign: "left",
+    borderBottom: "1px solid #eee"
+  }
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -268,7 +293,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     setTimeout(() => setMessage({ text: '', type: '' }), 5000);
   };
 
-  // ============ FIX: Update inputs when currentUser loads with weather data ============
+  // Update inputs when currentUser loads with weather data
   useEffect(() => {
     if (currentUser?.farm_details) {
       console.log('Loading weather data:', {
@@ -365,7 +390,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       if (response.data.success) {
         setResult(response.data.result);
         showMessage('Analysis completed successfully!');
-        loadUserData(); // Refresh history and analytics
+        loadUserData();
       }
     } catch (err) {
       showMessage(err.response?.data?.message || 'Analysis failed', 'error');
@@ -446,7 +471,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       if (res.data.success) {
         showMessage('Item added');
         setNewItem('');
-        fetchConfig(); // refresh dropdowns
+        fetchConfig();
       }
     } catch (err) {
       showMessage(err.response?.data?.message || 'Failed to add', 'error');
@@ -464,7 +489,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       const res = await api.delete(endpoint);
       if (res.data.success) {
         showMessage('Item removed');
-        fetchConfig(); // refresh dropdowns
+        fetchConfig();
       }
     } catch (err) {
       showMessage(err.response?.data?.message || 'Failed to remove', 'error');
@@ -478,6 +503,28 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     loadUserHistory(userId);
   };
 
+  // Helper function for nav button style
+  const getNavButtonStyle = (tabName, isLogout = false) => {
+    if (isLogout) {
+      return {
+        padding: "8px 12px",
+        background: "#e74c3c",
+        color: "white",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer"
+      };
+    }
+    return {
+      padding: "8px 12px",
+      background: activeTab === tabName ? "#2e7d32" : "#ccc",
+      color: "white",
+      border: "none",
+      borderRadius: "5px",
+      cursor: "pointer"
+    };
+  };
+
   return (
     <div style={styles.app}>
       {/* Header */}
@@ -487,100 +534,35 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <p style={styles.welcome}>Welcome, {currentUser?.name || 'Farmer'}!</p>
         </div>
         <nav style={styles.nav}>
-          <button
-            style={{
-            padding: "8px 12px",
-            background: activeTab === 'analysis' ? "#2e7d32" : "#ccc",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-            onClick={() => setActiveTab('analysis')}
-          >
+          <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>
             Analysis
-          </button> 
-              
-          <button
-            style={{
-            padding: "8px 12px",
-            background: activeTab === 'ml' ? "#2e7d32" : "#ccc",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-            onClick={() => setActiveTab('ml')}
-          >
-            ML Model 
-          </button>   
-
-
-              
+          </button>
           
-          <button
-            style={{
-            padding: "8px 12px",
-            background: activeTab === 'analytics' ? "#2e7d32" : "#ccc",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-            onClick={() => setActiveTab('analytics')}
-          >
+          <button style={getNavButtonStyle('ml')} onClick={() => setActiveTab('ml')}>
+            ML Model
+          </button>
+
+          <button style={getNavButtonStyle('analytics')} onClick={() => setActiveTab('analytics')}>
             Analytics
           </button>
 
           {currentUser?.is_admin && (
-            <button
-            style={{
-            padding: "8px 12px",
-            background: activeTab === 'admin' ? "#2e7d32" : "#ccc",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-              onClick={() => setActiveTab('admin')}
-            >
+            <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>
               Admin
             </button>
           )}
 
-          <button
-            style={{
-            padding: "8px 12px",
-            background: activeTab === 'chat' ? "#2e7d32" : "#ccc",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-            onClick={() => setActiveTab('chat')}
-          >
+          <button style={getNavButtonStyle('chat')} onClick={() => setActiveTab('chat')}>
             Chatbot
           </button>
-            
-          <button
-            style={{
-            padding: "8px 12px",
-            background: "#e74c3c",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-            onClick={() => {
-              localStorage.removeItem('token');
-              setToken(null);
-              setCurrentUser(null);
-            }}
-          >
+
+          <button style={getNavButtonStyle('', true)} onClick={() => {
+            localStorage.removeItem('token');
+            setToken(null);
+            setCurrentUser(null);
+          }}>
             Logout
           </button>
-
-          
         </nav>
       </header>
 
@@ -606,7 +588,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       
             {/* Main Grid */}
             <div style={styles.analysisGrid}>
-              {/* ================= INPUT SECTION ================= */}
+              {/* Input Section */}
               <div style={styles.card}>
                 <h2 style={styles.cardTitle}>Farm Inputs</h2>
       
@@ -617,9 +599,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       type="number"
                       style={styles.input}
                       value={inputs.Temperature}
-                      onChange={(e) =>
-                        setInputs({ ...inputs, Temperature: e.target.value })
-                      }
+                      onChange={(e) => setInputs({ ...inputs, Temperature: parseFloat(e.target.value) })}
                     />
                   </div>
       
@@ -629,9 +609,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       type="number"
                       style={styles.input}
                       value={inputs.Moisture}
-                      onChange={(e) =>
-                        setInputs({ ...inputs, Moisture: e.target.value })
-                      }
+                      onChange={(e) => setInputs({ ...inputs, Moisture: parseFloat(e.target.value) })}
                     />
                   </div>
       
@@ -640,14 +618,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <select
                       style={styles.input}
                       value={inputs.Soil_Type}
-                      onChange={(e) =>
-                        setInputs({ ...inputs, Soil_Type: e.target.value })
-                      }
+                      onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}
                     >
                       {soilTypes.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
+                        <option key={type} value={type}>{type}</option>
                       ))}
                     </select>
                   </div>
@@ -657,14 +631,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <select
                       style={styles.input}
                       value={inputs.Crop_Type}
-                      onChange={(e) =>
-                        setInputs({ ...inputs, Crop_Type: e.target.value })
-                      }
+                      onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}
                     >
                       {cropTypes.map((crop) => (
-                        <option key={crop} value={crop}>
-                          {crop}
-                        </option>
+                        <option key={crop} value={crop}>{crop}</option>
                       ))}
                     </select>
                   </div>
@@ -674,17 +644,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <select
                       style={styles.input}
                       value={inputs.Fertilizer_Name}
-                      onChange={(e) =>
-                        setInputs({
-                          ...inputs,
-                          Fertilizer_Name: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}
                     >
                       {fertilizerNames.map((fert) => (
-                        <option key={fert} value={fert}>
-                          {fert}
-                        </option>
+                        <option key={fert} value={fert}>{fert}</option>
                       ))}
                     </select>
                   </div>
@@ -695,40 +658,25 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       type="number"
                       style={styles.input}
                       value={inputs.Fertilizer_Quantity}
-                      onChange={(e) =>
-                        setInputs({
-                          ...inputs,
-                          Fertilizer_Quantity: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: parseFloat(e.target.value) })}
                     />
                   </div>
                 </div>
       
-                <button
-                  style={styles.analyzeButton}
-                  onClick={handleAnalyze}
-                  disabled={loading}
-                >
+                <button style={styles.analyzeButton} onClick={handleAnalyze} disabled={loading}>
                   {loading ? "Analyzing..." : "🔬 Analyze"}
                 </button>
               </div>
       
-              {/* ================= RESULT + HISTORY ================= */}
               {/* Results + History Section */}
               <div style={styles.rightPanel}>
-                {/* RESULT */}
+                {/* Result */}
                 {result && (
                   <div style={styles.resultCard}>
                     <div style={styles.resultHeader}>
-                      <h2 style={styles.resultTitle}>
-                        {result.overall_compatibility}
-                      </h2>
-      
+                      <h2 style={styles.resultTitle}>{result.overall_compatibility}</h2>
                       <div style={styles.scoreCircle}>
-                        <span style={styles.scoreNumber}>
-                          {result.overall_score}%
-                        </span>
+                        <span style={styles.scoreNumber}>{result.overall_score}%</span>
                         <span style={styles.scoreLabel}>Overall</span>
                       </div>
                     </div>
@@ -736,48 +684,32 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <div style={styles.resultGrid}>
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Temperature</span>
-                        <span style={styles.resultValue}>
-                          {result.temperature_status}
-                        </span>
-                        <span style={styles.resultDetail}>
-                          {result.temperature_range}
-                        </span>
+                        <span style={styles.resultValue}>{result.temperature_status}</span>
+                        <span style={styles.resultDetail}>{result.temperature_range}</span>
                       </div>
       
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Moisture</span>
-                        <span style={styles.resultValue}>
-                          {result.moisture_status}
-                        </span>
-                        <span style={styles.resultDetail}>
-                          {result.moisture_range}
-                        </span>
+                        <span style={styles.resultValue}>{result.moisture_status}</span>
+                        <span style={styles.resultDetail}>{result.moisture_range}</span>
                       </div>
       
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Soil</span>
-                        <span style={styles.resultValue}>
-                          {result.soil_compatibility}
-                        </span>
+                        <span style={styles.resultValue}>{result.soil_compatibility}</span>
                       </div>
       
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Quantity</span>
-                        <span style={styles.resultValue}>
-                          {result.quantity_status}
-                        </span>
-                        <span style={styles.resultDetail}>
-                          {result.quantity_range}
-                        </span>
+                        <span style={styles.resultValue}>{result.quantity_status}</span>
+                        <span style={styles.resultDetail}>{result.quantity_range}</span>
                       </div>
                     </div>
       
                     <div style={styles.suggestionsBox}>
                       <h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>
                       {result.suggestions?.map((s, i) => (
-                        <p key={i} style={styles.suggestion}>
-                          • {s}
-                        </p>
+                        <p key={i} style={styles.suggestion}>• {s}</p>
                       ))}
                     </div>
       
@@ -787,7 +719,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 )}
       
-                {/* HISTORY */}
+                {/* History */}
                 <div style={styles.historyCard}>
                   <h3 style={styles.cardTitle}>Recent Analyses</h3>
       
@@ -797,35 +729,22 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <table style={styles.table}>
                       <thead>
                         <tr>
-                          <th>Crop</th>
-                          <th>Fertilizer</th>
-                          <th>Compatibility</th>
-                          <th>Score</th>
+                          <th style={styles.th}>Crop</th>
+                          <th style={styles.th}>Fertilizer</th>
+                          <th style={styles.th}>Status</th>
+                          <th style={styles.th}>Score</th>
                         </tr>
                       </thead>
-      
                       <tbody>
                         {history.map((item, i) => {
                           const input = item.input_data || {};
                           const res = item.result || {};
-      
                           return (
                             <tr key={i}>
-                              <td>
-                                {input.Crop_Type || input.crop || item.crop || "N/A"}
-                              </td>
-                              <td>
-                                {input.Fertilizer_Name ||
-                                  input.fertilizer ||
-                                  item.fertilizer ||
-                                  "N/A"}
-                              </td>
-                              <td>{res.overall_compatibility || "N/A"}</td>
-                              <td>
-                                {res.overall_score !== undefined
-                                  ? `${res.overall_score}%`
-                                  : "N/A"}
-                              </td>
+                              <td style={styles.td}>{input.Crop_Type || "N/A"}</td>
+                              <td style={styles.td}>{input.Fertilizer_Name || "N/A"}</td>
+                              <td style={styles.td}>{res.overall_compatibility || "N/A"}</td>
+                              <td style={styles.td}>{res.overall_score ? `${res.overall_score}%` : "N/A"}</td>
                             </tr>
                           );
                         })}
@@ -835,16 +754,15 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 </div>
               </div>
             </div>
-            
           </>
         )}
-      </main>
+
         {activeTab === 'ml' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
             <MLModel />
           </div>
-        )}  
+        )}
 
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
@@ -872,7 +790,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   <div style={styles.chartList}>
                     {Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (
                       <div key={crop} style={styles.chartItem}>
-                        <span>{crop}</span>
+                        <span style={{ minWidth: "100px" }}>{crop}</span>
                         <span style={styles.chartBar}>
                           <span style={{ ...styles.chartFill, width: `${(count / analytics.total_analyses) * 100}%` }} />
                         </span>
@@ -888,7 +806,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   <div style={styles.chartList}>
                     {Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (
                       <div key={fert} style={styles.chartItem}>
-                        <span>{fert}</span>
+                        <span style={{ minWidth: "100px" }}>{fert}</span>
                         <span style={styles.chartBar}>
                           <span style={{ ...styles.chartFill, width: `${(count / analytics.total_analyses) * 100}%` }} />
                         </span>
@@ -910,28 +828,16 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* Tabs within admin */}
             <div style={styles.adminTabs}>
-              <button
-                style={styles.adminTab(adminManageType === 'soil')}
-                onClick={() => setAdminManageType('soil')}
-              >
+              <button style={styles.adminTab(adminManageType === 'soil')} onClick={() => setAdminManageType('soil')}>
                 Soil Types
               </button>
-              <button
-                style={styles.adminTab(adminManageType === 'crop')}
-                onClick={() => setAdminManageType('crop')}
-              >
+              <button style={styles.adminTab(adminManageType === 'crop')} onClick={() => setAdminManageType('crop')}>
                 Crop Types
               </button>
-              <button
-                style={styles.adminTab(adminManageType === 'fertilizer')}
-                onClick={() => setAdminManageType('fertilizer')}
-              >
+              <button style={styles.adminTab(adminManageType === 'fertilizer')} onClick={() => setAdminManageType('fertilizer')}>
                 Fertilizers
               </button>
-              <button
-                style={styles.adminTab(adminManageType === 'users')}
-                onClick={() => setAdminManageType('users')}
-              >
+              <button style={styles.adminTab(adminManageType === 'users')} onClick={() => setAdminManageType('users')}>
                 Users
               </button>
             </div>
@@ -1022,7 +928,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                           onClick={() => handleSelectUser(user._id)}
                         >
                           <strong>{user.name}</strong>
-                          <small>{user.email}</small>
+                          <div><small>{user.email}</small></div>
                           <span style={styles.userBadge}>{user.is_admin ? 'Admin' : 'User'}</span>
                         </div>
                       ))}
@@ -1039,19 +945,19 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             <table style={styles.table}>
                               <thead>
                                 <tr>
-                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Crop</th>
-                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Fertilizer</th>
-                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Status</th>
-                                  <th style={{ padding: "10px", borderBottom: "2px solid #333" }}>Score</th>
+                                  <th style={styles.th}>Crop</th>
+                                  <th style={styles.th}>Fertilizer</th>
+                                  <th style={styles.th}>Status</th>
+                                  <th style={styles.th}>Score</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {userHistory.map((item, i) => (
                                   <tr key={i}>
-                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.crop_type}</td>
-                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.fertilizer}</td>
-                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.compatibility}</td>
-                                    <td style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>{item.score}%</td>
+                                    <td style={styles.td}>{item.crop_type}</td>
+                                    <td style={styles.td}>{item.fertilizer}</td>
+                                    <td style={styles.td}>{item.compatibility}</td>
+                                    <td style={styles.td}>{item.score}%</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -1068,19 +974,16 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </div>
           </div>
         )}
-           {activeTab === 'chat' && (
-    <div style={styles.card}>
-      <h2 style={styles.cardTitle}>Farm Chatbot</h2>
-      <Chatbot />
-    </div>
-  )}
+
+        {activeTab === 'chat' && (
+          <div style={styles.card}>
+            <h2 style={styles.cardTitle}>Farm Chatbot</h2>
+            <Chatbot />
+          </div>
+        )}
       </main>
     </div>
-
- );
-
-} 
-
-
+  );
+}
 
 export default Dashboard;
