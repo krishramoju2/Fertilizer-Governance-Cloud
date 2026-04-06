@@ -12,6 +12,12 @@ const styles = {
     minHeight: "100vh"
   },
 
+  rightPanel: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px"
+  },
+
     description: {
     fontSize: "14px",
     color: "#555",
@@ -828,6 +834,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   )}
                 </div>
               </div>
+            </div>
             
           </>
         )}
