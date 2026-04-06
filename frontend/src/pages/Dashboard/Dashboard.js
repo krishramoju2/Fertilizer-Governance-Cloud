@@ -586,257 +586,251 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
-      {activeTab === 'analysis' && (
-        <>
-          {/* Description Card */}
-          <div style={styles.card}>
-            <h2 style={styles.cardTitle}>🔬 Farm Analysis</h2>
-            <p style={styles.description}>
-              Enter your farm conditions like temperature, moisture, soil type, crop,
-              and fertilizer details. This tool will analyze compatibility and suggest
-              improvements to maximize yield and efficiency.
-            </p>
-          </div>
-    
-          {/* Main Grid */}
-          <div style={styles.analysisGrid}>
-            
-            {/* Input Section */}
+        {activeTab === "analysis" && (
+          <>
+            {/* Description Card */}
             <div style={styles.card}>
-              <h2 style={styles.cardTitle}>Farm Inputs</h2>
-    
-              <div style={styles.inputGrid}>
-                <div>
-                  <label style={styles.label}>Temperature (°C)</label>
-                  <input
-                    type="number"
-                    style={styles.input}
-                    value={inputs.Temperature}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, Temperature: e.target.value })
-                    }
-                  />
-                </div>
-    
-                <div>
-                  <label style={styles.label}>Moisture (%)</label>
-                  <input
-                    type="number"
-                    style={styles.input}
-                    value={inputs.Moisture}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, Moisture: e.target.value })
-                    }
-                  />
-                </div>
-    
-                <div>
-                  <label style={styles.label}>Soil Type</label>
-                  <select
-                    style={styles.input}
-                    value={inputs.Soil_Type}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, Soil_Type: e.target.value })
-                    }
-                  >
-                    {soilTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-    
-                <div>
-                  <label style={styles.label}>Crop Type</label>
-                  <select
-                    style={styles.input}
-                    value={inputs.Crop_Type}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, Crop_Type: e.target.value })
-                    }
-                  >
-                    {cropTypes.map((crop) => (
-                      <option key={crop} value={crop}>
-                        {crop}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-    
-                <div>
-                  <label style={styles.label}>Fertilizer</label>
-                  <select
-                    style={styles.input}
-                    value={inputs.Fertilizer_Name}
-                    onChange={(e) =>
-                      setInputs({
-                        ...inputs,
-                        Fertilizer_Name: e.target.value,
-                      })
-                    }
-                  >
-                    {fertilizerNames.map((fert) => (
-                      <option key={fert} value={fert}>
-                        {fert}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-    
-                <div>
-                  <label style={styles.label}>Quantity (kg/ha)</label>
-                  <input
-                    type="number"
-                    style={styles.input}
-                    value={inputs.Fertilizer_Quantity}
-                    onChange={(e) =>
-                      setInputs({
-                        ...inputs,
-                        Fertilizer_Quantity: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-    
-              <button
-                style={styles.analyzeButton}
-                onClick={handleAnalyze}
-                disabled={loading}
-              >
-                {loading ? "Analyzing..." : "🔬 Analyze"}
-              </button>
+              <h2 style={styles.cardTitle}>🔬 Farm Analysis</h2>
+              <p style={styles.description}>
+                Enter your farm conditions like temperature, moisture, soil type, crop,
+                and fertilizer details. This tool will analyze compatibility and suggest
+                improvements to maximize yield and efficiency.
+              </p>
             </div>
-    
-            {/* Results + History Section */}
-            <div>
-              {/* Result */}
-              {result && (
-                <div style={styles.resultCard}>
-                  <div style={styles.resultHeader}>
-                    <h2 style={styles.resultTitle}>
-                      {result.overall_compatibility}
-                    </h2>
-                    <div style={styles.scoreCircle}>
-                      <span style={styles.scoreNumber}>
-                        {result.overall_score}%
-                      </span>
-                      <span style={styles.scoreLabel}>Overall</span>
-                    </div>
+      
+            {/* Main Grid */}
+            <div style={styles.analysisGrid}>
+              {/* ================= INPUT SECTION ================= */}
+              <div style={styles.card}>
+                <h2 style={styles.cardTitle}>Farm Inputs</h2>
+      
+                <div style={styles.inputGrid}>
+                  <div>
+                    <label style={styles.label}>Temperature (°C)</label>
+                    <input
+                      type="number"
+                      style={styles.input}
+                      value={inputs.Temperature}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, Temperature: e.target.value })
+                      }
+                    />
                   </div>
-    
-                  <div style={styles.resultGrid}>
-                    <div style={styles.resultItem}>
-                      <span style={styles.resultLabel}>Temperature</span>
-                      <span style={styles.resultValue}>
-                        {result.temperature_status}
-                      </span>
-                      <span style={styles.resultDetail}>
-                        {result.temperature_range}
-                      </span>
-                    </div>
-    
-                    <div style={styles.resultItem}>
-                      <span style={styles.resultLabel}>Moisture</span>
-                      <span style={styles.resultValue}>
-                        {result.moisture_status}
-                      </span>
-                      <span style={styles.resultDetail}>
-                        {result.moisture_range}
-                      </span>
-                    </div>
-    
-                    <div style={styles.resultItem}>
-                      <span style={styles.resultLabel}>Soil</span>
-                      <span style={styles.resultValue}>
-                        {result.soil_compatibility}
-                      </span>
-                    </div>
-    
-                    <div style={styles.resultItem}>
-                      <span style={styles.resultLabel}>Quantity</span>
-                      <span style={styles.resultValue}>
-                        {result.quantity_status}
-                      </span>
-                      <span style={styles.resultDetail}>
-                        {result.quantity_range}
-                      </span>
-                    </div>
+      
+                  <div>
+                    <label style={styles.label}>Moisture (%)</label>
+                    <input
+                      type="number"
+                      style={styles.input}
+                      value={inputs.Moisture}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, Moisture: e.target.value })
+                      }
+                    />
                   </div>
-    
-                  <div style={styles.suggestionsBox}>
-                    <h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>
-                    {result.suggestions?.map((s, i) => (
-                      <p key={i} style={styles.suggestion}>
-                        • {s}
-                      </p>
-                    ))}
+      
+                  <div>
+                    <label style={styles.label}>Soil Type</label>
+                    <select
+                      style={styles.input}
+                      value={inputs.Soil_Type}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, Soil_Type: e.target.value })
+                      }
+                    >
+                      {soilTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-    
-                  <button style={styles.pdfButton} onClick={generatePDF}>
-                    📄 Download PDF Report
-                  </button>
+      
+                  <div>
+                    <label style={styles.label}>Crop Type</label>
+                    <select
+                      style={styles.input}
+                      value={inputs.Crop_Type}
+                      onChange={(e) =>
+                        setInputs({ ...inputs, Crop_Type: e.target.value })
+                      }
+                    >
+                      {cropTypes.map((crop) => (
+                        <option key={crop} value={crop}>
+                          {crop}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+      
+                  <div>
+                    <label style={styles.label}>Fertilizer</label>
+                    <select
+                      style={styles.input}
+                      value={inputs.Fertilizer_Name}
+                      onChange={(e) =>
+                        setInputs({
+                          ...inputs,
+                          Fertilizer_Name: e.target.value,
+                        })
+                      }
+                    >
+                      {fertilizerNames.map((fert) => (
+                        <option key={fert} value={fert}>
+                          {fert}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+      
+                  <div>
+                    <label style={styles.label}>Quantity (kg/ha)</label>
+                    <input
+                      type="number"
+                      style={styles.input}
+                      value={inputs.Fertilizer_Quantity}
+                      onChange={(e) =>
+                        setInputs({
+                          ...inputs,
+                          Fertilizer_Quantity: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
-              )}
-    
-              {/* History */}
-              <div style={styles.historyCard}>
-                <h3 style={styles.cardTitle}>Recent Analyses</h3>
-    
-                {history.length === 0 ? (
-                  <p style={styles.emptyText}>No analyses yet</p>
-                ) : (
-                  <table style={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>Crop</th>
-                        <th>Fertilizer</th>
-                        <th>Compatibility</th>
-                        <th>Score</th>
-                      </tr>
-                    </thead>
-    
-                    <tbody>
-                      {history.map((item, i) => {
-                        const input = item.input_data || {};
-                        const result = item.result || {};
-    
-                        return (
-                          <tr key={i}>
-                            <td>
-                              {input.Crop_Type || input.crop || item.crop || "N/A"}
-                            </td>
-    
-                            <td>
-                              {input.Fertilizer_Name ||
-                                input.fertilizer ||
-                                item.fertilizer ||
-                                "N/A"}
-                            </td>
-    
-                            <td>
-                              {result.overall_compatibility || "N/A"}
-                            </td>
-    
-                            <td>
-                              {result.overall_score !== undefined
-                                ? `${result.overall_score}%`
-                                : "N/A"}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+      
+                <button
+                  style={styles.analyzeButton}
+                  onClick={handleAnalyze}
+                  disabled={loading}
+                >
+                  {loading ? "Analyzing..." : "🔬 Analyze"}
+                </button>
+              </div>
+      
+              {/* ================= RESULT + HISTORY ================= */}
+              <div>
+                {/* RESULT */}
+                {result && (
+                  <div style={styles.resultCard}>
+                    <div style={styles.resultHeader}>
+                      <h2 style={styles.resultTitle}>
+                        {result.overall_compatibility}
+                      </h2>
+      
+                      <div style={styles.scoreCircle}>
+                        <span style={styles.scoreNumber}>
+                          {result.overall_score}%
+                        </span>
+                        <span style={styles.scoreLabel}>Overall</span>
+                      </div>
+                    </div>
+      
+                    <div style={styles.resultGrid}>
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Temperature</span>
+                        <span style={styles.resultValue}>
+                          {result.temperature_status}
+                        </span>
+                        <span style={styles.resultDetail}>
+                          {result.temperature_range}
+                        </span>
+                      </div>
+      
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Moisture</span>
+                        <span style={styles.resultValue}>
+                          {result.moisture_status}
+                        </span>
+                        <span style={styles.resultDetail}>
+                          {result.moisture_range}
+                        </span>
+                      </div>
+      
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Soil</span>
+                        <span style={styles.resultValue}>
+                          {result.soil_compatibility}
+                        </span>
+                      </div>
+      
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Quantity</span>
+                        <span style={styles.resultValue}>
+                          {result.quantity_status}
+                        </span>
+                        <span style={styles.resultDetail}>
+                          {result.quantity_range}
+                        </span>
+                      </div>
+                    </div>
+      
+                    <div style={styles.suggestionsBox}>
+                      <h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>
+                      {result.suggestions?.map((s, i) => (
+                        <p key={i} style={styles.suggestion}>
+                          • {s}
+                        </p>
+                      ))}
+                    </div>
+      
+                    <button style={styles.pdfButton} onClick={generatePDF}>
+                      📄 Download PDF Report
+                    </button>
+                  </div>
                 )}
+      
+                {/* HISTORY */}
+                <div style={styles.historyCard}>
+                  <h3 style={styles.cardTitle}>Recent Analyses</h3>
+      
+                  {history.length === 0 ? (
+                    <p style={styles.emptyText}>No analyses yet</p>
+                  ) : (
+                    <table style={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>Crop</th>
+                          <th>Fertilizer</th>
+                          <th>Compatibility</th>
+                          <th>Score</th>
+                        </tr>
+                      </thead>
+      
+                      <tbody>
+                        {history.map((item, i) => {
+                          const input = item.input_data || {};
+                          const res = item.result || {};
+      
+                          return (
+                            <tr key={i}>
+                              <td>
+                                {input.Crop_Type || input.crop || item.crop || "N/A"}
+                              </td>
+                              <td>
+                                {input.Fertilizer_Name ||
+                                  input.fertilizer ||
+                                  item.fertilizer ||
+                                  "N/A"}
+                              </td>
+                              <td>{res.overall_compatibility || "N/A"}</td>
+                              <td>
+                                {res.overall_score !== undefined
+                                  ? `${res.overall_score}%`
+                                  : "N/A"}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
-    </main>
-
+          </>
+        )}
+      </main>
         {activeTab === 'ml' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
