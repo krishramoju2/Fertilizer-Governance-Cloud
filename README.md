@@ -18,6 +18,22 @@ email - admin@farm.com
 password - admin123
 8. **Chatbot**
 The FarmAdvisor Chatbot is an intelligent assistant designed to help farmers make better decisions about crop selection and fertilizer usage. It understands both natural language (e.g., “hot weather with low moisture”) and structured inputs (like temperature, moisture, and soil type) to provide practical, easy-to-understand recommendations. The chatbot analyzes farm conditions and suggests improvements to maximize crop yield and efficiency.
+9. **Hyperparameter Tuning (Model Optimization)**
+a) **n_estimators**
+Number of trees in the forest.
+More trees → better accuracy (usually), but slower performance.
+b) **max_depth**
+Maximum depth of each decision tree.
+Lower values prevent overfitting, while higher values allow more complex learning.
+c) **min_samples_split**
+Minimum number of data points needed to split a node into two.
+Higher value → fewer splits → simpler model.
+
+d) **min_samples_leaf**
+Minimum number of data points allowed in a final node (leaf).
+Higher value → smoother and more stable predictions.
+
+
 
 Chatbot Sample Test Cases
 
