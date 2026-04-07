@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from utils.langchain_helper import parse_user_query
 
 # Auth
 from utils.auth import token_required
@@ -19,7 +20,7 @@ def chatbot(**kwargs):
         message = data.get("message", "").lower()
 
         # ✅ Parse input
-        input_data = extract_inputs(message)
+        input_data = parse_user_query(message)
 
         # ✅ Run analyzer
         ml_result = FertilizerAnalyzer.analyze(input_data)
