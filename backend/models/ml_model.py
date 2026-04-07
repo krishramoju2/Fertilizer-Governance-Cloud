@@ -1,5 +1,5 @@
 # ml_model.py
-import os
+'''import os
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -126,4 +126,4 @@ def get_model_dashboard(model, encoded_input):
             "confidence": round(max(model.predict_proba([encoded_input])[0]) * 100, 2)
         }
     except:
-        return {}
+        return {}'''
