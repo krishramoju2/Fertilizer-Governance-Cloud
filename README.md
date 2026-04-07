@@ -32,7 +32,8 @@ d) **min_samples_leaf**
 Minimum number of data points allowed in a final node (leaf).
 Higher value → smoother and more stable predictions.
 
-
+10. **Pickle-Based Data Storage Module**
+This module uses Python’s pickle mechanism to store and load preprocessed datasets efficiently. Instead of reading data from CSV files every time the system runs, the dataset is serialized and saved as a .pkl file. This significantly reduces loading time and improves application performance. 
 
 **Chatbot Sample Test Cases**
 
