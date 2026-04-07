@@ -33,7 +33,10 @@ Minimum number of data points allowed in a final node (leaf).
 Higher value → smoother and more stable predictions.
 
 10. **Pickle-Based Data Storage Module**
-This module uses Python’s pickle mechanism to store and load preprocessed datasets efficiently. Instead of reading data from CSV files every time the system runs, the dataset is serialized and saved as a .pkl file. This significantly reduces loading time and improves application performance. 
+This module uses Python’s pickle mechanism to store and load preprocessed datasets efficiently. Instead of reading data from CSV files every time the system runs, the dataset is serialized and saved as a .pkl file. This significantly reduces loading time and improves application performance.
+
+11. **LangChain Integration (Smart Input Processing)**
+The system integrates LangChain to build a structured and intelligent data processing pipeline for the chatbot. Using a sequence of modular steps, user input is cleaned, semantically interpreted, and converted into structured parameters such as temperature, moisture, soil type, crop, and fertilizer details. This enables the chatbot to understand both natural language inputs (e.g., “hot weather with low moisture”) and numeric inputs efficiently. 
 
 **Chatbot Sample Test Cases**
 
