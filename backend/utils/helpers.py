@@ -127,18 +127,6 @@ def extract_inputs(message):
 
     
 
-        # 🔥 FALLBACK NUMBER EXTRACTION (VERY IMPORTANT)
-    numbers = list(map(float, re.findall(r'\d+', message)))
 
-    if len(numbers) >= 3:
-        # Only override if not already clearly detected
-        if not re.search(r'(temp|temperature|°c)', message):
-            data["Temperature"] = numbers[0]
-
-        if not re.search(r'(moisture|%)', message):
-            data["Moisture"] = numbers[1]
-
-        if not re.search(r'(kg)', message):
-            data["Fertilizer_Quantity"] = numbers[2]
 
     return data
