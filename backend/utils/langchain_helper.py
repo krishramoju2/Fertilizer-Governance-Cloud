@@ -1,3 +1,4 @@
+import re 
 from langchain_core.runnables import RunnableLambda, RunnableSequence
 # ================= KNOWLEDGE BASE =================
 TEMP_CONTEXT = {
@@ -67,7 +68,7 @@ def semantic_parse(text):
 
 # ================= STEP 3: LIGHT NUMBER EXTRACTION =================
 def extract_numbers(text, data):
-    words = text.split()
+    words = re.findall(r'\d+\.?\d*|\w+', text)
 
     for i, word in enumerate(words):
         if word.replace('.', '').isdigit():
