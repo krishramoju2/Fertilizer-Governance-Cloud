@@ -1,5 +1,4 @@
-from langchain.schema.runnable import RunnableLambda, RunnableSequence
-
+from langchain_core.runnables import RunnableLambda, RunnableSequence
 # ================= KNOWLEDGE BASE =================
 TEMP_CONTEXT = {
     "very hot": 38,
