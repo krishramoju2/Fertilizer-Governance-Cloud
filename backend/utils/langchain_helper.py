@@ -61,7 +61,7 @@ def semantic_parse(text):
     # 🧪 FERTILIZER
     for fert in FERTS:
         if fert in text:
-            data["Fertilizer_Name"] = fert.upper() if fert in ["dap", "npk"] else fert
+            data["Fertilizer_Name"] = fert.upper()
 
     return data
 
@@ -70,7 +70,7 @@ def extract_numbers(text, data):
     words = text.split()
 
     for i, word in enumerate(words):
-        if word.isdigit():
+        if word.replace('.', '').isdigit():
             num = float(word)
 
             # Context-based assignment (NOT regex)
@@ -84,13 +84,7 @@ def extract_numbers(text, data):
                 elif "kg" in prev:
                     data["Fertilizer_Quantity"] = num
 
-            # fallback order
-            if data["Temperature"] is None:
-                data["Temperature"] = num
-            elif data["Moisture"] is None:
-                data["Moisture"] = num
-            elif data["Fertilizer_Quantity"] is None:
-                data["Fertilizer_Quantity"] = num
+
 
     return data
 
