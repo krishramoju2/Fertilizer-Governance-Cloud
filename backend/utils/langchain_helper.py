@@ -76,7 +76,7 @@ def extract_numbers(text, data):
 
             # Context-based assignment (NOT regex)
             if i > 0:
-                prev = words[i-1]
+                prev = words[i-1].lower()
 
                 if "temp" in prev:
                     data["Temperature"] = num
