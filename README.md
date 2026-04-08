@@ -47,3 +47,37 @@ c)28°C, 45% moisture, sandy soil, rice crop, using DAP 35 kg ;
 d)It is hot with high moisture, I am growing rice in clayey soil using urea ; 
 e)Weather is cool and low moisture, crop is wheat, fertilizer DAP 25 kg ; 
 f)Warm climate, medium moisture, maize crop with NPK fertilizer ; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**Test**
+x@gmail.com
+x
