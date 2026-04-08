@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useEffect, useCallback } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -10,10 +6,12 @@ import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 
 const styles = {
+  
   app: {
-    padding: "20px",
-    background: "#f5f5f5",
-    minHeight: "100vh"
+    padding: "30px",
+    background: "linear-gradient(135deg, #eef2ff, #f8fafc)",
+    minHeight: "100vh",
+    fontFamily: "Inter, sans-serif"
   },
 
   rightPanel: {
@@ -41,13 +39,25 @@ const styles = {
     gap: "20px"
   },
 
-  title: { fontSize: "20px", fontWeight: "bold" },
+  title: { 
+    fontSize: "22px", 
+    fontWeight: "700",
+    letterSpacing: "0.5px"
+  },
+  
   welcome: { fontSize: "14px" },
   
   errorMessage: { color: "red", margin: "10px 0" },
   successMessage: { color: "green", margin: "10px 0" },
   
-  resultCard: { background: "white", padding: "20px", borderRadius: "10px", marginBottom: "20px" },
+  resultCard: {
+    background: "linear-gradient(135deg, #ffffff, #f1f5f9)",
+    padding: "20px",
+    borderRadius: "14px",
+    marginBottom: "20px",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.08)"
+  },
+  
   resultHeader: { display: "flex", justifyContent: "space-between", alignItems: "center" },
   resultTitle: { fontSize: "18px", fontWeight: "bold" },
   
@@ -110,11 +120,12 @@ const styles = {
   userDetails: { flex: 1 },
   
   summaryCard: {
-    background: "white",
+    background: "linear-gradient(135deg, #1e293b, #334155)",
     padding: "20px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
-    textAlign: "center"
+    borderRadius: "16px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+    textAlign: "center",
+    color: "white"
   },
   
   summaryValue: {
@@ -162,16 +173,7 @@ const styles = {
     color: "#333"
   },
   
-  header: {
-    background: "#1a472a",
-    color: "white",
-    padding: "15px 20px",
-    marginBottom: "20px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: "8px"
-  },
+
   
   nav: {
     display: "flex",
@@ -182,15 +184,16 @@ const styles = {
   analyzeButton: {
     marginTop: "20px",
     width: "100%",
-    padding: "12px",
-    background: "linear-gradient(135deg, #2e7d32, #66bb6a)",
+    padding: "14px",
+    background: "linear-gradient(135deg, #4f46e5, #22c55e)",
     color: "white",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "10px",
     fontSize: "16px",
     fontWeight: "600",
     cursor: "pointer",
-    transition: "0.3s"
+    transition: "all 0.3s ease",
+    boxShadow: "0 6px 15px rgba(79,70,229,0.3)"
   },
   
   main: {
@@ -198,19 +201,21 @@ const styles = {
   },
   
   card: {
-    background: "white",
+    background: "rgba(255,255,255,0.8)",
+    backdropFilter: "blur(10px)",
     padding: "25px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
-    marginBottom: "20px"
+    borderRadius: "16px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+    marginBottom: "20px",
+    border: "1px solid rgba(255,255,255,0.3)"
   },
-  
+    
   analysisGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
-    gap: "20px"
+    gap: "25px"
   },
-
+  
   inputGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
@@ -220,13 +225,14 @@ const styles = {
 
   input: {
     width: "100%",
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
+    padding: "12px",
+    borderRadius: "10px",
+    border: "1px solid #e2e8f0",
     fontSize: "14px",
     outline: "none",
-    transition: "0.2s",
-    boxSizing: "border-box"
+    transition: "all 0.2s ease",
+    boxSizing: "border-box",
+    background: "#fff"
   },
   
   cardTitle: {
@@ -241,18 +247,34 @@ const styles = {
     borderCollapse: "collapse"
   },
   
-  th: {
-    padding: "10px",
-    textAlign: "left",
-    borderBottom: "2px solid #ddd",
-    fontWeight: "600"
+
+
+  header: {
+    background: "rgba(26, 71, 42, 0.85)",
+    backdropFilter: "blur(10px)",
+    color: "white",
+    padding: "18px 25px",
+    marginBottom: "25px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: "12px",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.15)"
   },
-  
-  td: {
-    padding: "10px",
+
+  th: {
+    padding: "12px",
     textAlign: "left",
-    borderBottom: "1px solid #eee"
+    borderBottom: "2px solid #e2e8f0",
+    fontWeight: "600",
+    color: "#334155"
+  },
+  td: {
+    padding: "12px",
+    textAlign: "left",
+    borderBottom: "1px solid #f1f5f9"
   }
+
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -516,12 +538,16 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       };
     }
     return {
-      padding: "8px 12px",
-      background: activeTab === tabName ? "#2e7d32" : "#ccc",
+      padding: "8px 14px",
+      background: activeTab === tabName 
+        ? "linear-gradient(135deg, #4f46e5, #22c55e)" 
+        : "rgba(255,255,255,0.2)",
       color: "white",
       border: "none",
-      borderRadius: "5px",
-      cursor: "pointer"
+      borderRadius: "8px",
+      cursor: "pointer",
+      transition: "all 0.3s ease",
+      backdropFilter: "blur(6px)"
     };
   };
 
