@@ -1,8 +1,17 @@
+
+
 import React, { useState } from "react";
 import api from "../../services/api";
 
 export default function Chatbot() {
-  const [messages, setMessages] = useState([]);
+  
+  const [messages, setMessages] = useState([
+    {
+      sender: "bot",
+      text: "Hi! I'm your FarmAdvisor AI 🌱 Ask me about crops, fertilizers, or weather conditions."
+    }
+  ]);
+  
   const [input, setInput] = useState("");
 
   const sendMessage = async () => {
@@ -33,7 +42,9 @@ export default function Chatbot() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2>Chat Assistant</h2>
+        <h2 style={{ marginBottom: "10px", fontWeight: "700" }}>
+        🤖 FarmAdvisor AI
+        </h2>
 
         {/* 🔥 NEW DESCRIPTION BOX */}
         <div style={styles.infoBox}>
@@ -45,19 +56,18 @@ export default function Chatbot() {
         </div>
 
         <div style={styles.chatBox}>
+              
           {messages.map((m, i) => (
+                        
             <div
               key={i}
-              style={{
-                ...styles.message,
-                alignSelf: m.sender === "user" ? "flex-end" : "flex-start",
-                background: m.sender === "user" ? "#1a472a" : "#e5e5e5",
-                color: m.sender === "user" ? "white" : "black"
-              }}
+              style={m.sender === "user" ? styles.userMessage : styles.botMessage}
             >
               {m.text}
             </div>
+
           ))}
+
         </div>
 
         <div style={styles.inputRow}>
@@ -77,29 +87,37 @@ export default function Chatbot() {
 }
 
 const styles = {
+  
   container: {
-    padding: "20px",
+    padding: "30px",
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "center",
+    background: "linear-gradient(135deg, #eef2ff, #f8fafc)",
+    minHeight: "100vh"
   },
+  
   card: {
-    width: "400px",
-    background: "white",
-    borderRadius: "10px",
+    width: "450px",
+    background: "rgba(255,255,255,0.8)",
+    backdropFilter: "blur(12px)",
+    borderRadius: "16px",
     padding: "20px",
-    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    border: "1px solid rgba(255,255,255,0.3)"
   },
 
   /* 🔥 NEW STYLES */
   infoBox: {
-    background: "#f0f7f4",
-    padding: "10px",
-    borderRadius: "6px",
+    background: "rgba(34,197,94,0.1)",
+    padding: "12px",
+    borderRadius: "10px",
     marginBottom: "12px",
-    borderLeft: "4px solid #1a472a"
+    border: "1px solid rgba(34,197,94,0.2)"
   },
+
+  
   description: {
     fontSize: "13.5px",
     color: "#444",
@@ -108,37 +126,67 @@ const styles = {
   },
 
   chatBox: {
-    height: "300px",
+    height: "320px",
     overflowY: "auto",
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
+    gap: "12px",
     marginBottom: "10px",
-    padding: "10px",
-    background: "#f5f5f5",
-    borderRadius: "5px"
+    padding: "12px",
+    background: "rgba(255,255,255,0.6)",
+    borderRadius: "12px",
+    border: "1px solid rgba(0,0,0,0.05)"
   },
+  
   message: {
     padding: "10px",
     borderRadius: "10px",
     maxWidth: "70%"
   },
+
+  userMessage: {
+    alignSelf: "flex-end",
+    background: "linear-gradient(135deg, #4f46e5, #22c55e)",
+    color: "white",
+    padding: "10px 14px",
+    borderRadius: "12px",
+    maxWidth: "75%",
+    fontSize: "14px"
+  },
+
+  botMessage: {
+    alignSelf: "flex-start",
+    background: "#f1f5f9",
+    color: "#1e293b",
+    padding: "10px 14px",
+    borderRadius: "12px",
+    maxWidth: "75%",
+    fontSize: "14px"
+  },
+  
   inputRow: {
     display: "flex",
-    gap: "10px"
+    gap: "10px",
+    marginTop: "8px"
   },
+  
   input: {
     flex: 1,
-    padding: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ccc"
+    padding: "12px",
+    borderRadius: "10px",
+    border: "1px solid #e2e8f0",
+    outline: "none",
+    fontSize: "14px"
   },
+  
   button: {
-    padding: "10px 15px",
-    background: "#1a472a",
+    padding: "12px 16px",
+    background: "linear-gradient(135deg, #22c55e, #4f46e5)",
     color: "white",
     border: "none",
-    borderRadius: "5px",
-    cursor: "pointer"
+    borderRadius: "10px",
+    cursor: "pointer",
+    fontWeight: "600",
+    transition: "0.3s"
   }
 };
