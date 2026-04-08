@@ -40,8 +40,8 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
       const res = await api.post(endpoint, payload);
 
       if (res.data.success) {
-        localStorage.setItem("token", res.data.token);
-        setToken(res.data.token);
+        localStorage.setItem("token", res.data.data?.token || res.data.token);
+        setToken(res.data.data?.token || res.data.token);
         setCurrentUser(res.data.user);
       }
     } catch (err) {
