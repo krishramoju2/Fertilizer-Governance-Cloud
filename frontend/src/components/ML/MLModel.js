@@ -46,7 +46,9 @@ export default function MLModel() {
     <div style={styles.container}>
       {/* MAIN CARD */}
       <div style={styles.card}>
-        <h2>ML Model Prediction</h2>
+        <h2 style={{ fontWeight: "700", marginBottom: "10px" }}>
+          📊 ML Model Prediction
+        </h2>
 
         {/* 🔥 DESCRIPTION BOX */}
         <div style={styles.infoBox}>
@@ -181,28 +183,34 @@ export default function MLModel() {
 }
 
 const styles = {
+  
   container: {
-    padding: "20px",
+    padding: "30px",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
+    background: "linear-gradient(135deg, #eef2ff, #f8fafc)",
+    minHeight: "100vh"
   },
+  
   card: {
-    background: "white",
-    padding: "20px",
-    borderRadius: "10px",
-    width: "350px",
-    boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+    background: "rgba(255,255,255,0.8)",
+    backdropFilter: "blur(12px)",
+    padding: "25px",
+    borderRadius: "16px",
+    width: "420px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+    border: "1px solid rgba(255,255,255,0.3)"
   },
-
-  /* 🔥 NEW STYLES */
+  
   infoBox: {
-    background: "#f0f7f4",
-    padding: "10px",
-    borderRadius: "6px",
-    marginBottom: "12px",
-    borderLeft: "4px solid #1a472a"
+    background: "rgba(34,197,94,0.1)",
+    padding: "14px",
+    borderRadius: "10px",
+    marginBottom: "15px",
+    border: "1px solid rgba(34,197,94,0.2)"
   },
+  
   description: {
     fontSize: "13.5px",
     color: "#444",
@@ -212,30 +220,43 @@ const styles = {
 
   input: {
     width: "100%",
-    padding: "10px",
+    padding: "12px",
     marginBottom: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ccc"
+    borderRadius: "10px",
+    border: "1px solid #e2e8f0",
+    fontSize: "14px",
+    outline: "none",
+    background: "#fff"
   },
+  
   button: {
     width: "100%",
-    padding: "10px",
-    background: "#1a472a",
+    padding: "14px",
+    marginTop: "10px",
+    background: "linear-gradient(135deg, #4f46e5, #22c55e)",
     color: "white",
     border: "none",
-    borderRadius: "5px",
-    cursor: "pointer"
+    borderRadius: "10px",
+    fontWeight: "600",
+    cursor: "pointer",
+    boxShadow: "0 6px 15px rgba(79,70,229,0.3)"
   },
+  
   result: {
     marginTop: "15px",
-    padding: "10px",
-    background: "#f5f5f5",
-    borderRadius: "5px"
+    padding: "15px",
+    background: "rgba(79,70,229,0.08)",
+    borderRadius: "10px",
+    border: "1px solid rgba(79,70,229,0.2)"
   },
+  
   historyItem: {
-    padding: "10px",
-    marginTop: "10px",
-    background: "#f9f9f9",
-    borderRadius: "5px"
+    padding: "15px",
+    marginTop: "12px",
+    background: "rgba(255,255,255,0.8)",
+    borderRadius: "12px",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
+    border: "1px solid rgba(0,0,0,0.05)"
   }
+  
 };
