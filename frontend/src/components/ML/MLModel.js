@@ -194,7 +194,11 @@ const styles = {
   },
   
   card: {
-    background: "rgba(255,255,255,0.8)",
+    background: `
+      radial-gradient(circle at 20% 30%, rgba(79,70,229,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(34,197,94,0.15) 0%, transparent 40%),
+      linear-gradient(135deg, #eef2ff, #f8fafc)
+    `,
     backdropFilter: "blur(12px)",
     padding: "25px",
     borderRadius: "16px",
