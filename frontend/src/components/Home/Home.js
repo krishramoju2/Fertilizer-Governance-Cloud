@@ -169,7 +169,7 @@ const styles = {
     marginTop: "40px",
     position: "relative",
     zIndex: 1
-  }
+  },
 
   title: {
     fontSize: "30px",
