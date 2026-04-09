@@ -553,6 +553,21 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
   };
 
+  const menuItems = [
+    {
+      title: "ML Model",
+      description: "Run predictions",
+      image: "https://picsum.photos/300",
+      onClick: () => setActiveTab("ml")
+    },
+    {
+      title: "Chatbot",
+      description: "Ask AI",
+      image: "https://picsum.photos/400",
+      onClick: () => setActiveTab("chat")
+    }
+  ];
+  
   return (
     <div style={styles.app}>
       {/* Header */}
