@@ -13,6 +13,47 @@ logger = logging.getLogger(__name__)
 auth_bp = Blueprint('auth', __name__)
 
 
+
+
+# ==================== GOOGLE LOGIN ====================
+@auth_bp.route('/google-login', methods=['POST', 'OPTIONS'])
+def google_login():
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+
+    data = request.get_json()
+    token = data.get("credential")
+
+    if not token:
+        return jsonify({"success": False, "message": "No token"}), 400
+
+    try:
+        decoded = jwt.decode(token, options={"verify_signature": False})
+
+        email = decoded.get("email")
+        name = decoded.get("name")
+
+        app_token = jwt.encode(
+            {"user": email},
+            current_app.config['SECRET_KEY'],   # ✅ IMPORTANT CHANGE
+            algorithm="HS256"
+        )
+
+        return jsonify({
+            "success": True,
+            "token": app_token,
+            "user": {
+                "email": email,
+                "name": name
+            }
+        })
+
+    except Exception:
+        return jsonify({
+            "success": False,
+            "message": "Invalid Google token"
+        }), 401
+
 # ==================== REGISTER ====================
 @auth_bp.route('/register', methods=['POST'])
 def register():
