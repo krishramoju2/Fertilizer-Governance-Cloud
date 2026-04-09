@@ -69,8 +69,18 @@ app.register_blueprint(analytics_bp)
 app.register_blueprint(admin_bp)
 
 
-# CORS configuration
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+CORS(
+    app,
+    origins=[
+        "http://localhost:3000",
+        "https://fertilizer-governance-cloud.vercel.app",
+        "https://fertilizer-governance-cloud-jftql8vo0-krishs-projects-39cc7848.vercel.app"
+    ],
+    supports_credentials=True
+)
+
+
 
 # Configuration
 SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_change_this')
