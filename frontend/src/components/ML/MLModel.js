@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
-import GradientBlinds from "../GradientBlinds/GradientBlinds";
-
+import GradientBlinds from "./GradientBlinds";
 
 export default function MLModel() {
   const [form, setForm] = useState({
