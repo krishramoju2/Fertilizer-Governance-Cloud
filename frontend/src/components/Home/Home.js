@@ -8,22 +8,40 @@ export default function Home({ setActiveTab }) {
   
   const menuItems = [
     {
-      title: "ML Model",
-      description: "Run predictions",
-      image: "https://picsum.photos/300",
+      content: (
+        <div style={styles.menuCard}>
+          <h3>🔬 Analysis</h3>
+          <p>Analyze farm conditions and get insights</p>
+        </div>
+      ),
+      onClick: () => setActiveTab("analysis")
+    },
+    {
+      content: (
+        <div style={styles.menuCard}>
+          <h3>🤖 ML Model</h3>
+          <p>Run ML predictions</p>
+        </div>
+      ),
       onClick: () => setActiveTab("ml")
     },
     {
-      title: "Chatbot",
-      description: "Ask AI",
-      image: "https://picsum.photos/400",
-      onClick: () => setActiveTab("chat")
+      content: (
+        <div style={styles.menuCard}>
+          <h3>📈 Analytics</h3>
+          <p>View trends and stats</p>
+        </div>
+      ),
+      onClick: () => setActiveTab("analytics")
     },
     {
-      title: "Analytics",
-      description: "View insights",
-      image: "https://picsum.photos/500",
-      onClick: () => setActiveTab("analytics")
+      content: (
+        <div style={styles.menuCard}>
+          <h3>💬 Chatbot</h3>
+          <p>Ask AI for farming advice</p>
+        </div>
+      ),
+      onClick: () => setActiveTab("chat")
     }
   ];
   
@@ -141,6 +159,20 @@ const styles = {
     alignItems: "center",
     background: "linear-gradient(135deg, #fff7ed, #ffedd5)"
   },
+
+  menuCard: {
+    background: "rgba(255,255,255,0.85)",
+    borderRadius: "14px",
+    padding: "20px",
+    textAlign: "center",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(0,0,0,0.05)",
+    cursor: "pointer",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
+  }
 
   silkBackground: {
     position: "absolute",
