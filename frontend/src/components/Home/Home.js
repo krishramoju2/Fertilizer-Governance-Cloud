@@ -1,11 +1,28 @@
 import React from "react";
 import { motion } from "framer-motion";
-
+import Silk from "./Silk";
 
 export default function Home({ setActiveTab }) {
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div style={{ ...styles.container, position: "relative", overflow: "hidden" }}>
+  
+      {/* 🔥 Silk Background */}
+      <div style={styles.silkBackground}>
+        <Silk 
+          speed={3}
+          scale={1}
+          color="#f59e0b"
+          noiseIntensity={1.2}
+          rotation={0}
+        />
+      </div>
+            
+      <motion.div
+        style={styles.card}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         
         {/* HEADER */}
         <h1 style={styles.title}>🌾 FarmAdvisor Pro</h1>
@@ -95,6 +112,15 @@ const styles = {
     background: "linear-gradient(135deg, #fff7ed, #ffedd5)"
   },
 
+  silkBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 0
+  },
+
   card: {
     width: "950px",
     background: "rgba(255,255,255,0.85)",
@@ -102,7 +128,9 @@ const styles = {
     borderRadius: "18px",
     padding: "40px",
     boxShadow: "0 12px 35px rgba(0,0,0,0.1)",
-    border: "1px solid rgba(255,255,255,0.3)"
+    border: "1px solid rgba(255,255,255,0.3)",
+    position: "relative",
+    zIndex: 1
   },
 
   title: {
