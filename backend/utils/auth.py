@@ -5,12 +5,18 @@ import jwt
 import hashlib
 import os
 
+from flask import Flask
 from flask_cors import CORS
+
+app = Flask(__name__)
 
 CORS(app, origins=[
     "https://fertilizer-governance-cloud.vercel.app",
+    "https://fertilizer-governance-cloud-jftql8vo0-krishs-projects-39cc7848.vercel.app",  # 🔥 IMPORTANT
     "http://localhost:3000"
 ], supports_credentials=True)
+
+
 
 from bson import ObjectId
 
@@ -22,6 +28,46 @@ SECRET_KEY = os.environ.get(
     'SECRET_KEY',
     'btech_project_2026_secret_key_change_this'
 )
+
+
+# ==================== GOOGLE LOGIN ====================
+@app.route('/google-login', methods=['POST', 'OPTIONS'])
+def google_login():
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+
+    data = request.get_json()
+    token = data.get("credential")
+
+    if not token:
+        return jsonify({"success": False, "message": "No token"}), 400
+
+    try:
+        decoded = jwt.decode(token, options={"verify_signature": False})
+
+        email = decoded.get("email")
+        name = decoded.get("name")
+
+        app_token = jwt.encode(
+            {"user": email},
+            SECRET_KEY,
+            algorithm="HS256"
+        )
+
+        return jsonify({
+            "success": True,
+            "token": app_token,
+            "user": {
+                "email": email,
+                "name": name
+            }
+        })
+
+    except Exception:
+        return jsonify({
+            "success": False,
+            "message": "Invalid Google token"
+        }), 401
 
 # ==================== AUTH MIDDLEWARE ====================
 def token_required(f):
