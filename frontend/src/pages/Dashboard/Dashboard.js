@@ -606,9 +606,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
-
-        {activeTab === 'home' && (
-          <Home setActiveTab={setActiveTab} />
+        
+        {activeTab === "menu" && (
+          <InfiniteMenu items={menuItems} />
         )}
   
         {activeTab === "analysis" && (
