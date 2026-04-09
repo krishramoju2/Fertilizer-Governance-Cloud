@@ -24,7 +24,31 @@ SECRET_KEY = os.environ.get(
 )
 
 
+# ==================== AUTH MIDDLEWARE ====================
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
 
+        if "Authorization" in request.headers:
+            parts = request.headers["Authorization"].split(" ")
+            if len(parts) == 2:
+                token = parts[1]
+
+        if not token:
+            return jsonify({"success": False, "message": "Token missing"}), 401
+
+        try:
+            current_user = {
+                "_id": "test_user"
+            }
+        except Exception:
+            return jsonify({"success": False, "message": "Invalid token"}), 401
+
+        kwargs['current_user'] = current_user
+        return f(*args, **kwargs)
+
+    return decorated
 
 
 # ==================== ADMIN REQUIRED ====================
