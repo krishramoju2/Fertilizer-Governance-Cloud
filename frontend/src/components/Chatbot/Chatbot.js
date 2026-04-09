@@ -1,4 +1,4 @@
-
+import Iridescence from "./Iridescence";
 
 import React, { useState } from "react";
 import api from "../../services/api";
@@ -40,7 +40,18 @@ export default function Chatbot() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{ ...styles.container, position: "relative", overflow: "hidden" }}>
+  
+    {/* 🔥 Iridescence Background */}
+    <div style={styles.bg}>
+      <Iridescence 
+        color={[0.5, 0.6, 0.8]} 
+        speed={0.8} 
+        amplitude={0.1} 
+        mouseReact={true}
+      />
+    </div>
+          
       <div style={styles.card}>
         <h2 style={{ marginBottom: "10px", fontWeight: "700" }}>
         🤖 FarmAdvisor AI
@@ -110,7 +121,9 @@ const styles = {
     boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
     display: "flex",
     flexDirection: "column",
-    border: "1px solid rgba(255,255,255,0.3)"
+    border: "1px solid rgba(255,255,255,0.3)".
+    position: "relative",
+    zIndex: 1
   },
 
   /* 🔥 NEW STYLES */
@@ -128,6 +141,16 @@ const styles = {
     color: "#444",
     margin: 0,
     lineHeight: "1.4"
+  },
+
+  
+  bg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 0
   },
 
   chatBox: {
