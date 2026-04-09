@@ -5,6 +5,13 @@ import jwt
 import hashlib
 import os
 
+from flask_cors import CORS
+
+CORS(app, origins=[
+    "https://fertilizer-governance-cloud.vercel.app",
+    "http://localhost:3000"
+], supports_credentials=True)
+
 from bson import ObjectId
 
 # DB imports
@@ -20,9 +27,7 @@ SECRET_KEY = os.environ.get(
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        # ✅ Allow preflight (CORS)
-        if request.method == "OPTIONS":
-            return jsonify({"success": True}), 200
+
 
         token = None
 
@@ -125,5 +130,4 @@ def hash_password(password):
 
 
 def check_password(plain_password, hashed_password):
-    """Validate password"""
-    return hash_password(plain_password) == hashed_password
+    return hash_password(plain_password) == str(hashed_password)
