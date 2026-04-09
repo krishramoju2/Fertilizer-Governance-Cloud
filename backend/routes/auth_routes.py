@@ -20,9 +20,17 @@ auth_bp = Blueprint('auth', __name__)
 def google_login():
     if request.method == "OPTIONS":
         return jsonify({"success": True}), 200
-
+        
     data = request.get_json()
+    
+    if not data or "credential" not in data:
+        return jsonify({
+            "success": False,
+            "message": "Credential missing"
+        }), 400
+    
     token = data.get("credential")
+    
 
     if not token:
         return jsonify({"success": False, "message": "No token"}), 400
