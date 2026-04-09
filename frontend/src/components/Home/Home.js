@@ -1,4 +1,4 @@
-import React from "react";
+eimport React from "react";
 import { motion } from "framer-motion";
 import Silk from "./Silk";
 
@@ -97,7 +97,7 @@ export default function Home({ setActiveTab }) {
 
         </div>
 
-      </div>
+      </motion.div>
     </div>
   );
 }
