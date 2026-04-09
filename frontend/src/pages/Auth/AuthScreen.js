@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
+import { GoogleLogin } from "@react-oauth/google";
+
 
 export default function AuthScreen({ setToken, setCurrentUser }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -106,6 +108,35 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
           </button>
         </form>
 
+                
+        
+                {/* GOOGLE LOGIN */}
+        <div style={styles.divider}>OR</div>
+        
+        <div style={styles.googleWrapper}>
+          <GoogleLogin
+            onSuccess={async (res) => {
+              try {
+                const response = await api.post("/google-login", {
+                  token: res.credential
+                });
+        
+                if (response.data.success) {
+                  localStorage.setItem("token", response.data.token);
+                  setToken(response.data.token);
+                  setCurrentUser(response.data.user);
+                }
+              } catch {
+                setError("Google login failed");
+              }
+            }}
+            onError={() => setError("Google login failed")}
+          />
+        </div>
+                    
+
+        
+
         <button
           style={styles.switch}
           onClick={() => setIsLogin(!isLogin)}
@@ -140,6 +171,22 @@ const styles = {
     fontSize: "24px",
     fontWeight: "600"
   },
+
+  divider: {
+    margin: "18px 0",
+    textAlign: "center",
+    color: "#777",
+    fontSize: "13px",
+    fontWeight: "500"
+  },
+  
+  googleWrapper: {
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: "10px"
+  },
+
+  
   form: {
     display: "flex",
     flexDirection: "column",
