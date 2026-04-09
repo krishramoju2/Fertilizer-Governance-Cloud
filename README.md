@@ -78,6 +78,3 @@ f)Warm climate, medium moisture, maize crop with NPK fertilizer ;
 
 
 
-**Test**
-x@gmail.com
-x
