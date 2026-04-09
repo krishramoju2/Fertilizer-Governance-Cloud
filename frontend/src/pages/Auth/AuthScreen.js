@@ -118,7 +118,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
             onSuccess={async (res) => {
               try {
                 const response = await api.post("/google-login", {
-                  token: res.credential
+                  credential: res.credential
                 });
         
                 if (response.data.success) {
