@@ -5,7 +5,7 @@ import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 import Home from "../../components/Home/Home";
-import InfiniteMenu from "../../components/InfiniteMenu/InfiniteMenu";
+import InfiniteMenu from "../../components/Home/InfiniteMenu";
 
 const styles = {
   
