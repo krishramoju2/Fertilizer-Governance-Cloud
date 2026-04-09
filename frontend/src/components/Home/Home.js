@@ -157,7 +157,7 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(135deg, #fff7ed, #ffedd5)"
+    background: "transparent"
   },
 
   menuCard: {
@@ -172,14 +172,14 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center"
-  }
+  },
 
   silkBackground: {
-    position: "absolute",
+    position: "fixed",   // 🔥 important
     top: 0,
     left: 0,
-    width: "100%",
-    height: "100%",
+    width: "100vw",
+    height: "100vh",
     zIndex: 0
   },
 
