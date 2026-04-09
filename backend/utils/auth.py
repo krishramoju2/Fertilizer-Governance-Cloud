@@ -5,10 +5,10 @@ import jwt
 import hashlib
 import os
 
-from flask import Flask
 
 
-app = Flask(__name__)
+
+
 
 
 
@@ -24,79 +24,7 @@ SECRET_KEY = os.environ.get(
 )
 
 
-# ==================== GOOGLE LOGIN ====================
-@app.route('/google-login', methods=['POST', 'OPTIONS'])
-def google_login():
-    if request.method == "OPTIONS":
-        return jsonify({"success": True}), 200
 
-    data = request.get_json()
-    token = data.get("credential")
-
-    if not token:
-        return jsonify({"success": False, "message": "No token"}), 400
-
-    try:
-        decoded = jwt.decode(token, options={"verify_signature": False})
-
-        email = decoded.get("email")
-        name = decoded.get("name")
-
-        app_token = jwt.encode(
-            {"user": email},
-            SECRET_KEY,
-            algorithm="HS256"
-        )
-
-        return jsonify({
-            "success": True,
-            "token": app_token,
-            "user": {
-                "email": email,
-                "name": name
-            }
-        })
-
-    except Exception:
-        return jsonify({
-            "success": False,
-            "message": "Invalid Google token"
-        }), 401
-
-# ==================== AUTH MIDDLEWARE ====================
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-
-
-        token = None
-
-        if "Authorization" in request.headers:
-            parts = request.headers["Authorization"].split(" ")
-            if len(parts) == 2:
-                token = parts[1]
-
-        if not token:
-            return jsonify({"success": False, "message": "Token missing"}), 401
-
-        try:
-            # 🔥 TEMP (you can replace with real JWT decode later)
-            current_user = {
-                "_id": "test_user",
-                "farm_details": {
-                    "temperature": 26,
-                    "humidity": 45,
-                    "soil_type": "Loamy"
-                }
-            }
-
-        except Exception:
-            return jsonify({"success": False, "message": "Invalid token"}), 401
-
-        kwargs['current_user'] = current_user
-        return f(*args, **kwargs)
-
-    return decorated
 
 
 # ==================== ADMIN REQUIRED ====================
