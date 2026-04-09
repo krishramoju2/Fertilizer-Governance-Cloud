@@ -44,7 +44,25 @@ export default function MLModel() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{ ...styles.container, position: "relative", overflow: "hidden" }}> 
+
+      {/* 🔥 Gradient Background */}
+      <div style={styles.bg}>
+        <GradientBlinds
+          gradientColors={['#4f46e5', '#22c55e']}
+          angle={0}
+          noise={0.2}
+          blindCount={12}
+          blindMinWidth={60}
+          spotlightRadius={0.4}
+          spotlightSoftness={1}
+          spotlightOpacity={0.8}
+          mouseDampening={0.15}
+          distortAmount={0.1}
+          shineDirection="left"
+          mixBlendMode="lighten"
+        />
+      </div>
       {/* MAIN CARD */}
       <div style={styles.card}>
         <h2 style={{ fontWeight: "700", marginBottom: "10px" }}>
@@ -205,7 +223,9 @@ const styles = {
     borderRadius: "16px",
     width: "420px",
     boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-    border: "1px solid rgba(255,255,255,0.3)"
+    border: "1px solid rgba(255,255,255,0.3)",
+    position: "relative",
+    zIndex: 1
   },
   
   infoBox: {
@@ -245,6 +265,15 @@ const styles = {
     fontWeight: "600",
     cursor: "pointer",
     boxShadow: "0 6px 15px rgba(79,70,229,0.3)"
+  },
+
+  bg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 0
   },
   
   result: {
