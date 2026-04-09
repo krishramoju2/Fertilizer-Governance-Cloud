@@ -5,33 +5,28 @@ import Silk from "./Silk";
 import InfiniteMenu from "./InfiniteMenu"; 
 
 export default function Home({ setActiveTab }) {
-
+  
   const menuItems = [
     {
-      image: "https://picsum.photos/300",
       title: "ML Model",
       description: "Run predictions",
-      link: "#"
+      image: "https://picsum.photos/300",
+      onClick: () => setActiveTab("ml")
     },
     {
-      image: "https://picsum.photos/400",
-      title: "Analytics",
-      description: "View insights",
-      link: "#"
-    },
-    {
-      image: "https://picsum.photos/500",
       title: "Chatbot",
       description: "Ask AI",
-      link: "#"
+      image: "https://picsum.photos/400",
+      onClick: () => setActiveTab("chat")
     },
     {
-      image: "https://picsum.photos/600",
-      title: "Analysis",
-      description: "Check soil",
-      link: "#"
+      title: "Analytics",
+      description: "View insights",
+      image: "https://picsum.photos/500",
+      onClick: () => setActiveTab("analytics")
     }
   ];
+  
   
   return (
     <div style={{ ...styles.container, position: "relative", overflow: "hidden" }}>
