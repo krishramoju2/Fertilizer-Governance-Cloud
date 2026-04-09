@@ -2,7 +2,37 @@ import React from "react";
 import { motion } from "framer-motion";
 import Silk from "./Silk";
 
+import InfiniteMenu from "./InfiniteMenu"; 
+
 export default function Home({ setActiveTab }) {
+
+  const menuItems = [
+    {
+      image: "https://picsum.photos/300",
+      title: "ML Model",
+      description: "Run predictions",
+      link: "#"
+    },
+    {
+      image: "https://picsum.photos/400",
+      title: "Analytics",
+      description: "View insights",
+      link: "#"
+    },
+    {
+      image: "https://picsum.photos/500",
+      title: "Chatbot",
+      description: "Ask AI",
+      link: "#"
+    },
+    {
+      image: "https://picsum.photos/600",
+      title: "Analysis",
+      description: "Check soil",
+      link: "#"
+    }
+  ];
+  
   return (
     <div style={{ ...styles.container, position: "relative", overflow: "hidden" }}>
   
@@ -98,6 +128,11 @@ export default function Home({ setActiveTab }) {
         </div>
 
       </motion.div>
+
+      <div style={styles.menuSection}>
+        <InfiniteMenu items={menuItems} scale={0.9} />
+      </div>
+            
     </div>
   );
 }
@@ -132,6 +167,14 @@ const styles = {
     position: "relative",
     zIndex: 1
   },
+
+  menuSection: {
+    width: "100%",
+    height: "500px",
+    marginTop: "40px",
+    position: "relative",
+    zIndex: 1
+  }
 
   title: {
     fontSize: "30px",
