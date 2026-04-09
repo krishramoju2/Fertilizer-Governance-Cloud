@@ -707,28 +707,43 @@ class InfiniteGridMenu {
     canvas.width = this.atlasSize * cellSize;
     canvas.height = this.atlasSize * cellSize;
 
-    Promise.all(
-      this.items.map(
-        item =>
-          new Promise(resolve => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => resolve(img);
-            img.src = item.image;
-          })
-      )
-    ).then(images => {
-      images.forEach((img, i) => {
-        const x = (i % this.atlasSize) * cellSize;
-        const y = Math.floor(i / this.atlasSize) * cellSize;
-        ctx.drawImage(img, x, y, cellSize, cellSize);
-      });
-
-      gl.bindTexture(gl.TEXTURE_2D, this.tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
-      gl.generateMipmap(gl.TEXTURE_2D);
+        // 🔥 Generate canvas-based cards instead of loading images
+    const images = this.items.map((item) => {
+      const tempCanvas = document.createElement("canvas");
+      const tempCtx = tempCanvas.getContext("2d");
+    
+      tempCanvas.width = 512;
+      tempCanvas.height = 512;
+    
+      // Background
+      tempCtx.fillStyle = "#111827";
+      tempCtx.fillRect(0, 0, 512, 512);
+    
+      // Title
+      tempCtx.fillStyle = "#22c55e";
+      tempCtx.font = "bold 36px sans-serif";
+      tempCtx.textAlign = "center";
+      tempCtx.fillText(item.title || "Menu", 256, 220);
+    
+      // Description
+      tempCtx.fillStyle = "#e5e7eb";
+      tempCtx.font = "18px sans-serif";
+      tempCtx.fillText(item.description || "", 256, 300);
+    
+      return tempCanvas;
     });
-  }
+    
+    // Draw into atlas
+    images.forEach((img, i) => {
+      const x = (i % this.atlasSize) * cellSize;
+      const y = Math.floor(i / this.atlasSize) * cellSize;
+      ctx.drawImage(img, x, y, cellSize, cellSize);
+    });
+    
+    // Upload to GPU
+    gl.bindTexture(gl.TEXTURE_2D, this.tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+    gl.generateMipmap(gl.TEXTURE_2D);
 
   #initDiscInstances(count) {
     const gl = this.gl;
@@ -903,14 +918,7 @@ class InfiniteGridMenu {
   }
 }
 
-const defaultItems = [
-  {
-    image: 'https://picsum.photos/900/900?grayscale',
-    link: 'https://google.com/',
-    title: '',
-    description: ''
-  }
-];
+
 
 export default function InfiniteMenu({ items = [], scale = 1.0 }) {
   const canvasRef = useRef(null);
@@ -929,7 +937,7 @@ export default function InfiniteMenu({ items = [], scale = 1.0 }) {
     if (canvas) {
       sketch = new InfiniteGridMenu(
         canvas,
-        items.length ? items : defaultItems,
+        items
         handleActiveItem,
         setIsMoving,
         sk => sk.run(),
