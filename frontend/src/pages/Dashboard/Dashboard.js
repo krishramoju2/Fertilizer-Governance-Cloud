@@ -279,7 +279,7 @@ const styles = {
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState("menu");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
 
