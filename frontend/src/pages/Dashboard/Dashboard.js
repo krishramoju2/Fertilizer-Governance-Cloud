@@ -577,7 +577,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         </div>
         <nav style={styles.nav}>
 
-          <button style={getNavButtonStyle('home')} onClick={() => setActiveTab('home')}>
+          <button style={getNavButtonStyle('menu')} onClick={() => setActiveTab('menu')}>
             Home
           </button>
                                            
