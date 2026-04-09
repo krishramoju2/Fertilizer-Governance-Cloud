@@ -4,6 +4,7 @@ import autoTable from "jspdf-autotable";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
+import Home from "../../components/Home/Home";
 
 const styles = {
   
@@ -278,7 +279,7 @@ const styles = {
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
-  const [activeTab, setActiveTab] = useState('analysis');
+  const [activeTab, setActiveTab] = useState('home');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
 
@@ -560,6 +561,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <p style={styles.welcome}>Welcome, {currentUser?.name || 'Farmer'}!</p>
         </div>
         <nav style={styles.nav}>
+
+          <button style={getNavButtonStyle('home')} onClick={() => setActiveTab('home')}>
+            Home
+          </button>
+                                           
           <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>
             Analysis
           </button>
@@ -600,6 +606,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
+
+        {activeTab === 'home' && (
+          <Home setActiveTab={setActiveTab} />
+        )}
+  
         {activeTab === "analysis" && (
           <>
             {/* Description Card */}
