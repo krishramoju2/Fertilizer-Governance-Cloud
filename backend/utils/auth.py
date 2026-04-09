@@ -6,15 +6,9 @@ import hashlib
 import os
 
 from flask import Flask
-from flask_cors import CORS
+
 
 app = Flask(__name__)
-
-CORS(app, origins=[
-    "https://fertilizer-governance-cloud.vercel.app",
-    "https://fertilizer-governance-cloud-jftql8vo0-krishs-projects-39cc7848.vercel.app",  # 🔥 IMPORTANT
-    "http://localhost:3000"
-], supports_credentials=True)
 
 
 
