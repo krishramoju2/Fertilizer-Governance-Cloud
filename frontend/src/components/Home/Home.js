@@ -191,8 +191,9 @@ const styles = {
     minHeight: "100vh",
     padding: "40px",
     display: "flex",
-    justifyContent: "center",
+    flexDirection: "column",
     alignItems: "center",
+    overflowY: "auto",
     background: "transparent"
   },
 
@@ -216,7 +217,7 @@ const styles = {
     left: 0,
     width: "100vw",
     height: "100vh",
-    zIndex: 0
+    zIndex: -1
   },
 
   card: {
@@ -233,8 +234,8 @@ const styles = {
 
   menuSection: {
     width: "100%",
-    height: "500px",
-    marginTop: "40px",
+    height: "600px",   // increase from 500
+    marginTop: "60px",
     position: "relative",
     zIndex: 1
   },
