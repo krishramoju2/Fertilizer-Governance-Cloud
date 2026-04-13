@@ -75,13 +75,13 @@ void main() {
     float imageAspect = float(texSize.x) / float(texSize.y);
     float containerAspect = 1.0;
     
-    float scale = max(imageAspect / containerAspect, 
-                     containerAspect / imageAspect);
-    
     vec2 st = vec2(vUvs.x, 1.0 - vUvs.y);
-    st = (st - 0.5) * scale + 0.5;
     
-    st = clamp(st, 0.0, 1.0);
+    if (imageAspect > containerAspect) {
+        st.y = (st.y - 0.5) * (containerAspect / imageAspect) + 0.5;
+    } else {
+        st.x = (st.x - 0.5) * (imageAspect / containerAspect) + 0.5;
+    }
     
     st = st * cellSize + cellOffset;
     
@@ -695,6 +695,32 @@ class InfiniteGridMenu {
   }
 
   #initTexture() {
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(" ");
+      let line = "";
+      let lines = [];
+    
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + " ";
+        const metrics = ctx.measureText(testLine);
+    
+        if (metrics.width > maxWidth && n > 0) {
+          lines.push(line);
+          line = words[n] + " ";
+        } else {
+          line = testLine;
+        }
+      }
+      lines.push(line);
+    
+      lines.forEach((l, i) => {
+        ctx.fillText(l.trim(), x, y + i * lineHeight);
+      });
+    }
+
+
+      
     const gl = this.gl;
     this.tex = createAndSetupTexture(gl, gl.LINEAR, gl.LINEAR, gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE);
 
@@ -702,33 +728,41 @@ class InfiniteGridMenu {
     this.atlasSize = Math.ceil(Math.sqrt(itemCount));
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const cellSize = 512;
-
+    const cellSize = 1024;
     canvas.width = this.atlasSize * cellSize;
     canvas.height = this.atlasSize * cellSize;
 
         // 🔥 Generate canvas-based cards instead of loading images
     const images = this.items.map((item) => {
-      const tempCanvas = document.createElement("canvas");
-      const tempCtx = tempCanvas.getContext("2d");
+        
+        const tempCanvas = document.createElement("canvas");
+        const tempCtx = tempCanvas.getContext("2d");
     
-      tempCanvas.width = 512;
-      tempCanvas.height = 512;
-    
-      // Background
-      tempCtx.fillStyle = "#111827";
-      tempCtx.fillRect(0, 0, 512, 512);
-    
-      // Title
-      tempCtx.fillStyle = "#22c55e";
-      tempCtx.font = "bold 36px sans-serif";
-      tempCtx.textAlign = "center";
-      tempCtx.fillText(item.title || "Menu", 256, 220);
-    
-      // Description
-      tempCtx.fillStyle = "#e5e7eb";
-      tempCtx.font = "18px sans-serif";
-      tempCtx.fillText(item.description || "", 256, 300);
+        tempCanvas.width = 1024;
+        tempCanvas.height = 1024;
+        
+        // Background
+        tempCtx.fillStyle = "#111827";
+        tempCtx.fillRect(0, 0, 1024, 1024);
+        
+        // Title
+        tempCtx.fillStyle = "#22c55e";
+        tempCtx.font = "bold 60px sans-serif";
+        tempCtx.textAlign = "center";
+        tempCtx.fillText(item.title || "Menu", 512, 350);
+        
+        // Description (wrapped)
+        tempCtx.fillStyle = "#e5e7eb";
+        tempCtx.font = "32px sans-serif";
+        
+        wrapText(
+          tempCtx,
+          item.description || "",
+          512,
+          450,
+          700,   // max width
+          45     // line height
+        );
     
       return tempCanvas;
     });
