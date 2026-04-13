@@ -83,8 +83,7 @@ export default function Home({ setActiveTab }) {
   
   
   return (
-    <div style={{ ...styles.container, position: "relative", overflow: "hidden" }}>
-  
+      <div style={{ ...styles.container, position: "relative" }}>  
       {/* 🔥 Silk Background */}
       <div style={styles.silkBackground}>
         <Silk 
@@ -222,7 +221,7 @@ const styles = {
 
   card: {
     width: "950px",
-    background: "rgba(255,255,255,0.85)",
+    background: "rgba(255,255,255,0.75)",
     backdropFilter: "blur(12px)",
     borderRadius: "18px",
     padding: "40px",
