@@ -11,7 +11,10 @@ export default function Home({ setActiveTab }) {
       content: (
         <div style={styles.menuCard}>
           <h3>🔬 Analysis</h3>
-          <p>Analyze farm conditions and get insights</p>
+          <p>
+            Analyze soil, weather, and environmental conditions to determine
+            crop compatibility and optimize farming strategies.
+          </p>
         </div>
       ),
       onClick: () => setActiveTab("analysis")
@@ -20,7 +23,10 @@ export default function Home({ setActiveTab }) {
       content: (
         <div style={styles.menuCard}>
           <h3>🤖 ML Model</h3>
-          <p>Run ML predictions</p>
+          <p>
+            Use machine learning to predict the best fertilizers based on
+            soil nutrients, crop type, and environmental factors.
+          </p>
         </div>
       ),
       onClick: () => setActiveTab("ml")
@@ -29,7 +35,10 @@ export default function Home({ setActiveTab }) {
       content: (
         <div style={styles.menuCard}>
           <h3>📈 Analytics</h3>
-          <p>View trends and stats</p>
+          <p>
+            View historical data, performance trends, and insights to improve
+            long-term agricultural productivity.
+          </p>
         </div>
       ),
       onClick: () => setActiveTab("analytics")
@@ -38,10 +47,37 @@ export default function Home({ setActiveTab }) {
       content: (
         <div style={styles.menuCard}>
           <h3>💬 Chatbot</h3>
-          <p>Ask AI for farming advice</p>
+          <p>
+            Interact with AI to get real-time farming advice, troubleshooting,
+            and recommendations.
+          </p>
         </div>
       ),
       onClick: () => setActiveTab("chat")
+    },
+    {
+      content: (
+        <div style={styles.menuCard}>
+          <h3>🌱 Crop Recommendations</h3>
+          <p>
+            Get suggestions on which crops to grow based on soil type,
+            climate, and seasonal conditions.
+          </p>
+        </div>
+      ),
+      onClick: () => setActiveTab("analysis")
+    },
+    {
+      content: (
+        <div style={styles.menuCard}>
+          <h3>🌦 Weather Insights</h3>
+          <p>
+            Monitor weather patterns and forecasts to plan irrigation,
+            fertilization, and harvesting efficiently.
+          </p>
+        </div>
+      ),
+      onClick: () => setActiveTab("analytics")
     }
   ];
   
