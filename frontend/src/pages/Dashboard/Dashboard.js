@@ -273,6 +273,16 @@ const styles = {
     fontWeight: "600",
     color: "#334155"
   },
+
+  menuContainer: {
+    width: "100%",
+    minHeight: "560px",
+    height: "70vh",
+    maxHeight: "720px",
+    borderRadius: "18px",
+    overflow: "hidden"
+  },
+  
   td: {
     padding: "12px",
     textAlign: "left",
@@ -557,15 +567,27 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   const menuItems = [
     {
-      title: "ML Model",
-      description: "Run predictions",
-      image: "https://picsum.photos/300",
+      title: "🔬 Analysis",
+      description: "Analyze soil, weather, and farm conditions",
+      image: "https://picsum.photos/seed/analysis/300",
+      onClick: () => setActiveTab("analysis")
+    },
+    {
+      title: "🤖 ML Model",
+      description: "Predict the best fertilizer for your crop",
+      image: "https://picsum.photos/seed/ml-model/300",
       onClick: () => setActiveTab("ml")
     },
     {
-      title: "Chatbot",
-      description: "Ask AI",
-      image: "https://picsum.photos/400",
+      title: "📈 Analytics",
+      description: "View trends and historical performance",
+      image: "https://picsum.photos/seed/analytics/300",
+      onClick: () => setActiveTab("analytics")
+    },
+    {
+      title: "💬 Chatbot",
+      description: "Ask AI and get real-time help",
+      image: "https://picsum.photos/seed/chatbot/300",
       onClick: () => setActiveTab("chat")
     }
   ];
@@ -626,7 +648,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       <main style={styles.main}>
         
         {activeTab === "menu" && (
-          <InfiniteMenu items={menuItems} />
+            <div style={styles.menuContainer}>
+            <InfiniteMenu items={menuItems} scale={0.95} />
+            </div> 
         )}
   
         {activeTab === "analysis" && (
