@@ -126,22 +126,7 @@ export default function Home({ setActiveTab }) {
       </motion.div>
 
       <div style={styles.menuSection}>
-        {menuItems.map((item, i) => (
-          <div
-            key={i}
-            onClick={item.onClick}
-            style={{
-              background: "rgba(255,255,255,0.7)",
-              padding: "20px",
-              borderRadius: "12px",
-              marginBottom: "10px",
-              cursor: "pointer"
-            }}
-          >
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-          </div>
-        ))}
+        <InfiniteMenu items={menuItems} />
       </div>
             
     </div>
