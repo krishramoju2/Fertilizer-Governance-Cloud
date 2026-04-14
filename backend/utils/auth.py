@@ -39,13 +39,22 @@ def token_required(f):
             return jsonify({"success": False, "message": "Token missing"}), 401
 
         try:
-            # ✅ Decode token
+
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        
-            # ✅ Fetch real user from DB
+
+            # 🔥 handle both possible keys
+            user_id = data.get("user_id") or data.get("id")
+            
+            if not user_id:
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid token: user_id missing"
+                }), 401
+            
             current_user = users_collection.find_one({
-                "_id": ObjectId(data["user_id"])
+                "_id": ObjectId(user_id)
             })
+            
         
             # ✅ If user not found
             if not current_user:
@@ -94,7 +103,18 @@ def admin_required(f):
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 
             current_user = users_collection.find_one({
-                '_id': ObjectId(data['user_id'])
+                user_id = data.get("user_id") or data.get("id")
+
+                if not user_id:
+                    return jsonify({
+                        "success": False,
+                        "message": "Invalid token"
+                    }), 401
+                
+                current_user = users_collection.find_one({
+                    '_id': ObjectId(user_id)
+                })
+            
             })
 
             if not current_user:
