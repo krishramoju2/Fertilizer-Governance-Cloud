@@ -37,11 +37,11 @@ const styles = {
   },
 
   fuzzyNameWrap: {
-    minWidth: "120px"
+    minWidth: "150px"
   },
 
   fuzzyCountWrap: {
-    minWidth: "72px",
+    minWidth: "96px",
     display: "flex",
     justifyContent: "flex-end"
   },
@@ -935,10 +935,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   >
                     <span style={styles.summaryIcon}>📊</span>
 
-                    <FuzzyText fontSize="30px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {String(analytics.total_analyses)}
                     </FuzzyText>
-                    <FuzzyText fontSize="13px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
+                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
                       Total Analyses
                     </FuzzyText>
                     
@@ -953,10 +953,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   >
                     <span style={styles.summaryIcon}>✅</span>
 
-                    <FuzzyText fontSize="30px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {`${analytics.compatibility_rate}%`}
                     </FuzzyText>
-                    <FuzzyText fontSize="13px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
+                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
                       Success Rate
                     </FuzzyText>
                     
@@ -971,10 +971,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   >
                     <span style={styles.summaryIcon}>🎯</span>
 
-                    <FuzzyText fontSize="30px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {`${analytics.average_score}%`}
                     </FuzzyText>
-                    <FuzzyText fontSize="13px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
+                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
                       Avg Score
                     </FuzzyText>
                     
@@ -989,7 +989,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   transition={{ duration: 0.55, ease: "easeOut" }}
                 >
 
-                  <FuzzyText fontSize="22px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
+                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
                     Crop Distribution
                   </FuzzyText>
                   
@@ -998,7 +998,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       <div key={crop} style={styles.chartItem}>
 
                         <div style={styles.fuzzyNameWrap}>
-                          <FuzzyText fontSize="14px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
+                          <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {crop}
                           </FuzzyText>
                         </div>
@@ -1013,7 +1013,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         </span>
 
                         <div style={styles.fuzzyCountWrap}>
-                          <FuzzyText fontSize="12px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
+                          <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {`${count} times`}
                           </FuzzyText>
                         </div>
@@ -1033,7 +1033,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 >
                   
 
-                  <FuzzyText fontSize="22px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
+                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
                     Fertilizer Usage
                   </FuzzyText>
                   
@@ -1042,7 +1042,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       <div key={fert} style={styles.chartItem}>
                       
                         <div style={styles.fuzzyNameWrap}>
-                          <FuzzyText fontSize="14px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
+                          <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {fert}
                           </FuzzyText>
                         </div>
@@ -1059,7 +1059,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                                                                                  
                         </span>
                         <div style={styles.fuzzyCountWrap}>
-                          <FuzzyText fontSize="12px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
+                          <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {`${count} times`}
                           </FuzzyText>
                         </div>                            
