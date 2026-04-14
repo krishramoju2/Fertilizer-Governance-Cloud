@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { GoogleLogin } from "@react-oauth/google";
+import Galaxy from "../../components/Auth/Galaxy";
 
 
 export default function AuthScreen({ setToken, setCurrentUser }) {
@@ -52,8 +53,29 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+
+      <div style={styles.container}>
+        <div style={styles.bgLayer}>
+          <Galaxy
+            mouseRepulsion
+            mouseInteraction
+            density={1}
+            glowIntensity={0.3}
+            saturation={0}
+            hueShift={140}
+            twinkleIntensity={0.3}
+            rotationSpeed={0.1}
+            repulsionStrength={2}
+            autoCenterRepulsion={0}
+            starSpeed={0.5}
+            speed={1}
+          />
+        </div>
+    
+        <div style={styles.overlay} />
+    
+        <div style={styles.card}>
+    
         <h2 style={styles.title}>{isLogin ? "Login" : "Register"}</h2>
 
         {error && <p style={styles.error}>{error}</p>}
@@ -135,7 +157,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         </div>
                     
 
-        
+
 
         <button
           style={styles.switch}
@@ -143,6 +165,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         >
           Switch to {isLogin ? "Register" : "Login"}
         </button>
+          
       </div>
     </div>
   );
@@ -151,20 +174,34 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
 /* ✅ STYLES OUTSIDE COMPONENT */
 const styles = {
   container: {
+    position: "relative",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    background: "linear-gradient(135deg, #1a472a, #66bb6a)"
+    overflow: "hidden"
   },
+
+
+  overlay: {
+    position: "absolute",
+    inset: 0,
+    background: "radial-gradient(circle at 30% 20%, rgba(26,71,42,0.25), rgba(0,0,0,0.45))",
+    zIndex: 1
+  },
+    
   card: {
-    background: "white",
+    position: "relative",
+    zIndex: 2,
+    background: "rgba(255,255,255,0.92)",
+    backdropFilter: "blur(10px)",
     padding: "40px",
     borderRadius: "15px",
     width: "350px",
-    boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.25)",
     textAlign: "center"
   },
+  
   title: {
     marginBottom: "20px",
     color: "#1a472a",
@@ -198,6 +235,7 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: "14px"
   },
+  
   button: {
     padding: "12px",
     background: "linear-gradient(135deg, #2e7d32, #66bb6a)",
@@ -216,6 +254,13 @@ const styles = {
     cursor: "pointer",
     fontWeight: "500"
   },
+
+  bgLayer: {
+    position: "absolute",
+    inset: 0,
+    zIndex: 0
+  },
+  
   error: {
     color: "red",
     marginBottom: "10px"
