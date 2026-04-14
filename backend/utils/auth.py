@@ -104,18 +104,17 @@ def admin_required(f):
             # ✅ FIXED: using SECRET_KEY instead of app.config
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 
-            current_user = users_collection.find_one({
-                user_id = data.get("user_id") or data.get("id")
+            user_id = data.get("user_id") or data.get("id")
 
-                if not user_id:
-                    return jsonify({
-                        "success": False,
-                        "message": "Invalid token"
-                    }), 401
+            if not user_id:
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid token"
+                }), 401
                 
-                current_user = users_collection.find_one({
-                    '_id': ObjectId(user_id)
-                })
+            current_user = users_collection.find_one({
+                '_id': ObjectId(user_id)
+            })
             
             })
 
