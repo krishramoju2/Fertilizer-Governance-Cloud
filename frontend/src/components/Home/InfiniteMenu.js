@@ -713,12 +713,11 @@ class InfiniteGridMenu {
         }
       }
     
-      lines.push(line);
+        lines.push(line);
     
-      lines.slice(0, 3).forEach((l, i) => {
-        context.fillText(l.trim(), x, y + i * lineHeight); // ✅ fixed
-      });
-    }
+        lines.slice(0, 5).forEach((l, i) => {
+          context.fillText(l.trim(), x, y + i * lineHeight);
+        });
 
       
     const gl = this.gl;
@@ -747,21 +746,24 @@ class InfiniteGridMenu {
         
         // Title (move UP + smaller)
         tempCtx.fillStyle = "#22c55e";
-        tempCtx.font = "bold 48px sans-serif";
+        tempCtx.font = "bold 52px sans-serif";
         tempCtx.textAlign = "center";
-        tempCtx.fillText(item.title || "Menu", 512, 260);
+        
+        tempCtx.fillText(item.title || "Menu", 512, 220);
         
         // Description (tighter + centered safely)
         tempCtx.fillStyle = "#e5e7eb";
-        tempCtx.font = "28px sans-serif";
+        tempCtx.font = "30px sans-serif";
+        
+        tempCtx.textAlign = "left";
         
         wrapText(
           tempCtx,
           item.description || "",
-          512,
+          200,
           420,
-          380,   // 🔥 IMPORTANT: reduce width (was 700)
-          42
+          620,
+          48
         );
     
       return tempCanvas;
