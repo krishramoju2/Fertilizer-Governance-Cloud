@@ -781,7 +781,7 @@ class InfiniteGridMenu {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
     gl.generateMipmap(gl.TEXTURE_2D);
 
-  };
+  }
 
   initDiscInstances(count) {
     const gl = this.gl;
