@@ -181,7 +181,6 @@ const styles = {
 
   menuSection: {
     width: "100%",
-    height: "600px",   // increase from 500
     marginTop: "60px",
     position: "relative",
     zIndex: 1
