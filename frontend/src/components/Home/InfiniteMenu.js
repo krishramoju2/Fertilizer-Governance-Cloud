@@ -924,7 +924,11 @@ class InfiniteGridMenu {
 
     if (!this.control.isPointerDown) {
       const nearestVertexIndex = this.findNearestVertexIndex();
-      const itemIndex = nearestVertexIndex % Math.max(1, this.items.length);
+    
+      const itemIndex = Math.floor(
+        (nearestVertexIndex / this.DISC_INSTANCE_COUNT) * this.items.length
+      );      
+        
       this.onActiveItemChange(itemIndex);
       const snapDirection = vec3.normalize(vec3.create(), this.getVertexWorldPosition(nearestVertexIndex));
       this.control.snapTargetDirection = snapDirection;
@@ -972,8 +976,7 @@ export default function InfiniteMenu({ items = [], scale = 1.0 }) {
     let sketch;
 
     const handleActiveItem = index => {
-      const itemIndex = index % items.length;
-      setActiveItem(items[itemIndex]);
+      setActiveItem(items[index]);
     };
 
     if (canvas) {
