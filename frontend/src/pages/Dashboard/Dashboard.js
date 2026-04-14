@@ -246,7 +246,7 @@ const styles = {
     marginTop: "20px"
   },
 
-  menuContainer: {
+  homeMenuWall: {
     width: "100%",
     minHeight: "560px",
     height: "70vh",
@@ -711,7 +711,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       <main style={styles.main}>
         
         {activeTab === "menu" && (
-            <div style={styles.menuContainer}>
+            <div style={styles.homeMenuWall}>
               <InfiniteMenu items={menuItems} scale={0.95} />
             </div> 
         )}
