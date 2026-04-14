@@ -39,7 +39,7 @@ const styles = {
 
   summaryGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
     gap: "20px"
   },
 
@@ -124,24 +124,41 @@ const styles = {
   userDetails: { flex: 1 },
   
   summaryCard: {
-    background: "linear-gradient(135deg, #1e293b, #334155)",
-    padding: "20px",
-    borderRadius: "16px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-    textAlign: "center",
-    color: "white"
+    background: "linear-gradient(145deg, rgba(30,64,175,0.92), rgba(15,118,110,0.9))",
+    padding: "22px",
+    borderRadius: "18px",
+    boxShadow: "0 14px 34px rgba(15,23,42,0.22)",
+    textAlign: "left",
+    color: "white",
+    border: "1px solid rgba(255,255,255,0.25)",
+    position: "relative",
+    overflow: "hidden"
   },
   
   summaryValue: {
-    fontSize: "24px",
+    fontSize: "30px",
     fontWeight: "700",
-    color: "#1a472a"
+    color: "#ffffff",
+    display: "block",
+    marginTop: "10px"
   },
   
   summaryLabel: {
-    fontSize: "14px",
-    color: "#777",
-    marginTop: "5px"
+    fontSize: "13px",
+    color: "rgba(255,255,255,0.85)",
+    marginTop: "6px",
+    display: "block"
+  },
+
+  summaryIcon: {
+    fontSize: "20px",
+    width: "40px",
+    height: "40px",
+    display: "grid",
+    placeItems: "center",
+    borderRadius: "12px",
+    background: "rgba(255,255,255,0.18)",
+    backdropFilter: "blur(6px)"
   },
   
   chartList: {
@@ -154,20 +171,45 @@ const styles = {
   chartItem: {
     display: "flex",
     alignItems: "center",
-    gap: "10px"
+    gap: "12px"
   },
   
   chartBar: {
     flex: 1,
-    height: "10px",
-    background: "#eee",
-    borderRadius: "5px",
-    overflow: "hidden"
+    height: "12px",
+    background: "rgba(148,163,184,0.25)",
+    borderRadius: "999px",
+    overflow: "hidden",
+    boxShadow: "inset 0 1px 3px rgba(15,23,42,0.18)"
   },
   
   chartFill: {
     height: "100%",
-    background: "linear-gradient(135deg, #2e7d32, #66bb6a)"
+    background: "linear-gradient(90deg, #14b8a6, #22c55e, #84cc16)",
+    borderRadius: "999px",
+    boxShadow: "0 0 14px rgba(34,197,94,0.35)"
+  },
+
+  chartCard: {
+    background: "rgba(255,255,255,0.82)",
+    border: "1px solid rgba(226,232,240,0.9)",
+    borderRadius: "16px",
+    padding: "22px",
+    boxShadow: "0 12px 24px rgba(15,23,42,0.08)"
+  },
+
+  chartName: {
+    minWidth: "120px",
+    fontWeight: "600",
+    color: "#1e293b"
+  },
+
+  chartCount: {
+    minWidth: "72px",
+    textAlign: "right",
+    fontSize: "12px",
+    color: "#334155",
+    fontWeight: "600"  
   },
 
   label: {
@@ -202,6 +244,15 @@ const styles = {
   
   main: {
     marginTop: "20px"
+  },
+
+  menuContainer: {
+    width: "100%",
+    minHeight: "560px",
+    height: "70vh",
+    maxHeight: "720px",
+    borderRadius: "18px",
+    overflow: "hidden"
   },
   
   card: {
@@ -576,7 +627,19 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       title: "🤖 ML Model",
       description: "Predict the best fertilizer for your crop",
       image: "https://picsum.photos/seed/ml-model/300",
+      onClick: () => setActiveTab("analysis")
+    },
+    {
+      title: "🤖 ML Model",
+      description: "Predict the best fertilizer for your crop",
+      image: "https://picsum.photos/seed/ml-model/300",
       onClick: () => setActiveTab("ml")
+    },
+    {
+      title: "📈 Analytics",
+      description: "View trends and historical performance",
+      image: "https://picsum.photos/seed/analytics/300",
+      onClick: () => setActiveTab("analytics")
     },
     {
       title: "📈 Analytics",
@@ -649,7 +712,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         
         {activeTab === "menu" && (
             <div style={styles.menuContainer}>
-            <InfiniteMenu items={menuItems} scale={0.95} />
+              <InfiniteMenu items={menuItems} scale={0.95} />
             </div> 
         )}
   
@@ -850,33 +913,36 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.summaryGrid}>
                   <motion.div
                     style={styles.summaryCard}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    whileHover={{ scale: 1.05 }}
+                    initial={{ opacity: 0, y: 36, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.55, ease: "easeOut" }}
+                    whileHover={{ y: -6, scale: 1.02 }}
                   >
+                    <span style={styles.summaryIcon}>📊</span>
                     <span style={styles.summaryValue}>{analytics.total_analyses}</span>
                     <span style={styles.summaryLabel}>Total Analyses</span>
                   </motion.div>
                 
                   <motion.div
                     style={styles.summaryCard}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    whileHover={{ scale: 1.05 }}
+                    initial={{ opacity: 0, y: 36, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.65, ease: "easeOut" }}
+                    whileHover={{ y: -6, scale: 1.02 }}
                   >
+                    <span style={styles.summaryIcon}>✅</span>
                     <span style={styles.summaryValue}>{analytics.compatibility_rate}%</span>
                     <span style={styles.summaryLabel}>Success Rate</span>
                   </motion.div>
                 
                   <motion.div
                     style={styles.summaryCard}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7 }}
-                    whileHover={{ scale: 1.05 }}
+                    initial={{ opacity: 0, y: 36, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.75, ease: "easeOut" }}
+                    whileHover={{ y: -6, scale: 1.02 }}
                   >
+                    <span style={styles.summaryIcon}>🎯</span>
                     <span style={styles.summaryValue}>{analytics.average_score}%</span>
                     <span style={styles.summaryLabel}>Avg Score</span>
                   </motion.div>
@@ -884,47 +950,56 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
                 {/* Crop Distribution */}
                 <motion.div
-                  style={styles.card}
-                  initial={{ opacity: 0, x: -50 }}
+                  style={styles.chartCard}
+                  initial={{ opacity: 0, x: -40, filter: "blur(6px)" }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6 }}
+                  transition={{ duration: 0.55, ease: "easeOut" }}
                 >
                   <h3 style={styles.cardTitle}>Crop Distribution</h3>
                   <div style={styles.chartList}>
                     {Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (
                       <div key={crop} style={styles.chartItem}>
-                        <span style={{ minWidth: "100px" }}>{crop}</span>
+                        <span style={styles.chartName}>{crop}</span>
                         <span style={styles.chartBar}>
-                          <span style={{ ...styles.chartFill, width: `${(count / analytics.total_analyses) * 100}%` }} />
+                          <motion.span
+                            style={styles.chartFill}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(count / analytics.total_analyses) * 100}%` }}
+                            transition={{ duration: 0.9, ease: "easeOut" }}
+                          />
                         </span>
-                        <span>{count} times</span>
+                        <span style={styles.chartCount}>{count} times</span>
                       </div>
                     ))}
                   </div>
                 </motion.div> 
 
+
+                      
                 <motion.div
-                  style={styles.card}
-                  initial={{ opacity: 0, x: 50 }}
+                  style={styles.chartCard}
+                  initial={{ opacity: 0, x: 40, filter: "blur(6px)" }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6 }}
+                  transition={{ duration: 0.55, ease: "easeOut" }}
                 >
+                  
                   <h3 style={styles.cardTitle}>Fertilizer Usage</h3>
                   <div style={styles.chartList}>
                     {Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (
                       <div key={fert} style={styles.chartItem}>
-                        <span style={{ minWidth: "100px" }}>{fert}</span>
+                      
+                        <span style={styles.chartName}>{fert}</span>
                         <span style={styles.chartBar}>
                                                                                  
                           <motion.span
                             style={styles.chartFill}
                             initial={{ width: 0 }}
                             animate={{ width: `${(count / analytics.total_analyses) * 100}%` }}
-                            transition={{ duration: 0.8 }}
+                            transition={{ duration: 0.9, ease: "easeOut" }}
                           />
                                                                                  
                         </span>
-                        <span>{count} times</span>
+                        <span style={styles.chartCount}>{count} times</span>
                       </div>
                     ))}
                   </div>
