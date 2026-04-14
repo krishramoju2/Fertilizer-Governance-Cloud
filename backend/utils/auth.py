@@ -116,7 +116,7 @@ def admin_required(f):
                 '_id': ObjectId(user_id)
             })
             
-            })
+            
 
             if not current_user:
                 return jsonify({
