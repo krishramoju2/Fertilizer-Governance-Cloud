@@ -3,6 +3,8 @@ import datetime
 import logging
 import traceback
 
+from bson import ObjectId
+
 # Auth
 from utils.auth import token_required
 
@@ -49,7 +51,7 @@ def predict(**kwargs):
 
         # 🔥 FIXED HISTORY (THIS WAS YOUR MAIN BUG)
         history_entry = {
-            'user_id': current_user['_id'],
+            'user_id': ObjectId(current_user['_id']),
 
             # ✅ USE input_data (NOT raw data)
             'input_data': {
@@ -65,7 +67,10 @@ def predict(**kwargs):
                 )
             },
 
-            'model': 'decision',
+            model_type = data.get('model', 'analysis')  # or pass from frontend
+            'model': model_type,
+            
+
             'timestamp': datetime.datetime.utcnow()
         }
 
