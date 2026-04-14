@@ -54,6 +54,9 @@ def predict(**kwargs):
                 'message': result.get('error', 'Analysis failed')
             }), 400
 
+        model_type = data.get('model', 'analysis')  # or pass from frontend
+
+
         # 🔥 FIXED HISTORY (THIS WAS YOUR MAIN BUG)
         history_entry = {
             'user_id': ensure_object_id(current_user['_id']),
@@ -71,7 +74,6 @@ def predict(**kwargs):
                 )
             },
 
-            model_type = data.get('model', 'analysis')  # or pass from frontend
             'model': model_type,
             
 
