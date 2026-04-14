@@ -41,6 +41,11 @@ The system integrates LangChain to build a structured and intelligent data proce
 12. **Google Authentication**
 In the system provides a fast and secure way for users to access the platform using their existing Google accounts. Instead of manually registering with an email and password, users can sign in through Google OAuth, which returns a credential token (JWT) on the frontend. This token is sent to the backend, where it is decoded to extract user information such as email and name. The backend then generates its own JWT to manage the user session securely. This approach eliminates the need for password storage, reduces security risks, and enables automatic user registration for first-time logins. It also improves user experience by simplifying the login process while maintaining secure communication between frontend and backend using token-based authentication.
 
+13. **Integration of ReactBits for Advanced UI Components**
+The frontend incorporates ReactBits, a collection of modern and reusable UI components, to enhance the visual experience and interactivity of the application. Features such as animated backgrounds (e.g., Silk effect), infinite scrolling menus, and dynamic card layouts are implemented using ReactBits to create a smooth and engaging interface. These components improve usability by providing intuitive navigation and visually appealing transitions, making the platform more accessible and enjoyable for users. The use of ReactBits also promotes modular design, allowing easy scalability and consistent styling across the application.
+
+
+
 **Chatbot Sample Test Cases**
 
 a)Temperature 30, moisture 60, soil loamy, crop wheat, urea 40 kg ; 
