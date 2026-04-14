@@ -696,14 +696,14 @@ class InfiniteGridMenu {
 
   #initTexture() {
 
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
       const words = text.split(" ");
       let line = "";
       let lines = [];
     
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + " ";
-        const metrics = ctx.measureText(testLine);
+        const metrics = context.measureText(testLine); // ✅ fixed
     
         if (metrics.width > maxWidth && n > 0) {
           lines.push(line);
@@ -712,13 +712,13 @@ class InfiniteGridMenu {
           line = testLine;
         }
       }
+    
       lines.push(line);
     
-    // 🔥 LIMIT to 3 lines so it NEVER overflows circle
-    lines.slice(0, 3).forEach((l, i) => {
-      ctx.fillText(l.trim(), x, y + i * lineHeight);
-    });
-
+      lines.slice(0, 3).forEach((l, i) => {
+        context.fillText(l.trim(), x, y + i * lineHeight); // ✅ fixed
+      });
+    }
 
       
     const gl = this.gl;
