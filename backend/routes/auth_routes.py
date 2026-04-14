@@ -41,9 +41,37 @@ def google_login():
         email = decoded.get("email")
         name = decoded.get("name")
 
+        # 🔥 find or create user first
+        user = users_collection.find_one({"email": email})
+        
+        if not user:
+            new_user = {
+                "email": email,
+                "name": name,
+                "farm_details": {
+                    "soil_type": "Loamy",
+                    "farm_size": 1,
+                    "location": "",
+                    "primary_crops": [],
+                    "temperature": 26,
+                    "humidity": 45
+                },
+                "is_admin": False,
+                "created_at": datetime.datetime.utcnow()
+            }
+            result = users_collection.insert_one(new_user)
+            user_id = str(result.inserted_id)
+        else:
+            user_id = str(user["_id"])
+        
+        # ✅ FIXED TOKEN
         app_token = jwt.encode(
-            {"user": email},
-            current_app.config['SECRET_KEY'],   # ✅ IMPORTANT CHANGE
+            {
+                "user_id": user_id,   ✅ IMPORTANT
+                "email": email,
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
+            },
+            current_app.config['SECRET_KEY'],
             algorithm="HS256"
         )
 
