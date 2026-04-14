@@ -4,6 +4,7 @@ import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 
 import "./InfiniteMenu.css";
 
+
 const discVertShaderSource = `#version 300 es
 
 uniform mat4 uWorldMatrix;
@@ -718,6 +719,9 @@ class InfiniteGridMenu {
         lines.slice(0, 5).forEach((l, i) => {
           context.fillText(l.trim(), x, y + i * lineHeight);
         });
+
+    }
+      
 
       
     const gl = this.gl;
