@@ -6,6 +6,9 @@ import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 import InfiniteMenu from "../../components/Home/InfiniteMenu";
 
+import { motion } from "framer-motion";
+
+
 const styles = {
   
   app: {
