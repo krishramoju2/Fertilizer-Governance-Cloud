@@ -929,7 +929,12 @@ class InfiniteGridMenu {
         (nearestVertexIndex / this.DISC_INSTANCE_COUNT) * this.items.length
       );      
         
-      this.onActiveItemChange(itemIndex);
+      if (this.lastActiveIndex !== itemIndex) {
+          this.lastActiveIndex = itemIndex;
+          this.onActiveItemChange(itemIndex);
+      }
+
+        
       const snapDirection = vec3.normalize(vec3.create(), this.getVertexWorldPosition(nearestVertexIndex));
       this.control.snapTargetDirection = snapDirection;
     } else {
