@@ -486,8 +486,8 @@ class ArcballControl {
       if (vec2.sqrLen(midPointerPos) > this.EPSILON) {
         vec2.add(midPointerPos, this.previousPointerPos, midPointerPos);
 
-        const p = this.#project(midPointerPos);
-        const q = this.#project(this.previousPointerPos);
+        const p = this.project(midPointerPos);
+        const q = this.project(this.previousPointerPos);
         const a = vec3.normalize(vec3.create(), p);
         const b = vec3.normalize(vec3.create(), q);
 
@@ -548,7 +548,7 @@ class ArcballControl {
     return { q: out, axis, angle };
   }
 
-  #project(pos) {
+  project(pos) {
     const r = 2;
     const w = this.canvas.clientWidth;
     const h = this.canvas.clientHeight;
@@ -573,10 +573,10 @@ class InfiniteGridMenu {
   TARGET_FRAME_DURATION = 1000 / 60;
   SPHERE_RADIUS = 2;
 
-  #time = 0;
-  #deltaTime = 0;
-  #deltaFrames = 0;
-  #frames = 0;
+  time = 0;
+  deltaTime = 0;
+  deltaFrames = 0;
+  frames = 0;
 
   camera = {
     matrix: mat4.create(),
@@ -605,7 +605,7 @@ class InfiniteGridMenu {
     this.onMovementChange = onMovementChange || (() => {});
     this.scaleFactor = scale;
     this.camera.position[2] = 3 * scale;
-    this.#init(onInit);
+    this.init(onInit);
   }
 
   resize() {
@@ -617,22 +617,22 @@ class InfiniteGridMenu {
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     }
 
-    this.#updateProjectionMatrix(gl);
+    this.updateProjectionMatrix(gl);
   }
 
   run(time = 0) {
-    this.#deltaTime = Math.min(32, time - this.#time);
-    this.#time = time;
-    this.#deltaFrames = this.#deltaTime / this.TARGET_FRAME_DURATION;
-    this.#frames += this.#deltaFrames;
+    this.deltaTime = Math.min(32, time - this.time);
+    this.time = time;
+    this.deltaFrames = this.deltaTime / this.TARGET_FRAME_DURATION;
+    this.frames += this.deltaFrames;
 
-    this.#animate(this.#deltaTime);
-    this.#render();
+    this.animate(this.deltaTime);
+    this.render();
 
     requestAnimationFrame(t => this.run(t));
   }
 
-  #init(onInit) {
+  init(onInit) {
     this.gl = this.canvas.getContext('webgl2', { antialias: true, alpha: false });
     const gl = this.gl;
     if (!gl) {
@@ -680,21 +680,21 @@ class InfiniteGridMenu {
     this.icoGeo.subdivide(1).spherize(this.SPHERE_RADIUS);
     this.instancePositions = this.icoGeo.vertices.map(v => v.position);
     this.DISC_INSTANCE_COUNT = this.icoGeo.vertices.length;
-    this.#initDiscInstances(this.DISC_INSTANCE_COUNT);
+    this.initDiscInstances(this.DISC_INSTANCE_COUNT);
 
     this.worldMatrix = mat4.create();
-    this.#initTexture();
+    this.initTexture();
 
-    this.control = new ArcballControl(this.canvas, deltaTime => this.#onControlUpdate(deltaTime));
+    this.control = new ArcballControl(this.canvas, deltaTime => this.onControlUpdate(deltaTime));
 
-    this.#updateCameraMatrix();
-    this.#updateProjectionMatrix(gl);
+    this.updateCameraMatrix();
+    this.updateProjectionMatrix(gl);
     this.resize();
 
     if (onInit) onInit(this);
   }
 
-  #initTexture() {
+  initTexture() {
 
     function wrapText(context, text, x, y, maxWidth, lineHeight) {
       const words = text.split(" ");
@@ -783,7 +783,7 @@ class InfiniteGridMenu {
 
   } 
 
-  #initDiscInstances(count) {
+  initDiscInstances(count) {
     const gl = this.gl;
     this.discInstances = {
       matricesArray: new Float32Array(count * 16),
@@ -810,7 +810,7 @@ class InfiniteGridMenu {
     gl.bindVertexArray(null);
   }
 
-  #animate(deltaTime) {
+  animate(deltaTime) {
     const gl = this.gl;
     this.control.update(deltaTime, this.TARGET_FRAME_DURATION);
 
@@ -836,7 +836,7 @@ class InfiniteGridMenu {
     this.smoothRotationVelocity = this.control.rotationVelocity;
   }
 
-  #render() {
+  render() {
     const gl = this.gl;
     gl.useProgram(this.discProgram);
 
@@ -866,7 +866,7 @@ class InfiniteGridMenu {
     gl.uniform1i(this.discLocations.uItemCount, this.items.length);
     gl.uniform1i(this.discLocations.uAtlasSize, this.atlasSize);
 
-    gl.uniform1f(this.discLocations.uFrames, this.#frames);
+    gl.uniform1f(this.discLocations.uFrames, this.frames);
     gl.uniform1f(this.discLocations.uScaleFactor, this.scaleFactor);
     gl.uniform1i(this.discLocations.uTex, 0);
     gl.activeTexture(gl.TEXTURE0);
@@ -882,12 +882,12 @@ class InfiniteGridMenu {
     );
   }
 
-  #updateCameraMatrix() {
+  updateCameraMatrix() {
     mat4.targetTo(this.camera.matrix, this.camera.position, [0, 0, 0], this.camera.up);
     mat4.invert(this.camera.matrices.view, this.camera.matrix);
   }
 
-  #updateProjectionMatrix(gl) {
+  updateProjectionMatrix(gl) {
     this.camera.aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const height = this.SPHERE_RADIUS * 0.35;
     const distance = this.camera.position[2];
@@ -906,7 +906,7 @@ class InfiniteGridMenu {
     mat4.invert(this.camera.matrices.inversProjection, this.camera.matrices.projection);
   }
 
-  #onControlUpdate(deltaTime) {
+  onControlUpdate(deltaTime) {
     const timeScale = deltaTime / this.TARGET_FRAME_DURATION + 0.0001;
     let damping = 5 / timeScale;
     let cameraTargetZ = 3 * this.scaleFactor;
@@ -919,10 +919,10 @@ class InfiniteGridMenu {
     }
 
     if (!this.control.isPointerDown) {
-      const nearestVertexIndex = this.#findNearestVertexIndex();
+      const nearestVertexIndex = this.findNearestVertexIndex();
       const itemIndex = nearestVertexIndex % Math.max(1, this.items.length);
       this.onActiveItemChange(itemIndex);
-      const snapDirection = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(nearestVertexIndex));
+      const snapDirection = vec3.normalize(vec3.create(), this.getVertexWorldPosition(nearestVertexIndex));
       this.control.snapTargetDirection = snapDirection;
     } else {
       cameraTargetZ += this.control.rotationVelocity * 80 + 2.5;
@@ -930,10 +930,10 @@ class InfiniteGridMenu {
     }
 
     this.camera.position[2] += (cameraTargetZ - this.camera.position[2]) / damping;
-    this.#updateCameraMatrix();
+    this.updateCameraMatrix();
   }
 
-  #findNearestVertexIndex() {
+  findNearestVertexIndex() {
     const n = this.control.snapDirection;
     const inversOrientation = quat.conjugate(quat.create(), this.control.orientation);
     const nt = vec3.transformQuat(vec3.create(), n, inversOrientation);
@@ -950,7 +950,7 @@ class InfiniteGridMenu {
     return nearestVertexIndex;
   }
 
-  #getVertexWorldPosition(index) {
+  getVertexWorldPosition(index) {
     const nearestVertexPos = this.instancePositions[index];
     return vec3.transformQuat(vec3.create(), nearestVertexPos, this.control.orientation);
   }
