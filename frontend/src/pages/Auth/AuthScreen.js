@@ -11,7 +11,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
 
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    password: "", 
     name: "",
     soil_type: "Loamy",
     farm_size: "1",
