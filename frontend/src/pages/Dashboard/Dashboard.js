@@ -952,7 +952,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <motion.div
                   style={styles.chartCard}
                   initial={{ opacity: 0, x: -40, filter: "blur(6px)" }}
-                  animate={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                   transition={{ duration: 0.55, ease: "easeOut" }}
                 >
                   <h3 style={styles.cardTitle}>Crop Distribution</h3>
@@ -979,7 +979,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <motion.div
                   style={styles.chartCard}
                   initial={{ opacity: 0, x: 40, filter: "blur(6px)" }}
-                  animate={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                   transition={{ duration: 0.55, ease: "easeOut" }}
                 >
                   
