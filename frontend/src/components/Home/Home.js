@@ -183,7 +183,12 @@ const styles = {
     width: "100%",
     marginTop: "60px",
     position: "relative",
-    zIndex: 1
+    zIndex: 1,
+    minHeight: "560px",
+    height: "70vh",
+    maxHeight: "720px",
+    borderRadius: "18px",
+    overflow: "hidden",
   },
 
   title: {
