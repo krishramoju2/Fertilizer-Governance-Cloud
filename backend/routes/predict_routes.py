@@ -60,6 +60,9 @@ def predict(**kwargs):
         # 🔥 FIXED HISTORY (THIS WAS YOUR MAIN BUG)
         history_entry = {
             'user_id': ensure_object_id(current_user['_id']),
+
+            'model': model_type,
+
             # ✅ USE input_data (NOT raw data)
             'input_data': {
                 'Crop_Type': input_data.get('Crop_Type'),
@@ -74,7 +77,6 @@ def predict(**kwargs):
                 )
             },
 
-            'model': model_type,
             
 
             'timestamp': datetime.datetime.utcnow()
