@@ -67,7 +67,7 @@ def google_login():
         # ✅ FIXED TOKEN
         app_token = jwt.encode(
             {
-                "user_id": user_id,   ✅ IMPORTANT
+                "user_id": user_id,   
                 "email": email,
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
             },
