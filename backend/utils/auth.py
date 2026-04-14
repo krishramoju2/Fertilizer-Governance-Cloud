@@ -28,6 +28,12 @@ SECRET_KEY = os.environ.get(
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+
+
+         # 🔥 ADD THIS BLOCK (VERY IMPORTANT)
+        if request.method == "OPTIONS":
+            return jsonify({"success": True}), 200
+            
         token = None
 
         if "Authorization" in request.headers:
