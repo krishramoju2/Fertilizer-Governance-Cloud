@@ -823,24 +823,48 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <div style={styles.analyticsContainer}>
             {analytics ? (
               <>
-                {/* Summary Cards */}
                 <div style={styles.summaryGrid}>
-                  <div style={styles.summaryCard}>
+                  <motion.div
+                    style={styles.summaryCard}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    whileHover={{ scale: 1.05 }}
+                  >
                     <span style={styles.summaryValue}>{analytics.total_analyses}</span>
                     <span style={styles.summaryLabel}>Total Analyses</span>
-                  </div>
-                  <div style={styles.summaryCard}>
+                  </motion.div>
+                
+                  <motion.div
+                    style={styles.summaryCard}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    whileHover={{ scale: 1.05 }}
+                  >
                     <span style={styles.summaryValue}>{analytics.compatibility_rate}%</span>
                     <span style={styles.summaryLabel}>Success Rate</span>
-                  </div>
-                  <div style={styles.summaryCard}>
+                  </motion.div>
+                
+                  <motion.div
+                    style={styles.summaryCard}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                    whileHover={{ scale: 1.05 }}
+                  >
                     <span style={styles.summaryValue}>{analytics.average_score}%</span>
                     <span style={styles.summaryLabel}>Avg Score</span>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Crop Distribution */}
-                <div style={styles.card}>
+                <motion.div
+                  style={styles.card}
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
                   <h3 style={styles.cardTitle}>Crop Distribution</h3>
                   <div style={styles.chartList}>
                     {Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (
@@ -855,15 +879,26 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 </div>
 
-                {/* Fertilizer Usage */}
-                <div style={styles.card}>
+                <motion.div
+                  style={styles.card}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
                   <h3 style={styles.cardTitle}>Fertilizer Usage</h3>
                   <div style={styles.chartList}>
                     {Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (
                       <div key={fert} style={styles.chartItem}>
                         <span style={{ minWidth: "100px" }}>{fert}</span>
                         <span style={styles.chartBar}>
-                          <span style={{ ...styles.chartFill, width: `${(count / analytics.total_analyses) * 100}%` }} />
+                                                                                 
+                          <motion.span
+                            style={styles.chartFill}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(count / analytics.total_analyses) * 100}%` }}
+                            transition={{ duration: 0.8 }}
+                          />
+                                                                                 
                         </span>
                         <span>{count} times</span>
                       </div>
