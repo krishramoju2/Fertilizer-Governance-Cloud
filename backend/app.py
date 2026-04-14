@@ -69,16 +69,15 @@ app.register_blueprint(analytics_bp)
 app.register_blueprint(admin_bp)
 
 
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
-CORS(
-    app,
-    origins=[
-        "http://localhost:3000",
-        "https://fertilizer-governance-cloud.vercel.app",
-        "https://fertilizer-governance-cloud-jftql8vo0-krishs-projects-39cc7848.vercel.app"
-    ],
-    supports_credentials=True
-)
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    return response
 
 
 
