@@ -877,7 +877,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.div> 
 
                 <motion.div
                   style={styles.card}
@@ -904,7 +904,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.div> 
               </>
             ) : (
               <p>Loading analytics...</p>
