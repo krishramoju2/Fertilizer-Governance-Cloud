@@ -1,5 +1,6 @@
 flask
 PyJWT==2.8.0
+bcrypt==4.1.2
 gunicorn
 anyio==4.11.0
 argon2-cffi==25.1.0
