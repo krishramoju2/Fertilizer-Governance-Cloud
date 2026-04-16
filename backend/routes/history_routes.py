@@ -1,7 +1,5 @@
 from flask import Blueprint, jsonify
-from bson import ObjectId
 from datetime import datetime
-
 from utils.auth import token_required
 from models.db import history_collection
 
@@ -14,17 +12,17 @@ def get_history(**kwargs):
         current_user = kwargs['current_user']
 
         history = list(history_collection.find(
-            {'user_id': current_user['_id']}
+            {'user_id': str(current_user['_id'])}   # 🔥 convert to string
         ).sort('timestamp', -1).limit(20))
 
         formatted_history = []
         for item in history:
             formatted_history.append({
-                'id': str(item['_id']),
+                'id': item['_id'],  # already string
                 'input_data': item.get('input_data', {}),
                 'result': item.get('result', {}),
                 'dashboard': item.get('dashboard', {}),
-                'model': item.get('model', 'decision'),  # 🔥 ADD THIS
+                'model': item.get('model', 'decision'),
                 'timestamp': item['timestamp'].isoformat() if item.get('timestamp') else None
             })
 
@@ -41,8 +39,8 @@ def delete_history(record_id, **kwargs):
         current_user = kwargs['current_user']
 
         result = history_collection.delete_one({
-            '_id': ObjectId(record_id),
-            'user_id': current_user['_id']
+            '_id': record_id,   # 🔥 no ObjectId
+            'user_id': str(current_user['_id'])
         })
 
         if result.deleted_count == 0:
