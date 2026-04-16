@@ -2,40 +2,26 @@
 from functools import wraps
 from flask import request, jsonify
 import jwt
-import hashlib
 import os
 import bcrypt
-
-
-
-
-
-
-
-from bson import ObjectId
 
 # DB imports
 from models.db import users_collection, check_db_connection
 
 # ==================== CONFIG ====================
 SECRET_KEY = os.environ.get('SECRET_KEY')
-
 if not SECRET_KEY:
     raise Exception("SECRET_KEY not set in environment")
-    
 
 # ==================== AUTH MIDDLEWARE ====================
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
 
-
-         # 🔥 ADD THIS BLOCK (VERY IMPORTANT)
         if request.method == "OPTIONS":
             return jsonify({"success": True}), 200
-            
-        token = None
 
+        token = None
         if "Authorization" in request.headers:
             parts = request.headers["Authorization"].split(" ")
             if len(parts) == 2:
@@ -47,32 +33,29 @@ def token_required(f):
         try:
             # ✅ Decode token
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        
-            # ✅ FIX HERE
+
             user_id = data.get("user_id") or data.get("id")
-        
+
             if not user_id:
                 return jsonify({
                     "success": False,
                     "message": "Invalid token: user_id missing"
                 }), 401
-        
-            # ✅ Fetch user
+
+            # ✅ NO BSON → direct string match
             current_user = users_collection.find_one({
-                "_id": ObjectId(user_id)
+                "_id": user_id
             })
-        
+
             if not current_user:
                 return jsonify({
                     "success": False,
                     "message": "User not found"
                 }), 401
-        
-        # ❌ Token expired
+
         except jwt.ExpiredSignatureError:
             return jsonify({"success": False, "message": "Token expired"}), 401
-        
-        # ❌ Invalid token
+
         except jwt.InvalidTokenError:
             return jsonify({"success": False, "message": "Invalid token"}), 401
 
@@ -87,7 +70,6 @@ def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
 
-        # ✅ Check DB connection
         if not check_db_connection():
             return jsonify({
                 'success': False,
@@ -107,7 +89,6 @@ def admin_required(f):
             }), 401
 
         try:
-            # ✅ FIXED: using SECRET_KEY instead of app.config
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 
             user_id = data.get("user_id") or data.get("id")
@@ -117,12 +98,11 @@ def admin_required(f):
                     "success": False,
                     "message": "Invalid token"
                 }), 401
-                
+
+            # ✅ NO BSON → direct string match
             current_user = users_collection.find_one({
-                '_id': ObjectId(user_id)
+                '_id': user_id
             })
-            
-            
 
             if not current_user:
                 return jsonify({
@@ -142,7 +122,6 @@ def admin_required(f):
                 'message': 'Invalid token'
             }), 401
 
-        # ✅ Admin check
         if not current_user.get('is_admin', False):
             return jsonify({
                 'success': False,
@@ -156,10 +135,9 @@ def admin_required(f):
 
 
 # ==================== PASSWORD UTILITIES ====================
-
-
 def hash_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode()
+
 
 def check_password(plain_password, hashed_password):
     return bcrypt.checkpw(
