@@ -46,7 +46,7 @@ def google_login():
         decoded = id_token.verify_oauth2_token(
             token,
             requests.Request(),
-            "YOUR_GOOGLE_CLIENT_ID"
+            "306459208757-f6ubq5173k79iub958r8nr76k0r42qa8.apps.googleusercontent.com"
         )
 
         email = decoded.get("email")
