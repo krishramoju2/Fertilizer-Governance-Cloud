@@ -1,4 +1,5 @@
 flask
+bson
 gunicorn
 anyio==4.11.0
 argon2-cffi==25.1.0
