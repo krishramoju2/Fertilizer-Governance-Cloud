@@ -4,7 +4,7 @@ from flask import request, jsonify
 import jwt
 import hashlib
 import os
-
+import bcrypt
 
 
 
@@ -18,11 +18,11 @@ from bson import ObjectId
 from models.db import users_collection, check_db_connection
 
 # ==================== CONFIG ====================
-SECRET_KEY = os.environ.get(
-    'SECRET_KEY',
-    'btech_project_2026_secret_key_change_this'
-)
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
+if not SECRET_KEY:
+    raise Exception("SECRET_KEY not set in environment")
+    
 
 # ==================== AUTH MIDDLEWARE ====================
 def token_required(f):
@@ -156,11 +156,13 @@ def admin_required(f):
 
 
 # ==================== PASSWORD UTILITIES ====================
-def hash_password(password):
-    """Hash password using SHA-256"""
-    salt = "farmadvisor_salt_2026"
-    return hashlib.sha256((password + salt).encode('utf-8')).hexdigest()
 
+
+def hash_password(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode()
 
 def check_password(plain_password, hashed_password):
-    return hash_password(plain_password) == str(hashed_password)
+    return bcrypt.checkpw(
+        plain_password.encode('utf-8'),
+        hashed_password.encode('utf-8')
+    )
