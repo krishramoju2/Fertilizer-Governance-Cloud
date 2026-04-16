@@ -4,6 +4,13 @@ import jwt
 import traceback
 import logging
 
+
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+
+
+
 # DB + utils
 from models.db import users_collection, check_db_connection
 from utils.auth import hash_password, check_password
@@ -36,7 +43,11 @@ def google_login():
         return jsonify({"success": False, "message": "No token"}), 400
 
     try:
-        decoded = jwt.decode(token, options={"verify_signature": False})
+        decoded = id_token.verify_oauth2_token(
+            token,
+            requests.Request(),
+            "YOUR_GOOGLE_CLIENT_ID"
+        )
 
         email = decoded.get("email")
         name = decoded.get("name")
