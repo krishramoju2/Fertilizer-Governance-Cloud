@@ -1,5 +1,6 @@
 flask
 langchain
+flask-cors
 langchain-core
 pymongo==4.6.1
 PyJWT==2.8.0
