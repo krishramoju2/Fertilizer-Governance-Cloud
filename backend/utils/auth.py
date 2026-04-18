@@ -42,6 +42,23 @@ def token_required(f):
                     "message": "Invalid token: user_id missing"
                 }), 401
 
+            # 🔥 HANDLE BYPASS USER
+            if user_id == "bypass-user":
+                current_user = {
+                    "_id": "bypass-user",
+                    "email": data.get("email"),
+                    "farm_details": {
+                        "soil_type": "Loamy",
+                        "temperature": 26,
+                        "humidity": 45
+                    },
+                    "is_admin": True
+                }
+            else:
+                current_user = users_collection.find_one({
+                    "_id": user_id
+                })
+            
             # ✅ NO BSON → direct string match
             current_user = users_collection.find_one({
                 "_id": user_id
