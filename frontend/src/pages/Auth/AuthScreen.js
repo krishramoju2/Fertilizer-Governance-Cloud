@@ -6,7 +6,7 @@ import Galaxy from "../../components/Auth/Galaxy";
 
 export default function AuthScreen({ setToken, setCurrentUser }) {
   const [isLogin, setIsLogin] = useState(true);
-  const [soilTypes, setSoilTypes] = useState([]);
+  const [soilTypes, setSoilTypes] = useState(["Loamy", "Sandy", "Clay"]);
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -24,7 +24,10 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
       try {
         const res = await api.get("/config/soil-types");
         if (res.data.success) setSoilTypes(res.data.data);
-      } catch {}
+      } catch (err) {
+          console.error("Soil types fetch failed:", err);
+          setTimeout(fetchSoilTypes, 2000); // retry after 2s
+        }
     };
     fetchSoilTypes();
   }, []);
@@ -118,9 +121,15 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
                   setFormData({ ...formData, soil_type: e.target.value })
                 }
               >
-                {soilTypes.map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
+                <option value="">Select Soil Type</option>
+              
+                {soilTypes && soilTypes.length > 0 ? (
+                  soilTypes.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))
+                ) : (
+                  <option>Loading...</option>
+                )}
               </select>
             </>
           )}
