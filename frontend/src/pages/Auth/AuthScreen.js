@@ -20,15 +20,25 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
   });
 
   useEffect(() => {
+    let retries = 0;
+  
     const fetchSoilTypes = async () => {
       try {
         const res = await api.get("/config/soil-types");
         if (res.data.success) setSoilTypes(res.data.data);
       } catch (err) {
-          console.error("Soil types fetch failed:", err);
-          setTimeout(fetchSoilTypes, 2000); // retry after 2s
+        console.error("Soil types fetch failed:", err);
+  
+        if (retries < 3) {
+          retries++;
+          setTimeout(fetchSoilTypes, 2000);
+        } else {
+          // ✅ fallback so UI never breaks
+          setSoilTypes(["Loamy", "Sandy", "Clay"]);
         }
+      }
     };
+  
     fetchSoilTypes();
   }, []);
 
