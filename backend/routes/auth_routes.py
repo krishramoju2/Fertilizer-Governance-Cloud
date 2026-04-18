@@ -176,8 +176,7 @@ def register():
 # ==================== LOGIN ====================
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
+
 
     try:
         data = request.get_json()
@@ -216,6 +215,9 @@ def login():
                 "token": token,
                 "user": fake_user
             }), 200
+
+            if not check_db_connection():
+                return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
         
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
