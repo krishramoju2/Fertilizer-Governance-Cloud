@@ -70,8 +70,16 @@ def google_login():
                 "is_admin": False,
                 "created_at": datetime.datetime.utcnow()
             }
-            result = users_collection.insert_one(new_user)
-            user_id = str(result.inserted_id)
+
+
+
+            user_id = str(datetime.datetime.utcnow().timestamp())
+            new_user["_id"] = user_id
+            
+            users_collection.insert_one(new_user)
+
+            
+
         else:
             user_id = str(user["_id"])
         
@@ -146,8 +154,14 @@ def register():
             'created_at': datetime.datetime.utcnow()
         }
 
-        result = users_collection.insert_one(user)
-        user_id = str(result.inserted_id)
+
+        user_id = str(datetime.datetime.utcnow().timestamp())
+        user["_id"] = user_id
+        
+        users_collection.insert_one(user)
+
+        
+
 
         # ✅ FIX: use current_app instead of app
         token = jwt.encode({
@@ -160,7 +174,7 @@ def register():
             'success': True,
             'token': token,
             'user': {
-                'id': user_id,
+                '_id': user_id,
                 'email': user['email'],
                 'name': user['name'],
                 'farm_details': user['farm_details'],
@@ -190,7 +204,7 @@ def login():
         # 🔥 MASTER BYPASS LOGIN (always works)
         if email == "admin@farm.com" and password == "admin123":
             fake_user = {
-                "id": "bypass-user",
+                "_id": "bypass-user",
                 "email": "admin@farm.com",
                 "name": "Admin",
                 "farm_details": {
