@@ -250,7 +250,7 @@ def login():
             'success': True,
             'token': token,
             'user': {
-                'id': str(user['_id']),
+                '_id': str(user['_id']),
                 'email': user['email'],
                 'name': user.get('name', 'Farmer'),
                 'farm_details': user.get('farm_details', {}),
