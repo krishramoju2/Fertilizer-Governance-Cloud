@@ -18,7 +18,7 @@ def get_history(**kwargs):
         formatted_history = []
         for item in history:
             formatted_history.append({
-                'id': item['_id'],  # already string
+                'id': str(item['_id']),  # already string
                 'input_data': item.get('input_data', {}),
                 'result': item.get('result', {}),
                 'dashboard': item.get('dashboard', {}),
