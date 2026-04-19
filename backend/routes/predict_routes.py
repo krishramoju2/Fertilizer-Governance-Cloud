@@ -3,12 +3,8 @@ import datetime
 import logging
 import traceback
 
-from bson import ObjectId
 
-def ensure_object_id(val):
-    if isinstance(val, ObjectId):
-        return val
-    return ObjectId(val)
+
 
 # Auth
 from utils.auth import token_required
@@ -59,7 +55,7 @@ def predict(**kwargs):
 
         # 🔥 FIXED HISTORY (THIS WAS YOUR MAIN BUG)
         history_entry = {
-            'user_id': ensure_object_id(current_user['_id']),
+            'user_id': str(current_user['_id']),
 
             'model': model_type,
 
