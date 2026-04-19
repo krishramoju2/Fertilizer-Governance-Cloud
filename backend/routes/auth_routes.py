@@ -216,8 +216,7 @@ def login():
                 "user": fake_user
             }), 200
 
-            if not check_db_connection():
-                return jsonify({'success': False, 'message': 'Database connection error. Please try again later.'}), 503
+           
         
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
