@@ -8,12 +8,6 @@ import FuzzyText from "../../components/Shared/FuzzyText";
 import { motion } from "framer-motion";
 import Silk from "../../components/Home/Silk";
 
-// ===== 4 CORNER IMAGES =====
-import agritechImg from "../Auth/agritech.png";
-import chatbotImg from "../Auth/chatbot.png";
-import harvestImg from "../Auth/harvest.png";
-import innovationImg from "../Auth/innovation.png";
-
 const styles = {
   app: {
     padding: "30px",
@@ -32,75 +26,6 @@ const styles = {
     height: "100vh",
     zIndex: 0,
     pointerEvents: "none"
-  },
-
-  // ===== CORNER IMAGE STYLES =====
-  cornerImageTL: {
-    position: "absolute",
-    top: "20px",
-    left: "20px",
-    zIndex: 2,
-    width: "170px",
-    height: "170px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  cornerImageTR: {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    zIndex: 2,
-    width: "170px",
-    height: "170px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  cornerImageBL: {
-    position: "absolute",
-    bottom: "20px",
-    left: "20px",
-    zIndex: 2,
-    width: "170px",
-    height: "170px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  cornerImageBR: {
-    position: "absolute",
-    bottom: "20px",
-    right: "20px",
-    zIndex: 2,
-    width: "170px",
-    height: "170px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  decoImage: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    opacity: 0.85,
-    transition: "opacity 0.3s ease, transform 0.3s ease"
   },
 
   rightPanel: {
@@ -526,16 +451,30 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
+  // ✅ FIXED: loadUserData with proper state updates
   const loadUserData = useCallback(async () => {
     try {
+      console.log("📡 Fetching history and analytics...");
       const [historyRes, analyticsRes] = await Promise.all([
         api.get('/history'),
         api.get('/analytics')
       ]);
-      if (historyRes.data.success) setHistory(historyRes.data.history || []);
-      if (analyticsRes.data.success) setAnalytics(analyticsRes.data.analytics);
+      console.log("📜 History API response:", historyRes.data);
+      console.log("📊 Analytics API response:", analyticsRes.data);
+      
+      if (historyRes.data.success) {
+        const historyData = historyRes.data.history || [];
+        console.log(`✅ Setting history with ${historyData.length} records`);
+        setHistory(historyData);
+      } else {
+        console.warn("History API returned success=false");
+      }
+      
+      if (analyticsRes.data.success) {
+        setAnalytics(analyticsRes.data.analytics);
+      }
     } catch (err) {
-      console.error('Error loading user data:', err);
+      console.error('❌ Error loading user data:', err);
     }
   }, []);
 
@@ -566,21 +505,14 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  const hasLoadedData = React.useRef(false);
-  
+  // Initial data load
   useEffect(() => {
     if (!currentUser) {
       console.log("No currentUser, skipping data fetch");
       return;
     }
     
-    if (hasLoadedData.current) {
-      return;
-    }
-    
     console.log("CurrentUser loaded, fetching dashboard data...");
-    hasLoadedData.current = true;
-    
     const loadData = async () => {
       await fetchConfig();
       await loadUserData();
@@ -590,8 +522,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
     
     loadData();
-  }, [currentUser, fetchConfig, loadUserData, loadUsers]);
+  }, [currentUser]); // Removed dependencies that cause loops
 
+  // ✅ Load most recent result from history when component mounts
   useEffect(() => {
     if (history.length > 0 && !result) {
       const mostRecent = history[0];
@@ -602,6 +535,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [history, result]);
 
+  // ✅ FIXED: handleAnalyze with proper history refresh
   const handleAnalyze = async () => {
     console.log("🔴 1. Analyze clicked");
     console.log("🔴 2. Inputs being sent:", inputs);
@@ -617,6 +551,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         console.log("🔴 6. Setting result:", response.data.result);
         setResult(response.data.result);
         showMessage('Analysis completed successfully!');
+        
         console.log("🔴 7. Reloading user data...");
         await loadUserData();
         console.log("🔴 8. User data reloaded");
@@ -632,8 +567,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     } finally {
       setLoading(false);
       console.log("🔴 13. Loading set to false");
-      console.log("🔴 14. Current result state:", result);
     }
+  };
+
+  // ✅ Manual refresh function for history
+  const refreshHistory = async () => {
+    console.log("🔄 Manual refresh triggered");
+    await loadUserData();
   };
 
   const generatePDF = () => {
@@ -772,20 +712,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           noiseIntensity={1.2}
           rotation={0}
         />
-      </div>
-
-      {/* ===== 4 CORNER IMAGES ===== */}
-      <div style={styles.cornerImageTL}>
-        <img src={agritechImg} alt="Agritech" style={styles.decoImage} />
-      </div>
-      <div style={styles.cornerImageTR}>
-        <img src={chatbotImg} alt="Chatbot" style={styles.decoImage} />
-      </div>
-      <div style={styles.cornerImageBL}>
-        <img src={harvestImg} alt="Harvest" style={styles.decoImage} />
-      </div>
-      <div style={styles.cornerImageBR}>
-        <img src={innovationImg} alt="Innovation" style={styles.decoImage} />
       </div>
 
       {/* Header */}
@@ -936,15 +862,29 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 )}
 
-                {/* History Table */}
+                {/* History Table - WILL NOW SHOW DATA */}
                 <div style={styles.historyCard}>
-                  <h3 style={styles.cardTitle}>Recent Analyses</h3>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+                    <h3 style={styles.cardTitle}>Recent Analyses</h3>
+                    <button 
+                      onClick={refreshHistory} 
+                      style={{ padding: "5px 10px", fontSize: "12px", background: "#4f46e5", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
+                    >
+                      🔄 Refresh
+                    </button>
+                  </div>
+                  
                   {history.length === 0 ? (
-                    <p style={styles.emptyText}>No analyses yet</p>
+                    <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
                   ) : (
                     <table style={styles.table}>
                       <thead>
-                        <tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr>
+                        <tr>
+                          <th style={styles.th}>Crop</th>
+                          <th style={styles.th}>Fertilizer</th>
+                          <th style={styles.th}>Status</th>
+                          <th style={styles.th}>Score</th>
+                        </tr>
                       </thead>
                       <tbody>
                         {history.map((item, i) => {
