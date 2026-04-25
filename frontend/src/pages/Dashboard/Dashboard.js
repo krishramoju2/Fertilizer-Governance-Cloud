@@ -6,11 +6,9 @@ import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 import FuzzyText from "../../components/Shared/FuzzyText";
 import { motion } from "framer-motion";
-import Silk from "../../components/Home/Silk";  // ✅ Silk background import
-
+import Silk from "../../components/Home/Silk";
 
 const styles = {
-  
   app: {
     padding: "30px",
     background: "linear-gradient(135deg, #eef2ff, #f8fafc)",
@@ -70,17 +68,17 @@ const styles = {
     gap: "20px"
   },
 
-  title: { 
-    fontSize: "22px", 
+  title: {
+    fontSize: "22px",
     fontWeight: "700",
     letterSpacing: "0.5px"
   },
-  
+
   welcome: { fontSize: "14px" },
-  
+
   errorMessage: { color: "red", margin: "10px 0" },
   successMessage: { color: "green", margin: "10px 0" },
-  
+
   resultCard: {
     background: "linear-gradient(135deg, #ffffff, #f1f5f9)",
     padding: "20px",
@@ -88,33 +86,33 @@ const styles = {
     marginBottom: "20px",
     boxShadow: "0 8px 25px rgba(0,0,0,0.08)"
   },
-  
+
   resultHeader: { display: "flex", justifyContent: "space-between", alignItems: "center" },
   resultTitle: { fontSize: "18px", fontWeight: "bold" },
-  
+
   scoreCircle: { textAlign: "center" },
   scoreNumber: { fontSize: "20px", fontWeight: "bold" },
   scoreLabel: { fontSize: "12px" },
-  
+
   resultGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" },
   resultItem: { padding: "10px", border: "1px solid #eee" },
   resultLabel: { fontWeight: "bold" },
   resultValue: { display: "block" },
   resultDetail: { fontSize: "12px", color: "#777" },
-  
+
   suggestionsBox: { marginTop: "10px" },
   suggestionsTitle: { fontWeight: "bold" },
   suggestion: { fontSize: "14px" },
-  
+
   pdfButton: { marginTop: "10px", padding: "10px", background: "#2e7d32", color: "white", border: "none", cursor: "pointer" },
-  
+
   historyCard: { marginTop: "20px", background: "white", padding: "20px", borderRadius: "10px" },
   emptyText: { color: "#777" },
-  
+
   adminContainer: { marginTop: "20px" },
   adminTitle: { fontSize: "20px", fontWeight: "bold" },
   adminTabs: { display: "flex", gap: "10px", marginBottom: "10px" },
-  
+
   adminTab: (active) => ({
     padding: "8px 16px",
     background: active ? "#2e7d32" : "#ccc",
@@ -123,20 +121,20 @@ const styles = {
     borderRadius: "5px",
     cursor: "pointer"
   }),
-  
+
   adminContent: {},
   manageSection: {},
   addItemRow: { display: "flex", gap: "10px", marginBottom: "10px" },
   addButton: { padding: "8px 16px", background: "#2e7d32", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" },
-  
+
   itemList: { listStyle: "none", padding: 0 },
   listItem: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid #eee" },
   removeButton: { background: "red", color: "white", border: "none", borderRadius: "3px", padding: "2px 8px", cursor: "pointer" },
-  
+
   userSection: {},
   userGrid: { display: "flex", gap: "20px" },
   userList: { width: "30%", maxHeight: "400px", overflowY: "auto" },
-  
+
   userCard: (active) => ({
     padding: "10px",
     border: "1px solid #ccc",
@@ -145,11 +143,11 @@ const styles = {
     background: active ? "#e8f5e9" : "white",
     cursor: "pointer"
   }),
-  
+
   userBadge: { fontSize: "10px", color: "#fff", background: "#333", padding: "2px 5px", borderRadius: "3px", display: "inline-block", marginTop: "5px" },
-  
+
   userDetails: { flex: 1 },
-  
+
   summaryCard: {
     background: "linear-gradient(145deg, rgba(30,64,175,0.92), rgba(15,118,110,0.9))",
     padding: "22px",
@@ -161,7 +159,7 @@ const styles = {
     position: "relative",
     overflow: "hidden"
   },
-  
+
   summaryValue: {
     fontSize: "30px",
     fontWeight: "700",
@@ -169,7 +167,7 @@ const styles = {
     display: "block",
     marginTop: "10px"
   },
-  
+
   summaryLabel: {
     fontSize: "13px",
     color: "rgba(255,255,255,0.85)",
@@ -187,20 +185,20 @@ const styles = {
     background: "rgba(255,255,255,0.18)",
     backdropFilter: "blur(6px)"
   },
-  
+
   chartList: {
     display: "flex",
     flexDirection: "column",
     gap: "10px",
     marginTop: "10px"
   },
-  
+
   chartItem: {
     display: "flex",
     alignItems: "center",
     gap: "12px"
   },
-  
+
   chartBar: {
     flex: 1,
     height: "12px",
@@ -209,7 +207,7 @@ const styles = {
     overflow: "hidden",
     boxShadow: "inset 0 1px 3px rgba(15,23,42,0.18)"
   },
-  
+
   chartFill: {
     height: "100%",
     background: "linear-gradient(90deg, #14b8a6, #22c55e, #84cc16)",
@@ -236,7 +234,7 @@ const styles = {
     textAlign: "right",
     fontSize: "12px",
     color: "#334155",
-    fontWeight: "600"  
+    fontWeight: "600"
   },
 
   label: {
@@ -245,9 +243,7 @@ const styles = {
     fontWeight: "500",
     color: "#333"
   },
-  
 
-  
   nav: {
     display: "flex",
     gap: "10px",
@@ -268,7 +264,7 @@ const styles = {
     transition: "all 0.3s ease",
     boxShadow: "0 6px 15px rgba(79,70,229,0.3)"
   },
-  
+
   main: {
     marginTop: "20px"
   },
@@ -317,7 +313,7 @@ const styles = {
     lineHeight: "1.5",
     margin: 0
   },
-  
+
   card: {
     background: "rgba(255,255,255,0.8)",
     backdropFilter: "blur(10px)",
@@ -327,13 +323,13 @@ const styles = {
     marginBottom: "20px",
     border: "1px solid rgba(255,255,255,0.3)"
   },
-    
+
   analysisGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "25px"
   },
-  
+
   inputGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
@@ -352,20 +348,18 @@ const styles = {
     boxSizing: "border-box",
     background: "#fff"
   },
-  
+
   cardTitle: {
     fontSize: "18px",
     fontWeight: "600",
     marginBottom: "10px",
     color: "#1a472a"
   },
-  
+
   table: {
     width: "100%",
     borderCollapse: "collapse"
   },
-  
-
 
   header: {
     background: "rgba(26, 71, 42, 0.85)",
@@ -398,13 +392,12 @@ const styles = {
     borderRadius: "18px",
     overflow: "hidden"
   },
-  
+
   td: {
     padding: "12px",
     textAlign: "left",
     borderBottom: "1px solid #f1f5f9"
   }
-
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -412,12 +405,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
 
-  // Dropdown options (dynamic)
   const [soilTypes, setSoilTypes] = useState([]);
   const [cropTypes, setCropTypes] = useState([]);
   const [fertilizerNames, setFertilizerNames] = useState([]);
 
-  // Analysis inputs - start with defaults
   const [inputs, setInputs] = useState({
     Temperature: 26,
     Moisture: 45,
@@ -426,12 +417,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     Fertilizer_Name: 'Urea',
     Fertilizer_Quantity: 30
   });
-  
+
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [analytics, setAnalytics] = useState(null);
 
-  // Admin state
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [userAnalytics, setUserAnalytics] = useState(null);
@@ -439,21 +429,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [adminManageType, setAdminManageType] = useState('soil');
   const [newItem, setNewItem] = useState('');
 
-  // Show message
   const showMessage = (text, type = 'success') => {
     setMessage({ text, type });
     setTimeout(() => setMessage({ text: '', type: '' }), 5000);
   };
 
-  // Update inputs when currentUser loads with weather data
   useEffect(() => {
     if (currentUser?.farm_details) {
-      console.log('Loading weather data:', {
-        temperature: currentUser.farm_details.temperature,
-        humidity: currentUser.farm_details.humidity,
-        soil_type: currentUser.farm_details.soil_type
-      });
-      
       setInputs(prev => ({
         ...prev,
         Temperature: currentUser.farm_details.temperature || prev.Temperature,
@@ -463,7 +445,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [currentUser]);
 
-  // Fetch dropdown options
   const fetchConfig = useCallback(async () => {
     try {
       const [soilRes, cropRes, fertRes] = await Promise.all([
@@ -479,7 +460,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Load user data
   const loadUserData = useCallback(async () => {
     try {
       const [historyRes, analyticsRes] = await Promise.all([
@@ -493,7 +473,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Load admin users
   const loadUsers = useCallback(async () => {
     try {
       const res = await api.get('/admin/users');
@@ -503,7 +482,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Load user analytics for selected user
   const loadUserAnalytics = useCallback(async (userId) => {
     try {
       const res = await api.get(`/admin/analytics/${userId}`);
@@ -513,7 +491,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Load user history for selected user
   const loadUserHistory = useCallback(async (userId) => {
     try {
       const res = await api.get(`/admin/history/${userId}`);
@@ -523,7 +500,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Initial fetch
   useEffect(() => {
     fetchConfig();
     if (currentUser) {
@@ -534,7 +510,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [currentUser, fetchConfig, loadUserData, loadUsers]);
 
-  // Run analysis
   const handleAnalyze = async () => {
     setLoading(true);
     try {
@@ -551,7 +526,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // Generate PDF
   const generatePDF = () => {
     if (!result) return;
     const doc = new jsPDF();
@@ -610,7 +584,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     doc.save(`FarmReport_${inputs.Crop_Type}_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
-  // Admin: add item
   const handleAddItem = async () => {
     if (!newItem.trim()) return;
     try {
@@ -630,7 +603,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // Admin: remove item
   const handleRemoveItem = async (item) => {
     try {
       let endpoint = '';
@@ -648,14 +620,12 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // When a user is selected from admin panel
   const handleSelectUser = (userId) => {
     setSelectedUserId(userId);
     loadUserAnalytics(userId);
     loadUserHistory(userId);
   };
 
-  // Helper function for nav button style
   const getNavButtonStyle = (tabName, isLogout = false) => {
     if (isLogout) {
       return {
@@ -669,8 +639,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
     return {
       padding: "8px 14px",
-      background: activeTab === tabName 
-        ? "linear-gradient(135deg, #4f46e5, #22c55e)" 
+      background: activeTab === tabName
+        ? "linear-gradient(135deg, #4f46e5, #22c55e)"
         : "rgba(255,255,255,0.2)",
       color: "white",
       border: "none",
@@ -683,9 +653,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   return (
     <div style={styles.app}>
-      {/* ✅ SILK BACKGROUND - NOW VISIBLE ON ALL TABS */}
+      {/* Silk Background */}
       <div style={styles.silkBackground}>
-        <Silk 
+        <Silk
           speed={3}
           scale={1}
           color="#f59e0b"
@@ -704,29 +674,23 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <button style={getNavButtonStyle('menu')} onClick={() => setActiveTab('menu')}>
             Home
           </button>
-                                           
           <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>
             Analysis
           </button>
-          
           <button style={getNavButtonStyle('ml')} onClick={() => setActiveTab('ml')}>
             ML Model
           </button>
-
           <button style={getNavButtonStyle('analytics')} onClick={() => setActiveTab('analytics')}>
             Analytics
           </button>
-
           {currentUser?.is_admin && (
             <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>
               Admin
             </button>
           )}
-
           <button style={getNavButtonStyle('chat')} onClick={() => setActiveTab('chat')}>
             Chatbot
           </button>
-
           <button style={getNavButtonStyle('', true)} onClick={() => {
             localStorage.removeItem('token');
             setToken(null);
@@ -745,8 +709,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
-        
-        {/* HOME TAB - STATIC MENU (NO ROTATION) */}
+        {/* HOME TAB */}
         {activeTab === "menu" && (
           <div style={styles.homeMenuWall}>
             <div style={styles.staticMenuGrid}>
@@ -769,10 +732,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </div>
           </div>
         )}
-  
+
+        {/* ANALYSIS TAB */}
         {activeTab === "analysis" && (
           <>
-            {/* Description Card */}
             <div style={styles.card}>
               <h2 style={styles.cardTitle}>🔬 Farm Analysis</h2>
               <p style={styles.description}>
@@ -781,13 +744,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 improvements to maximize yield and efficiency.
               </p>
             </div>
-      
-            {/* Main Grid */}
+
             <div style={styles.analysisGrid}>
-              {/* Input Section */}
               <div style={styles.card}>
                 <h2 style={styles.cardTitle}>Farm Inputs</h2>
-      
                 <div style={styles.inputGrid}>
                   <div>
                     <label style={styles.label}>Temperature (°C)</label>
@@ -798,7 +758,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       onChange={(e) => setInputs({ ...inputs, Temperature: parseFloat(e.target.value) })}
                     />
                   </div>
-      
                   <div>
                     <label style={styles.label}>Moisture (%)</label>
                     <input
@@ -808,7 +767,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       onChange={(e) => setInputs({ ...inputs, Moisture: parseFloat(e.target.value) })}
                     />
                   </div>
-      
                   <div>
                     <label style={styles.label}>Soil Type</label>
                     <select
@@ -821,7 +779,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       ))}
                     </select>
                   </div>
-      
                   <div>
                     <label style={styles.label}>Crop Type</label>
                     <select
@@ -834,7 +791,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       ))}
                     </select>
                   </div>
-      
                   <div>
                     <label style={styles.label}>Fertilizer</label>
                     <select
@@ -847,7 +803,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       ))}
                     </select>
                   </div>
-      
                   <div>
                     <label style={styles.label}>Quantity (kg/ha)</label>
                     <input
@@ -858,15 +813,12 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     />
                   </div>
                 </div>
-      
                 <button style={styles.analyzeButton} onClick={handleAnalyze} disabled={loading}>
                   {loading ? "Analyzing..." : "🔬 Analyze"}
                 </button>
               </div>
-      
-              {/* Results + History Section */}
+
               <div style={styles.rightPanel}>
-                {/* Result */}
                 {result && (
                   <div style={styles.resultCard}>
                     <div style={styles.resultHeader}>
@@ -876,49 +828,41 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         <span style={styles.scoreLabel}>Overall</span>
                       </div>
                     </div>
-      
                     <div style={styles.resultGrid}>
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Temperature</span>
                         <span style={styles.resultValue}>{result.temperature_status}</span>
                         <span style={styles.resultDetail}>{result.temperature_range}</span>
                       </div>
-      
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Moisture</span>
                         <span style={styles.resultValue}>{result.moisture_status}</span>
                         <span style={styles.resultDetail}>{result.moisture_range}</span>
                       </div>
-      
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Soil</span>
                         <span style={styles.resultValue}>{result.soil_compatibility}</span>
                       </div>
-      
                       <div style={styles.resultItem}>
                         <span style={styles.resultLabel}>Quantity</span>
                         <span style={styles.resultValue}>{result.quantity_status}</span>
                         <span style={styles.resultDetail}>{result.quantity_range}</span>
                       </div>
                     </div>
-      
                     <div style={styles.suggestionsBox}>
                       <h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>
                       {result.suggestions?.map((s, i) => (
                         <p key={i} style={styles.suggestion}>• {s}</p>
                       ))}
                     </div>
-      
                     <button style={styles.pdfButton} onClick={generatePDF}>
                       📄 Download PDF Report
                     </button>
                   </div>
                 )}
-      
-                {/* History */}
+
                 <div style={styles.historyCard}>
                   <h3 style={styles.cardTitle}>Recent Analyses</h3>
-      
                   {history.length === 0 ? (
                     <p style={styles.emptyText}>No analyses yet</p>
                   ) : (
@@ -953,6 +897,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </>
         )}
 
+        {/* ML TAB */}
         {activeTab === 'ml' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
@@ -960,6 +905,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
+        {/* ANALYTICS TAB */}
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
             {analytics ? (
@@ -973,16 +919,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     whileHover={{ y: -6, scale: 1.02 }}
                   >
                     <span style={styles.summaryIcon}>📊</span>
-
                     <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {String(analytics.total_analyses)}
                     </FuzzyText>
                     <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
                       Total Analyses
                     </FuzzyText>
-                    
                   </motion.div>
-                
                   <motion.div
                     style={styles.summaryCard}
                     initial={{ opacity: 0, y: 36, scale: 0.96 }}
@@ -991,16 +934,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     whileHover={{ y: -6, scale: 1.02 }}
                   >
                     <span style={styles.summaryIcon}>✅</span>
-
                     <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {`${analytics.compatibility_rate}%`}
                     </FuzzyText>
                     <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
                       Success Rate
                     </FuzzyText>
-                    
                   </motion.div>
-                
                   <motion.div
                     style={styles.summaryCard}
                     initial={{ opacity: 0, y: 36, scale: 0.96 }}
@@ -1009,39 +949,32 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     whileHover={{ y: -6, scale: 1.02 }}
                   >
                     <span style={styles.summaryIcon}>🎯</span>
-
                     <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {`${analytics.average_score}%`}
                     </FuzzyText>
                     <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
                       Avg Score
                     </FuzzyText>
-                    
                   </motion.div>
                 </div>
 
-                {/* Crop Distribution */}
                 <motion.div
                   style={styles.chartCard}
                   initial={{ opacity: 0, x: -40, filter: "blur(6px)" }}
                   animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                   transition={{ duration: 0.55, ease: "easeOut" }}
                 >
-
                   <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
                     Crop Distribution
                   </FuzzyText>
-                  
                   <div style={styles.chartList}>
                     {Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (
                       <div key={crop} style={styles.chartItem}>
-
                         <div style={styles.fuzzyNameWrap}>
                           <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {crop}
                           </FuzzyText>
                         </div>
-                      
                         <span style={styles.chartBar}>
                           <motion.span
                             style={styles.chartFill}
@@ -1050,62 +983,50 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             transition={{ duration: 0.9, ease: "easeOut" }}
                           />
                         </span>
-
                         <div style={styles.fuzzyCountWrap}>
                           <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {`${count} times`}
                           </FuzzyText>
                         </div>
-                            
                       </div>
                     ))}
                   </div>
-                </motion.div> 
+                </motion.div>
 
-
-                      
                 <motion.div
                   style={styles.chartCard}
                   initial={{ opacity: 0, x: 40, filter: "blur(6px)" }}
                   animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                   transition={{ duration: 0.55, ease: "easeOut" }}
                 >
-                  
-
                   <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
                     Fertilizer Usage
                   </FuzzyText>
-                  
                   <div style={styles.chartList}>
                     {Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (
                       <div key={fert} style={styles.chartItem}>
-                      
                         <div style={styles.fuzzyNameWrap}>
                           <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {fert}
                           </FuzzyText>
                         </div>
-
-                      
                         <span style={styles.chartBar}>
-                                                                                 
                           <motion.span
                             style={styles.chartFill}
                             initial={{ width: 0 }}
                             animate={{ width: `${(count / analytics.total_analyses) * 100}%` }}
                             transition={{ duration: 0.9, ease: "easeOut" }}
                           />
-                                                                                 
                         </span>
                         <div style={styles.fuzzyCountWrap}>
                           <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
                             {`${count} times`}
                           </FuzzyText>
-                        </div>                            
+                        </div>
                       </div>
                     ))}
                   </div>
-                </motion.div> 
+                </motion.div>
               </>
             ) : (
               <p>Loading analytics...</p>
@@ -1113,11 +1034,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
+        {/* ADMIN TAB */}
         {activeTab === 'admin' && currentUser?.is_admin && (
           <div style={styles.adminContainer}>
             <h2 style={styles.adminTitle}>Admin Panel</h2>
-
-            {/* Tabs within admin */}
             <div style={styles.adminTabs}>
               <button style={styles.adminTab(adminManageType === 'soil')} onClick={() => setAdminManageType('soil')}>
                 Soil Types
@@ -1133,7 +1053,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               </button>
             </div>
 
-            {/* Content based on adminManageType */}
             <div style={styles.adminContent}>
               {adminManageType === 'soil' && (
                 <div style={styles.manageSection}>
@@ -1249,7 +1168,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                                     <td style={styles.td}>{item.fertilizer}</td>
                                     <td style={styles.td}>{item.compatibility}</td>
                                     <td style={styles.td}>{item.score}%</td>
-                                  </table>
+                                  </tr>
                                 ))}
                               </tbody>
                             </table>
@@ -1266,6 +1185,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
+        {/* CHAT TAB */}
         {activeTab === 'chat' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Farm Chatbot</h2>
