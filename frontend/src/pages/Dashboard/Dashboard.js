@@ -500,20 +500,32 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // ✅ FIXED: Only fetch data when currentUser exists
+  // ✅ FIXED: useEffect with proper dependencies using useRef to prevent infinite loops
+  const hasLoadedData = React.useRef(false);
+  
   useEffect(() => {
     if (!currentUser) {
       console.log("No currentUser, skipping data fetch");
       return;
     }
     
-    console.log("CurrentUser loaded, fetching dashboard data...");
-    fetchConfig();
-    loadUserData();
-    if (currentUser.is_admin) {
-      loadUsers();
+    if (hasLoadedData.current) {
+      return;
     }
-  }, [currentUser]); // Only depend on currentUser, not the functions
+    
+    console.log("CurrentUser loaded, fetching dashboard data...");
+    hasLoadedData.current = true;
+    
+    const loadData = async () => {
+      await fetchConfig();
+      await loadUserData();
+      if (currentUser.is_admin) {
+        await loadUsers();
+      }
+    };
+    
+    loadData();
+  }, [currentUser, fetchConfig, loadUserData, loadUsers]);
 
   const handleAnalyze = async () => {
     setLoading(true);
