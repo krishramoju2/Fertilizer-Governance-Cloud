@@ -1,3 +1,13 @@
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect, useCallback } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -527,19 +537,48 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     loadData();
   }, [currentUser, fetchConfig, loadUserData, loadUsers]);
 
+  // ✅ Load most recent result from history when component mounts
+  useEffect(() => {
+    if (history.length > 0 && !result) {
+      const mostRecent = history[0];
+      if (mostRecent.result) {
+        console.log("Loading most recent result from history:", mostRecent.result);
+        setResult(mostRecent.result);
+      }
+    }
+  }, [history, result]);
+
   const handleAnalyze = async () => {
+    console.log("🔴 1. Analyze clicked");
+    console.log("🔴 2. Inputs being sent:", inputs);
+    
     setLoading(true);
     try {
+      console.log("🔴 3. Calling /predict...");
       const response = await api.post('/predict', inputs);
+      console.log("🔴 4. Response received:", response);
+      console.log("🔴 5. Response data:", response.data);
+      
       if (response.data.success) {
+        console.log("🔴 6. Setting result:", response.data.result);
         setResult(response.data.result);
         showMessage('Analysis completed successfully!');
-        loadUserData();
+        console.log("🔴 7. Reloading user data...");
+        await loadUserData();
+        console.log("🔴 8. User data reloaded");
+      } else {
+        console.log("🔴 9. API returned success=false");
+        showMessage(response.data.message || 'Analysis failed', 'error');
       }
     } catch (err) {
+      console.log("🔴 10. ERROR caught!");
+      console.log("🔴 11. Error:", err);
+      console.log("🔴 12. Error response:", err.response);
       showMessage(err.response?.data?.message || 'Analysis failed', 'error');
     } finally {
       setLoading(false);
+      console.log("🔴 13. Loading set to false");
+      console.log("🔴 14. Current result state:", result);
     }
   };
 
@@ -1185,7 +1224,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                                     <td style={styles.td}>{item.fertilizer}</td>
                                     <td style={styles.td}>{item.compatibility}</td>
                                     <td style={styles.td}>{item.score}%</td>
-                                  </tr>
+                                  </table>
                                 ))}
                               </tbody>
                             </table>
