@@ -74,17 +74,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 # ✅ CORRECT - Single CORS configuration
-CORS(app, resources={
-    r"/api/*": {
-        "origins": [
-            "https://fertilizer-governance-cloud.vercel.app",
-            "http://localhost:3000"
-        ],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
-        "supports_credentials": True
-    }
-})
+CORS(app, origins=[
+    "https://fertilizer-governance-cloud.vercel.app",
+    "http://localhost:3000"
+])
 
 
 @app.after_request
