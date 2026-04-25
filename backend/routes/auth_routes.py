@@ -269,6 +269,7 @@ import datetime
 import jwt
 import traceback
 import logging
+import uuid
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
@@ -291,15 +292,9 @@ def get_secret_key():
         return 'btech_project_2026_secret_key'
 
 
-def generate_string_id(email=None):
-    """Generate a simple string ID"""
-    import time
-    import random
-    suffix = f"{int(time.time())}_{random.randint(1000, 9999)}"
-    if email:
-        email_prefix = email.split('@')[0].replace('.', '_')
-        return f"user_{email_prefix}_{suffix}"
-    return f"user_{suffix}"
+def create_string_id():
+    """Generate a guaranteed string ID"""
+    return str(uuid.uuid4())  # Returns something like "550e8400-e29b-41d4-a716-446655440000"
 
 
 # ==================== GOOGLE LOGIN ====================
@@ -332,8 +327,8 @@ def google_login():
         user = users_collection.find_one({"email": email})
         
         if not user:
-            # Create a new user with string ID
-            user_id = generate_string_id(email)
+            # Create a new user with UUID string ID
+            user_id = create_string_id()
             
             new_user = {
                 "_id": user_id,
@@ -356,28 +351,24 @@ def google_login():
             users_collection.insert_one(new_user)
             user_id = new_user["_id"]
         else:
-            user_id = str(user["_id"])  # Ensure string
-            # Update name if changed
-            if user.get('name') != name:
-                users_collection.update_one({'_id': user['_id']}, {'$set': {'name': name}})
+            user_id = str(user["_id"])
         
-        # Generate JWT token - ensure user_id is string
+        # Generate JWT token - use string directly
         secret_key = get_secret_key()
-        app_token = jwt.encode(
-            {
-                "user_id": str(user_id),  # ✅ Force string
-                "email": email,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
-            },
-            secret_key,
-            algorithm="HS256"
-        )
+        
+        payload = {
+            "user_id": user_id,  # Already a string
+            "email": email,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }
+        
+        app_token = jwt.encode(payload, secret_key, algorithm="HS256")
 
         return jsonify({
             "success": True,
             "token": app_token,
             "user": {
-                "_id": str(user_id),
+                "_id": user_id,
                 "email": email,
                 "name": name,
                 "is_admin": False,
@@ -414,13 +405,15 @@ def register():
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
 
-        if users_collection.find_one({'email': email}):
+        # Check if user exists
+        existing = users_collection.find_one({'email': email})
+        if existing:
             return jsonify({'success': False, 'message': 'Email already registered'}), 400
 
         hashed_password = hash_password(password)
 
-        # Generate string ID
-        user_id = generate_string_id(email)
+        # Generate UUID string ID (guaranteed to be a string)
+        user_id = create_string_id()
 
         user = {
             '_id': user_id,
@@ -442,19 +435,23 @@ def register():
 
         users_collection.insert_one(user)
 
+        # Generate JWT token
         secret_key = get_secret_key()
-        token = jwt.encode({
-            'user_id': str(user_id),  # ✅ Force string
-            'email': user['email'],
+        
+        payload = {
+            'user_id': user_id,  # Already a string (UUID)
+            'email': email,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }, secret_key, algorithm='HS256')
+        }
+        
+        token = jwt.encode(payload, secret_key, algorithm='HS256')
 
         return jsonify({
             'success': True,
             'token': token,
             'user': {
-                '_id': str(user_id),
-                'email': user['email'],
+                '_id': user_id,
+                'email': email,
                 'name': user['name'],
                 'farm_details': user['farm_details'],
                 'is_admin': False
@@ -499,11 +496,14 @@ def login():
             }
             
             secret_key = get_secret_key()
-            token = jwt.encode({
-                "user_id": "bypass-user",  # ✅ Already string
+            
+            payload = {
+                "user_id": "bypass-user",  # String
                 "email": fake_user["email"],
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
-            }, secret_key, algorithm='HS256')
+            }
+            
+            token = jwt.encode(payload, secret_key, algorithm='HS256')
             
             return jsonify({
                 "success": True,
@@ -523,17 +523,22 @@ def login():
         if user.get('auth_provider') == 'google':
             return jsonify({'success': False, 'message': 'Please login with Google'}), 401
 
+        # Verify password
         if not check_password(password, user['password']):
             return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
-        user_id = str(user['_id'])  # ✅ Ensure string
+        # Get user_id as string - IMPORTANT
+        user_id = str(user['_id'])
+        
         secret_key = get_secret_key()
         
-        token = jwt.encode({
-            'user_id': user_id,  # ✅ Now a string
+        payload = {
+            'user_id': user_id,  # String
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }, secret_key, algorithm='HS256')
+        }
+        
+        token = jwt.encode(payload, secret_key, algorithm='HS256')
 
         return jsonify({
             'success': True,
