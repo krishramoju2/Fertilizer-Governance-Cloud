@@ -180,11 +180,12 @@ import bcrypt
 from models.db import users_collection, check_db_connection
 
 # ==================== CONFIG ====================
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_123')
+print(f"🔑 Auth.py SECRET_KEY loaded (length: {len(SECRET_KEY)})")
+
 if not SECRET_KEY:
-    # Fallback for development
-    SECRET_KEY = 'btech_project_2026_secret_key'
-    print("⚠️ Warning: SECRET_KEY not set in environment, using default")
+    print("⚠️ Warning: SECRET_KEY not set, using fallback")
+    SECRET_KEY = 'btech_project_2026_secret_key_123'
 
 # ==================== AUTH MIDDLEWARE ====================
 def token_required(f):
