@@ -267,185 +267,101 @@ def login():
 from flask import Blueprint, request, jsonify, current_app
 import datetime
 import jwt
-import traceback
-import logging
 import uuid
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
+import bcrypt
+import os
+from models.db import users_collection
 
-# DB + utils
-from models.db import users_collection, check_db_connection
-from utils.auth import hash_password, check_password
-
-logger = logging.getLogger(__name__)
-
-# Blueprint
 auth_bp = Blueprint('auth', __name__)
 
-
-# ==================== HELPER ====================
+# ==================== HELPER FUNCTIONS ====================
 def get_secret_key():
-    """Get secret key from app config or environment"""
+    """Get secret key from multiple sources"""
+    # Try from app config first
     try:
-        return current_app.config.get('SECRET_KEY', 'btech_project_2026_secret_key')
+        if current_app and current_app.config.get('SECRET_KEY'):
+            return current_app.config['SECRET_KEY']
     except:
-        return 'btech_project_2026_secret_key'
-
-
-def create_string_id():
-    """Generate a guaranteed string ID"""
-    return str(uuid.uuid4())  # Returns something like "550e8400-e29b-41d4-a716-446655440000"
-
-
-# ==================== GOOGLE LOGIN ====================
-@auth_bp.route('/google-login', methods=['POST', 'OPTIONS'])
-def google_login():
-    if request.method == "OPTIONS":
-        return '', 200
-        
-    data = request.get_json()
+        pass
     
-    if not data or "credential" not in data:
-        return jsonify({"success": False, "message": "Credential missing"}), 400
+    # Try from environment
+    secret = os.environ.get('SECRET_KEY')
+    if secret:
+        return secret
     
-    token = data.get("credential")
+    # Fallback (only for development)
+    print("⚠️ WARNING: Using fallback secret key - not secure for production")
+    return 'btech_project_2026_secret_key_fallback'
 
-    if not token:
-        return jsonify({"success": False, "message": "No token"}), 400
+def hash_password(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode()
 
-    try:
-        decoded = id_token.verify_oauth2_token(
-            token,
-            google_requests.Request(),
-            "306459208757-f6ubq5173k79iub958r8nr76k0r42qa8.apps.googleusercontent.com"
-        )
-
-        email = decoded.get("email")
-        name = decoded.get("name")
-
-        # Find or create user
-        user = users_collection.find_one({"email": email})
-        
-        if not user:
-            # Create a new user with UUID string ID
-            user_id = create_string_id()
-            
-            new_user = {
-                "_id": user_id,
-                "email": email,
-                "name": name,
-                "password": "",
-                "auth_provider": "google",
-                "farm_details": {
-                    "soil_type": "Loamy",
-                    "farm_size": 1,
-                    "location": "",
-                    "primary_crops": [],
-                    "temperature": 26,
-                    "humidity": 45
-                },
-                "is_admin": False,
-                "created_at": datetime.datetime.utcnow()
-            }
-            
-            users_collection.insert_one(new_user)
-            user_id = new_user["_id"]
-        else:
-            user_id = str(user["_id"])
-        
-        # Generate JWT token - use string directly
-        secret_key = get_secret_key()
-        
-        payload = {
-            "user_id": user_id,  # Already a string
-            "email": email,
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }
-        
-        app_token = jwt.encode(payload, secret_key, algorithm="HS256")
-
-        return jsonify({
-            "success": True,
-            "token": app_token,
-            "user": {
-                "_id": user_id,
-                "email": email,
-                "name": name,
-                "is_admin": False,
-                "farm_details": user.get("farm_details", {"soil_type": "Loamy"}) if user else {"soil_type": "Loamy"}
-            }
-        })
-
-    except Exception as e:
-        logger.error(f"Google login error: {traceback.format_exc()}")
-        return jsonify({
-            "success": False,
-            "message": f"Invalid Google token: {str(e)}"
-        }), 401
+def check_password(plain, hashed):
+    if not hashed:
+        return False
+    return bcrypt.checkpw(plain.encode('utf-8'), hashed.encode('utf-8'))
 
 
 # ==================== REGISTER ====================
 @auth_bp.route('/register', methods=['POST', 'OPTIONS'])
 def register():
-    if request.method == "OPTIONS":
+    if request.method == 'OPTIONS':
         return '', 200
     
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'Database connection error'}), 503
-
     try:
         data = request.get_json()
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
+        print("📝 Register request:", data)
+        
         email = data.get('email', '').lower().strip()
         password = data.get('password', '')
-
+        
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
-
+        
         # Check if user exists
         existing = users_collection.find_one({'email': email})
         if existing:
             return jsonify({'success': False, 'message': 'Email already registered'}), 400
-
-        hashed_password = hash_password(password)
-
-        # Generate UUID string ID (guaranteed to be a string)
-        user_id = create_string_id()
-
+        
+        # Create user
+        user_id = str(uuid.uuid4())
+        hashed = hash_password(password)
+        
         user = {
             '_id': user_id,
             'email': email,
-            'password': hashed_password,
+            'password': hashed,
             'name': data.get('name', email.split('@')[0]),
-            'auth_provider': 'email',
             'farm_details': {
                 'soil_type': data.get('soil_type', 'Loamy'),
                 'farm_size': float(data.get('farm_size', 1)),
                 'location': data.get('location', ''),
                 'primary_crops': data.get('primary_crops', []),
-                'temperature': data.get('temperature', 26),
-                'humidity': data.get('humidity', 45),
+                'temperature': 26,
+                'humidity': 45
             },
             'is_admin': False,
             'created_at': datetime.datetime.utcnow()
         }
-
-        users_collection.insert_one(user)
-
-        # Generate JWT token
-        secret_key = get_secret_key()
         
-        payload = {
-            'user_id': user_id,  # Already a string (UUID)
+        users_collection.insert_one(user)
+        
+        # Create token - IMPORTANT: Get secret key as string
+        secret_key = get_secret_key()
+        print(f"🔑 Secret key loaded (length: {len(secret_key)})")
+        
+        # Ensure secret_key is a string
+        if not isinstance(secret_key, str):
+            secret_key = str(secret_key)
+        
+        token_payload = {
+            'user_id': user_id,
             'email': email,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }
         
-        token = jwt.encode(payload, secret_key, algorithm='HS256')
-
+        token = jwt.encode(token_payload, secret_key, algorithm='HS256')
+        
         return jsonify({
             'success': True,
             'token': token,
@@ -456,90 +372,74 @@ def register():
                 'farm_details': user['farm_details'],
                 'is_admin': False
             }
-        }), 201
-
+        })
+        
     except Exception as e:
-        logger.error(f"Registration error: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': f'Registration failed: {str(e)}'}), 500
+        print(f"❌ Register error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 # ==================== LOGIN ====================
 @auth_bp.route('/login', methods=['POST', 'OPTIONS'])
 def login():
-    if request.method == "OPTIONS":
+    if request.method == 'OPTIONS':
         return '', 200
-
+    
     try:
         data = request.get_json()
-
-        if not data:
-            return jsonify({'success': False, 'message': 'No data provided'}), 400
-
+        print("🔐 Login request:", data)
+        
         email = data.get('email', '').lower().strip()
         password = data.get('password', '')
-
-        # MASTER BYPASS LOGIN (always works)
-        if email == "admin@farm.com" and password == "admin123":
-            fake_user = {
-                "_id": "bypass-user",
-                "email": "admin@farm.com",
-                "name": "Admin",
-                "farm_details": {
-                    "soil_type": "Loamy",
-                    "farm_size": 1,
-                    "location": "Test Farm",
-                    "primary_crops": [],
-                    "temperature": 26,
-                    "humidity": 45
-                },
-                "is_admin": True
-            }
-            
+        
+        # Admin bypass
+        if email == 'admin@farm.com' and password == 'admin123':
             secret_key = get_secret_key()
+            if not isinstance(secret_key, str):
+                secret_key = str(secret_key)
             
-            payload = {
-                "user_id": "bypass-user",  # String
-                "email": fake_user["email"],
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
-            }
-            
-            token = jwt.encode(payload, secret_key, algorithm='HS256')
+            token = jwt.encode({
+                'user_id': 'bypass-user',
+                'email': email,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+            }, secret_key, algorithm='HS256')
             
             return jsonify({
-                "success": True,
-                "token": token,
-                "user": fake_user
-            }), 200
-
+                'success': True,
+                'token': token,
+                'user': {
+                    '_id': 'bypass-user',
+                    'email': email,
+                    'name': 'Admin',
+                    'is_admin': True,
+                    'farm_details': {'soil_type': 'Loamy', 'temperature': 26, 'humidity': 45}
+                }
+            })
+        
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
-
+        
         user = users_collection.find_one({'email': email})
-
         if not user:
             return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
-
-        # Check if user signed up with Google
-        if user.get('auth_provider') == 'google':
-            return jsonify({'success': False, 'message': 'Please login with Google'}), 401
-
-        # Verify password
+        
         if not check_password(password, user['password']):
             return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
-
-        # Get user_id as string - IMPORTANT
-        user_id = str(user['_id'])
         
+        user_id = str(user['_id'])
         secret_key = get_secret_key()
         
-        payload = {
-            'user_id': user_id,  # String
+        if not isinstance(secret_key, str):
+            secret_key = str(secret_key)
+        
+        token = jwt.encode({
+            'user_id': user_id,
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }
+        }, secret_key, algorithm='HS256')
         
-        token = jwt.encode(payload, secret_key, algorithm='HS256')
-
         return jsonify({
             'success': True,
             'token': token,
@@ -550,17 +450,101 @@ def login():
                 'farm_details': user.get('farm_details', {}),
                 'is_admin': user.get('is_admin', False)
             }
-        }), 200
-
+        })
+        
     except Exception as e:
-        logger.error(f"Login error: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': f'Login failed: {str(e)}'}), 500
+        print(f"❌ Login error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
-# ==================== GET CURRENT USER (ME) ====================
+# ==================== GOOGLE LOGIN ====================
+@auth_bp.route('/google-login', methods=['POST', 'OPTIONS'])
+def google_login():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        data = request.get_json()
+        credential = data.get('credential')
+        
+        if not credential:
+            return jsonify({'success': False, 'message': 'Credential missing'}), 400
+        
+        import requests
+        url = "https://oauth2.googleapis.com/tokeninfo"
+        params = {"id_token": credential}
+        response = requests.get(url, params=params)
+        
+        if response.status_code != 200:
+            return jsonify({'success': False, 'message': 'Invalid Google token'}), 401
+        
+        token_info = response.json()
+        email = token_info.get('email')
+        name = token_info.get('name', 'Google User')
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Email not provided'}), 400
+        
+        user = users_collection.find_one({'email': email})
+        
+        if not user:
+            user_id = str(uuid.uuid4())
+            new_user = {
+                '_id': user_id,
+                'email': email,
+                'name': name,
+                'password': '',
+                'farm_details': {
+                    'soil_type': 'Loamy',
+                    'farm_size': 1,
+                    'location': '',
+                    'primary_crops': [],
+                    'temperature': 26,
+                    'humidity': 45
+                },
+                'is_admin': False,
+                'created_at': datetime.datetime.utcnow()
+            }
+            users_collection.insert_one(new_user)
+            user_id = new_user['_id']
+        else:
+            user_id = str(user['_id'])
+        
+        secret_key = get_secret_key()
+        if not isinstance(secret_key, str):
+            secret_key = str(secret_key)
+        
+        token = jwt.encode({
+            'user_id': user_id,
+            'email': email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }, secret_key, algorithm='HS256')
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'user': {
+                '_id': user_id,
+                'email': email,
+                'name': name,
+                'is_admin': False,
+                'farm_details': {'soil_type': 'Loamy'}
+            }
+        })
+        
+    except Exception as e:
+        print(f"❌ Google login error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# ==================== GET CURRENT USER ====================
 @auth_bp.route('/me', methods=['GET', 'OPTIONS'])
 def get_me():
-    if request.method == "OPTIONS":
+    if request.method == 'OPTIONS':
         return '', 200
     
     auth_header = request.headers.get('Authorization')
@@ -571,7 +555,10 @@ def get_me():
     
     try:
         secret_key = get_secret_key()
-        data = jwt.decode(token, secret_key, algorithms=["HS256"])
+        if not isinstance(secret_key, str):
+            secret_key = str(secret_key)
+        
+        data = jwt.decode(token, secret_key, algorithms=['HS256'])
         user_id = data.get('user_id')
         
         if user_id == 'bypass-user':
@@ -582,7 +569,7 @@ def get_me():
                     'email': 'admin@farm.com',
                     'name': 'Admin',
                     'is_admin': True,
-                    'farm_details': {'soil_type': 'Loamy', 'temperature': 26, 'humidity': 45}
+                    'farm_details': {'soil_type': 'Loamy'}
                 }
             })
         
@@ -600,9 +587,6 @@ def get_me():
                 'farm_details': user.get('farm_details', {})
             }
         })
-    except jwt.ExpiredSignatureError:
-        return jsonify({'success': False, 'message': 'Token expired'}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({'success': False, 'message': 'Invalid token'}), 401
     except Exception as e:
+        print(f"❌ /me error: {e}")
         return jsonify({'success': False, 'message': str(e)}), 401
