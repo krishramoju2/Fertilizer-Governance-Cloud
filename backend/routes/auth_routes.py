@@ -278,7 +278,7 @@ from utils.auth import hash_password, check_password
 
 logger = logging.getLogger(__name__)
 
-# ✅ Blueprint
+# Blueprint
 auth_bp = Blueprint('auth', __name__)
 
 
@@ -286,10 +286,20 @@ auth_bp = Blueprint('auth', __name__)
 def get_secret_key():
     """Get secret key from app config or environment"""
     try:
-        from flask import current_app
         return current_app.config.get('SECRET_KEY', 'btech_project_2026_secret_key')
     except:
         return 'btech_project_2026_secret_key'
+
+
+def generate_string_id(email=None):
+    """Generate a simple string ID"""
+    import time
+    import random
+    suffix = f"{int(time.time())}_{random.randint(1000, 9999)}"
+    if email:
+        email_prefix = email.split('@')[0].replace('.', '_')
+        return f"user_{email_prefix}_{suffix}"
+    return f"user_{suffix}"
 
 
 # ==================== GOOGLE LOGIN ====================
@@ -301,10 +311,7 @@ def google_login():
     data = request.get_json()
     
     if not data or "credential" not in data:
-        return jsonify({
-            "success": False,
-            "message": "Credential missing"
-        }), 400
+        return jsonify({"success": False, "message": "Credential missing"}), 400
     
     token = data.get("credential")
 
@@ -325,9 +332,8 @@ def google_login():
         user = users_collection.find_one({"email": email})
         
         if not user:
-            # Create a new user with string ID (not ObjectId)
-            import time
-            user_id = f"google_{int(time.time())}_{email.replace('@', '_')}"
+            # Create a new user with string ID
+            user_id = generate_string_id(email)
             
             new_user = {
                 "_id": user_id,
@@ -350,16 +356,16 @@ def google_login():
             users_collection.insert_one(new_user)
             user_id = new_user["_id"]
         else:
-            user_id = str(user["_id"])
+            user_id = str(user["_id"])  # Ensure string
             # Update name if changed
             if user.get('name') != name:
                 users_collection.update_one({'_id': user['_id']}, {'$set': {'name': name}})
         
-        # Generate JWT token
+        # Generate JWT token - ensure user_id is string
         secret_key = get_secret_key()
         app_token = jwt.encode(
             {
-                "user_id": user_id,
+                "user_id": str(user_id),  # ✅ Force string
                 "email": email,
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
             },
@@ -371,7 +377,7 @@ def google_login():
             "success": True,
             "token": app_token,
             "user": {
-                "_id": user_id,
+                "_id": str(user_id),
                 "email": email,
                 "name": name,
                 "is_admin": False,
@@ -413,9 +419,8 @@ def register():
 
         hashed_password = hash_password(password)
 
-        # Generate simple string ID (not ObjectId)
-        import time
-        user_id = f"user_{int(time.time())}_{email.replace('@', '_')}"
+        # Generate string ID
+        user_id = generate_string_id(email)
 
         user = {
             '_id': user_id,
@@ -439,7 +444,7 @@ def register():
 
         secret_key = get_secret_key()
         token = jwt.encode({
-            'user_id': user_id,
+            'user_id': str(user_id),  # ✅ Force string
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }, secret_key, algorithm='HS256')
@@ -448,7 +453,7 @@ def register():
             'success': True,
             'token': token,
             'user': {
-                '_id': user_id,
+                '_id': str(user_id),
                 'email': user['email'],
                 'name': user['name'],
                 'farm_details': user['farm_details'],
@@ -495,7 +500,7 @@ def login():
             
             secret_key = get_secret_key()
             token = jwt.encode({
-                "user_id": "bypass-user",
+                "user_id": "bypass-user",  # ✅ Already string
                 "email": fake_user["email"],
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
             }, secret_key, algorithm='HS256')
@@ -521,11 +526,11 @@ def login():
         if not check_password(password, user['password']):
             return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
 
-        user_id = str(user['_id'])
+        user_id = str(user['_id'])  # ✅ Ensure string
         secret_key = get_secret_key()
         
         token = jwt.encode({
-            'user_id': user_id,
+            'user_id': user_id,  # ✅ Now a string
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }, secret_key, algorithm='HS256')
@@ -553,9 +558,6 @@ def get_me():
     if request.method == "OPTIONS":
         return '', 200
     
-    from utils.auth import token_required
-    
-    # This is a wrapper - we need to manually check token
     auth_header = request.headers.get('Authorization')
     if not auth_header or not auth_header.startswith('Bearer '):
         return jsonify({'success': False, 'message': 'Token missing'}), 401
@@ -575,7 +577,7 @@ def get_me():
                     'email': 'admin@farm.com',
                     'name': 'Admin',
                     'is_admin': True,
-                    'farm_details': {'soil_type': 'Loamy'}
+                    'farm_details': {'soil_type': 'Loamy', 'temperature': 26, 'humidity': 45}
                 }
             })
         
