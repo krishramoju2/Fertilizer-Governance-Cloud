@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Chatbot from "../../components/Chatbot/Chatbot";
@@ -425,6 +425,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     setTimeout(() => setMessage({ text: '', type: '' }), 5000);
   };
 
+  // Update inputs from user farm details
   useEffect(() => {
     if (currentUser?.farm_details) {
       setInputs(prev => ({
@@ -436,6 +437,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [currentUser]);
 
+  // Fetch config (soil types, crop types, fertilizer names)
   const fetchConfig = useCallback(async () => {
     try {
       const [soilRes, cropRes, fertRes] = await Promise.all([
@@ -451,7 +453,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // ✅ FIXED: loadUserData with proper state updates
+  // Load user data (history and analytics)
   const loadUserData = useCallback(async () => {
     try {
       console.log("📡 Fetching history and analytics...");
@@ -505,14 +507,22 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Initial data load
+  // Initial data load - runs only once when currentUser is available
+  const hasLoadedInitialData = useRef(false);
+  
   useEffect(() => {
     if (!currentUser) {
       console.log("No currentUser, skipping data fetch");
       return;
     }
     
+    if (hasLoadedInitialData.current) {
+      return;
+    }
+    
     console.log("CurrentUser loaded, fetching dashboard data...");
+    hasLoadedInitialData.current = true;
+    
     const loadData = async () => {
       await fetchConfig();
       await loadUserData();
@@ -522,9 +532,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
     
     loadData();
-  }, [currentUser]); // Removed dependencies that cause loops
+  }, [currentUser, fetchConfig, loadUserData, loadUsers]);
 
-  // ✅ Load most recent result from history when component mounts
+  // Load most recent result from history
   useEffect(() => {
     if (history.length > 0 && !result) {
       const mostRecent = history[0];
@@ -535,7 +545,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [history, result]);
 
-  // ✅ FIXED: handleAnalyze with proper history refresh
+  // Handle analyze
   const handleAnalyze = async () => {
     console.log("🔴 1. Analyze clicked");
     console.log("🔴 2. Inputs being sent:", inputs);
@@ -570,7 +580,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // ✅ Manual refresh function for history
+  // Manual refresh function
   const refreshHistory = async () => {
     console.log("🔄 Manual refresh triggered");
     await loadUserData();
@@ -862,7 +872,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 )}
 
-                {/* History Table - WILL NOW SHOW DATA */}
+                {/* History Table */}
                 <div style={styles.historyCard}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
                     <h3 style={styles.cardTitle}>Recent Analyses</h3>
