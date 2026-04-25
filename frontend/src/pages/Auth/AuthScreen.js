@@ -258,7 +258,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
   );
 }
 
-// Styles — UPDATED with larger corner images (140px instead of 100px)
+// Styles — UPDATED with larger corner images (170px)
 const styles = {
   container: {
     position: "relative",
@@ -282,14 +282,14 @@ const styles = {
     zIndex: 1
   },
 
-  // ===== CORNER IMAGE STYLES — SIZE INCREASED TO 140px =====
+  // ===== CORNER IMAGE STYLES — SIZE: 170px =====
   cornerImageTL: {
     position: "absolute",
     top: "20px",
     left: "20px",
     zIndex: 2,
-    width: "140px",        // Was 100px
-    height: "140px",       // Was 100px
+    width: "170px",
+    height: "170px",
     borderRadius: "15px",
     overflow: "hidden",
     boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
@@ -303,8 +303,8 @@ const styles = {
     top: "20px",
     right: "20px",
     zIndex: 2,
-    width: "140px",        // Was 100px
-    height: "140px",       // Was 100px
+    width: "170px",
+    height: "170px",
     borderRadius: "15px",
     overflow: "hidden",
     boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
@@ -318,8 +318,8 @@ const styles = {
     bottom: "20px",
     left: "20px",
     zIndex: 2,
-    width: "140px",        // Was 100px
-    height: "140px",       // Was 100px
+    width: "170px",
+    height: "170px",
     borderRadius: "15px",
     overflow: "hidden",
     boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
@@ -333,8 +333,8 @@ const styles = {
     bottom: "20px",
     right: "20px",
     zIndex: 2,
-    width: "140px",        // Was 100px
-    height: "140px",       // Was 100px
+    width: "170px",
+    height: "170px",
     borderRadius: "15px",
     overflow: "hidden",
     boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
