@@ -255,6 +255,7 @@ logger = logging.getLogger(__name__)
 
 # ==================== CREATE APP ====================
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key')
 
 # ==================== CORS - WIDE OPEN FOR TESTING ====================
 # This allows ALL origins - once working, restrict it
