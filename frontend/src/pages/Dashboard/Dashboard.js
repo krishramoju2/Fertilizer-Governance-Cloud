@@ -500,15 +500,20 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
+  // ✅ FIXED: Only fetch data when currentUser exists
   useEffect(() => {
-    fetchConfig();
-    if (currentUser) {
-      loadUserData();
-      if (currentUser.is_admin) {
-        loadUsers();
-      }
+    if (!currentUser) {
+      console.log("No currentUser, skipping data fetch");
+      return;
     }
-  }, [currentUser, fetchConfig, loadUserData, loadUsers]);
+    
+    console.log("CurrentUser loaded, fetching dashboard data...");
+    fetchConfig();
+    loadUserData();
+    if (currentUser.is_admin) {
+      loadUsers();
+    }
+  }, [currentUser]); // Only depend on currentUser, not the functions
 
   const handleAnalyze = async () => {
     setLoading(true);
