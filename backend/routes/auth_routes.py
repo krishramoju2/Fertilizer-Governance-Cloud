@@ -274,24 +274,10 @@ from models.db import users_collection
 
 auth_bp = Blueprint('auth', __name__)
 
-# ==================== HELPER FUNCTIONS ====================
-def get_secret_key():
-    """Get secret key from multiple sources"""
-    # Try from app config first
-    try:
-        if current_app and current_app.config.get('SECRET_KEY'):
-            return current_app.config['SECRET_KEY']
-    except:
-        pass
-    
-    # Try from environment
-    secret = os.environ.get('SECRET_KEY')
-    if secret:
-        return secret
-    
-    # Fallback (only for development)
-    print("⚠️ WARNING: Using fallback secret key - not secure for production")
-    return 'btech_project_2026_secret_key_fallback'
+
+# ==================== DIRECT SECRET KEY FROM ENV ====================
+SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_123')
+print(f"🔑 SECRET_KEY loaded (length: {len(SECRET_KEY)})")
 
 def hash_password(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode()
