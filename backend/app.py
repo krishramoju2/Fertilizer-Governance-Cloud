@@ -69,7 +69,22 @@ app.register_blueprint(analytics_bp)
 app.register_blueprint(admin_bp)
 
 
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+from flask_cors import CORS
+
+app = Flask(__name__)
+
+# ✅ CORRECT - Single CORS configuration
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "https://fertilizer-governance-cloud.vercel.app",
+            "http://localhost:3000"
+        ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
 
 
 @app.after_request
