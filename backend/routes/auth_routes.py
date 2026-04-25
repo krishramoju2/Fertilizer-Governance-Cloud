@@ -263,8 +263,7 @@ def login():
         return jsonify({'success': False, 'message': f'Login failed: {str(e)}'}), 500'''
 
 
-
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 import datetime
 import jwt
 import uuid
@@ -273,7 +272,6 @@ import os
 from models.db import users_collection
 
 auth_bp = Blueprint('auth', __name__)
-
 
 # ==================== DIRECT SECRET KEY FROM ENV ====================
 SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key_123')
@@ -296,7 +294,7 @@ def register():
     
     try:
         data = request.get_json()
-        print("📝 Register request:", data)
+        print("📝 Register request:", data.get('email'))
         
         email = data.get('email', '').lower().strip()
         password = data.get('password', '')
@@ -304,12 +302,10 @@ def register():
         if not email or not password:
             return jsonify({'success': False, 'message': 'Email and password required'}), 400
         
-        # Check if user exists
         existing = users_collection.find_one({'email': email})
         if existing:
             return jsonify({'success': False, 'message': 'Email already registered'}), 400
         
-        # Create user
         user_id = str(uuid.uuid4())
         hashed = hash_password(password)
         
@@ -332,21 +328,12 @@ def register():
         
         users_collection.insert_one(user)
         
-        # Create token - IMPORTANT: Get secret key as string
-        secret_key = get_secret_key()
-        print(f"🔑 Secret key loaded (length: {len(secret_key)})")
-        
-        # Ensure secret_key is a string
-        if not isinstance(secret_key, str):
-            secret_key = str(secret_key)
-        
-        token_payload = {
+        # Use SECRET_KEY directly (not calling a function)
+        token = jwt.encode({
             'user_id': user_id,
             'email': email,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }
-        
-        token = jwt.encode(token_payload, secret_key, algorithm='HS256')
+        }, SECRET_KEY, algorithm='HS256')
         
         return jsonify({
             'success': True,
@@ -375,22 +362,18 @@ def login():
     
     try:
         data = request.get_json()
-        print("🔐 Login request:", data)
+        print("🔐 Login request:", data.get('email'))
         
         email = data.get('email', '').lower().strip()
         password = data.get('password', '')
         
         # Admin bypass
         if email == 'admin@farm.com' and password == 'admin123':
-            secret_key = get_secret_key()
-            if not isinstance(secret_key, str):
-                secret_key = str(secret_key)
-            
             token = jwt.encode({
                 'user_id': 'bypass-user',
                 'email': email,
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-            }, secret_key, algorithm='HS256')
+            }, SECRET_KEY, algorithm='HS256')
             
             return jsonify({
                 'success': True,
@@ -415,16 +398,12 @@ def login():
             return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
         
         user_id = str(user['_id'])
-        secret_key = get_secret_key()
-        
-        if not isinstance(secret_key, str):
-            secret_key = str(secret_key)
         
         token = jwt.encode({
             'user_id': user_id,
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }, secret_key, algorithm='HS256')
+        }, SECRET_KEY, algorithm='HS256')
         
         return jsonify({
             'success': True,
@@ -498,15 +477,11 @@ def google_login():
         else:
             user_id = str(user['_id'])
         
-        secret_key = get_secret_key()
-        if not isinstance(secret_key, str):
-            secret_key = str(secret_key)
-        
         token = jwt.encode({
             'user_id': user_id,
             'email': email,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        }, secret_key, algorithm='HS256')
+        }, SECRET_KEY, algorithm='HS256')
         
         return jsonify({
             'success': True,
@@ -522,8 +497,6 @@ def google_login():
         
     except Exception as e:
         print(f"❌ Google login error: {e}")
-        import traceback
-        traceback.print_exc()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -540,11 +513,7 @@ def get_me():
     token = auth_header.split(' ')[1]
     
     try:
-        secret_key = get_secret_key()
-        if not isinstance(secret_key, str):
-            secret_key = str(secret_key)
-        
-        data = jwt.decode(token, secret_key, algorithms=['HS256'])
+        data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
         user_id = data.get('user_id')
         
         if user_id == 'bypass-user':
