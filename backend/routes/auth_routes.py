@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+'''from flask import Blueprint, request, jsonify, current_app
 import datetime
 import jwt
 import traceback
@@ -260,4 +260,215 @@ def login():
 
     except Exception as e:
         logger.error(f"Login error: {traceback.format_exc()}")
-        return jsonify({'success': False, 'message': f'Login failed: {str(e)}'}), 500
+        return jsonify({'success': False, 'message': f'Login failed: {str(e)}'}), 500'''
+
+
+
+from flask import Blueprint, request, jsonify
+import jwt
+import datetime
+import os
+from models.db import users_collection
+from utils.auth import hash_password, check_password
+import requests
+
+auth_bp = Blueprint('auth', __name__)
+SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key')
+
+# Google OAuth configuration
+GOOGLE_CLIENT_ID = "306459208757-f6ubq5173k79iub958r8nr76k0r42qa8.apps.googleusercontent.com"
+
+def verify_google_token(credential):
+    """Verify Google token and get user info"""
+    try:
+        url = "https://oauth2.googleapis.com/tokeninfo"
+        params = {"id_token": credential}
+        response = requests.get(url, params=params)
+        
+        if response.status_code != 200:
+            return None
+        
+        token_info = response.json()
+        return token_info
+    except Exception as e:
+        print(f"Google token verification error: {e}")
+        return None
+
+@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
+def register():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Email and password required'}), 400
+        
+        existing = users_collection.find_one({'email': email})
+        if existing:
+            return jsonify({'success': False, 'message': 'User already exists'}), 400
+        
+        hashed = hash_password(password)
+        user = {
+            'email': email,
+            'password': hashed,
+            'name': data.get('name', ''),
+            'farm_details': {
+                'soil_type': data.get('soil_type', 'Loamy'),
+                'farm_size': float(data.get('farm_size', 1)),
+                'location': data.get('location', ''),
+                'primary_crops': data.get('primary_crops', [])
+            },
+            'is_admin': False,
+            'created_at': datetime.datetime.utcnow(),
+            'auth_provider': 'email'
+        }
+        
+        result = users_collection.insert_one(user)
+        user_id = str(result.inserted_id)
+        
+        token = jwt.encode({
+            'user_id': user_id,
+            'email': email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }, SECRET_KEY, algorithm='HS256')
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'user': {
+                '_id': user_id,
+                'email': email,
+                'name': user['name'],
+                'is_admin': False,
+                'farm_details': user['farm_details']
+            }
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+def login():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not email or not password:
+            return jsonify({'success': False, 'message': 'Email and password required'}), 400
+        
+        user = users_collection.find_one({'email': email})
+        if not user:
+            return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+        
+        # Check if user signed up with Google
+        if user.get('auth_provider') == 'google':
+            return jsonify({'success': False, 'message': 'Please login with Google'}), 401
+        
+        if not check_password(password, user['password']):
+            return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+        
+        user_id = str(user['_id'])
+        
+        token = jwt.encode({
+            'user_id': user_id,
+            'email': email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }, SECRET_KEY, algorithm='HS256')
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'user': {
+                '_id': user_id,
+                'email': user['email'],
+                'name': user.get('name', ''),
+                'is_admin': user.get('is_admin', False),
+                'farm_details': user.get('farm_details', {})
+            }
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@auth_bp.route('/google-login', methods=['POST', 'OPTIONS'])
+def google_login():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        data = request.get_json()
+        credential = data.get('credential')
+        
+        if not credential:
+            return jsonify({'success': False, 'message': 'Credential missing'}), 400
+        
+        # Verify Google token
+        token_info = verify_google_token(credential)
+        if not token_info:
+            return jsonify({'success': False, 'message': 'Invalid Google token'}), 401
+        
+        email = token_info.get('email')
+        name = token_info.get('name', 'Google User')
+        
+        if not email:
+            return jsonify({'success': False, 'message': 'Email not provided by Google'}), 400
+        
+        # Check if user exists
+        user = users_collection.find_one({'email': email})
+        
+        if not user:
+            # Create new user
+            user_data = {
+                'email': email,
+                'name': name,
+                'password': '',  # No password for Google users
+                'auth_provider': 'google',
+                'farm_details': {
+                    'soil_type': 'Loamy',
+                    'farm_size': 1,
+                    'location': '',
+                    'primary_crops': []
+                },
+                'is_admin': False,
+                'created_at': datetime.datetime.utcnow()
+            }
+            result = users_collection.insert_one(user_data)
+            user_id = str(result.inserted_id)
+        else:
+            user_id = str(user['_id'])
+            # Update name if changed
+            if user.get('name') != name:
+                users_collection.update_one({'_id': user['_id']}, {'$set': {'name': name}})
+        
+        # Generate JWT token
+        token = jwt.encode({
+            'user_id': user_id,
+            'email': email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }, SECRET_KEY, algorithm='HS256')
+        
+        # Get updated user
+        final_user = users_collection.find_one({'_id': user_id}) if not user else user
+        if not final_user:
+            final_user = users_collection.find_one({'_id': user_id})
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'user': {
+                '_id': user_id,
+                'email': email,
+                'name': final_user.get('name', name),
+                'is_admin': final_user.get('is_admin', False),
+                'farm_details': final_user.get('farm_details', {})
+            }
+        })
+    except Exception as e:
+        print(f"Google login error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
