@@ -8,6 +8,12 @@ import FuzzyText from "../../components/Shared/FuzzyText";
 import { motion } from "framer-motion";
 import Silk from "../../components/Home/Silk";
 
+// ===== 4 CORNER IMAGES =====
+import agritechImg from "../Auth/agritech.png";
+import chatbotImg from "../Auth/chatbot.png";
+import harvestImg from "../Auth/harvest.png";
+import innovationImg from "../Auth/innovation.png";
+
 const styles = {
   app: {
     padding: "30px",
@@ -26,6 +32,75 @@ const styles = {
     height: "100vh",
     zIndex: 0,
     pointerEvents: "none"
+  },
+
+  // ===== CORNER IMAGE STYLES =====
+  cornerImageTL: {
+    position: "absolute",
+    top: "20px",
+    left: "20px",
+    zIndex: 2,
+    width: "170px",
+    height: "170px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  cornerImageTR: {
+    position: "absolute",
+    top: "20px",
+    right: "20px",
+    zIndex: 2,
+    width: "170px",
+    height: "170px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  cornerImageBL: {
+    position: "absolute",
+    bottom: "20px",
+    left: "20px",
+    zIndex: 2,
+    width: "170px",
+    height: "170px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  cornerImageBR: {
+    position: "absolute",
+    bottom: "20px",
+    right: "20px",
+    zIndex: 2,
+    width: "170px",
+    height: "170px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  decoImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    opacity: 0.85,
+    transition: "opacity 0.3s ease, transform 0.3s ease"
   },
 
   rightPanel: {
@@ -688,6 +763,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   return (
     <div style={styles.app}>
+      {/* Silk Background */}
       <div style={styles.silkBackground}>
         <Silk
           speed={3}
@@ -698,6 +774,21 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         />
       </div>
 
+      {/* ===== 4 CORNER IMAGES ===== */}
+      <div style={styles.cornerImageTL}>
+        <img src={agritechImg} alt="Agritech" style={styles.decoImage} />
+      </div>
+      <div style={styles.cornerImageTR}>
+        <img src={chatbotImg} alt="Chatbot" style={styles.decoImage} />
+      </div>
+      <div style={styles.cornerImageBL}>
+        <img src={harvestImg} alt="Harvest" style={styles.decoImage} />
+      </div>
+      <div style={styles.cornerImageBR}>
+        <img src={innovationImg} alt="Innovation" style={styles.decoImage} />
+      </div>
+
+      {/* Header */}
       <header style={styles.header}>
         <div>
           <h1 style={styles.title}>🌾 FarmAdvisor Pro</h1>
@@ -720,6 +811,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         </nav>
       </header>
 
+      {/* Message */}
       {message.text && (
         <div style={message.type === 'error' ? styles.errorMessage : styles.successMessage}>
           {message.text}
@@ -727,6 +819,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
+        {/* HOME TAB - STATIC MENU */}
         {activeTab === "menu" && (
           <div style={styles.homeMenuWall}>
             <div style={styles.staticMenuGrid}>
@@ -750,6 +843,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
+        {/* ANALYSIS TAB */}
         {activeTab === "analysis" && (
           <>
             <div style={styles.card}>
@@ -762,6 +856,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </div>
 
             <div style={styles.analysisGrid}>
+              {/* Input Section */}
               <div style={styles.card}>
                 <h2 style={styles.cardTitle}>Farm Inputs</h2>
                 <div style={styles.inputGrid}>
@@ -801,6 +896,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 </button>
               </div>
 
+              {/* Results Section */}
               <div style={styles.rightPanel}>
                 {result && (
                   <div style={styles.resultCard}>
@@ -840,6 +936,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 )}
 
+                {/* History Table */}
                 <div style={styles.historyCard}>
                   <h3 style={styles.cardTitle}>Recent Analyses</h3>
                   {history.length === 0 ? (
@@ -871,6 +968,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </>
         )}
 
+        {/* ML TAB */}
         {activeTab === 'ml' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
@@ -878,6 +976,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
+        {/* ANALYTICS TAB */}
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
             {analytics ? (
@@ -968,6 +1067,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
+        {/* ADMIN TAB */}
         {activeTab === 'admin' && currentUser?.is_admin && (
           <div style={styles.adminContainer}>
             <h2 style={styles.adminTitle}>Admin Panel</h2>
@@ -1054,6 +1154,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
+        {/* CHAT TAB */}
         {activeTab === 'chat' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Farm Chatbot</h2>
