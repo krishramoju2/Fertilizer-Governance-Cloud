@@ -785,8 +785,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <h3 style={styles.staticMenuTitle}>💬 Chatbot</h3>
                 <p style={styles.staticMenuDesc}>Interact with AI to get real-time farming advice, troubleshooting, and recommendations.</p>
               </div>
-            </div>
-          </div>
+            </div>  {/* ← THIS CLOSES staticMenuGrid */}
+          </div>      {/* ← THIS CLOSES homeMenuWall */}
         )}
 
         {/* ANALYSIS TAB */}
