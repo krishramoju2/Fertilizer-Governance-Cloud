@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect, useCallback } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -394,15 +384,6 @@ const styles = {
     color: "#334155"
   },
 
-  menuContainer: {
-    width: "100%",
-    minHeight: "560px",
-    height: "70vh",
-    maxHeight: "720px",
-    borderRadius: "18px",
-    overflow: "hidden"
-  },
-
   td: {
     padding: "12px",
     textAlign: "left",
@@ -510,7 +491,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // ✅ FIXED: useEffect with proper dependencies using useRef to prevent infinite loops
   const hasLoadedData = React.useRef(false);
   
   useEffect(() => {
@@ -537,7 +517,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     loadData();
   }, [currentUser, fetchConfig, loadUserData, loadUsers]);
 
-  // ✅ Load most recent result from history when component mounts
   useEffect(() => {
     if (history.length > 0 && !result) {
       const mostRecent = history[0];
@@ -709,7 +688,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   return (
     <div style={styles.app}>
-      {/* Silk Background */}
       <div style={styles.silkBackground}>
         <Silk
           speed={3}
@@ -720,44 +698,28 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         />
       </div>
 
-      {/* Header */}
       <header style={styles.header}>
         <div>
           <h1 style={styles.title}>🌾 FarmAdvisor Pro</h1>
           <p style={styles.welcome}>Welcome, {currentUser?.name || 'Farmer'}!</p>
         </div>
         <nav style={styles.nav}>
-          <button style={getNavButtonStyle('menu')} onClick={() => setActiveTab('menu')}>
-            Home
-          </button>
-          <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>
-            Analysis
-          </button>
-          <button style={getNavButtonStyle('ml')} onClick={() => setActiveTab('ml')}>
-            ML Model
-          </button>
-          <button style={getNavButtonStyle('analytics')} onClick={() => setActiveTab('analytics')}>
-            Analytics
-          </button>
+          <button style={getNavButtonStyle('menu')} onClick={() => setActiveTab('menu')}>Home</button>
+          <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>Analysis</button>
+          <button style={getNavButtonStyle('ml')} onClick={() => setActiveTab('ml')}>ML Model</button>
+          <button style={getNavButtonStyle('analytics')} onClick={() => setActiveTab('analytics')}>Analytics</button>
           {currentUser?.is_admin && (
-            <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>
-              Admin
-            </button>
+            <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>Admin</button>
           )}
-          <button style={getNavButtonStyle('chat')} onClick={() => setActiveTab('chat')}>
-            Chatbot
-          </button>
+          <button style={getNavButtonStyle('chat')} onClick={() => setActiveTab('chat')}>Chatbot</button>
           <button style={getNavButtonStyle('', true)} onClick={() => {
             localStorage.removeItem('token');
             setToken(null);
             setCurrentUser(null);
-          }}>
-            Logout
-          </button>
+          }}>Logout</button>
         </nav>
       </header>
 
-      {/* Message */}
       {message.text && (
         <div style={message.type === 'error' ? styles.errorMessage : styles.successMessage}>
           {message.text}
@@ -765,7 +727,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
-        {/* HOME TAB */}
         {activeTab === "menu" && (
           <div style={styles.homeMenuWall}>
             <div style={styles.staticMenuGrid}>
@@ -785,11 +746,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <h3 style={styles.staticMenuTitle}>💬 Chatbot</h3>
                 <p style={styles.staticMenuDesc}>Interact with AI to get real-time farming advice, troubleshooting, and recommendations.</p>
               </div>
-            </div>  {/* ← THIS CLOSES staticMenuGrid */}
-          </div>      {/* ← THIS CLOSES homeMenuWall */}
+            </div>
+          </div>
         )}
 
-        {/* ANALYSIS TAB */}
         {activeTab === "analysis" && (
           <>
             <div style={styles.card}>
@@ -807,66 +767,33 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.inputGrid}>
                   <div>
                     <label style={styles.label}>Temperature (°C)</label>
-                    <input
-                      type="number"
-                      style={styles.input}
-                      value={inputs.Temperature}
-                      onChange={(e) => setInputs({ ...inputs, Temperature: parseFloat(e.target.value) })}
-                    />
+                    <input type="number" style={styles.input} value={inputs.Temperature} onChange={(e) => setInputs({ ...inputs, Temperature: parseFloat(e.target.value) })} />
                   </div>
                   <div>
                     <label style={styles.label}>Moisture (%)</label>
-                    <input
-                      type="number"
-                      style={styles.input}
-                      value={inputs.Moisture}
-                      onChange={(e) => setInputs({ ...inputs, Moisture: parseFloat(e.target.value) })}
-                    />
+                    <input type="number" style={styles.input} value={inputs.Moisture} onChange={(e) => setInputs({ ...inputs, Moisture: parseFloat(e.target.value) })} />
                   </div>
                   <div>
                     <label style={styles.label}>Soil Type</label>
-                    <select
-                      style={styles.input}
-                      value={inputs.Soil_Type}
-                      onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}
-                    >
-                      {soilTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
+                    <select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>
+                      {soilTypes.map((type) => (<option key={type} value={type}>{type}</option>))}
                     </select>
                   </div>
                   <div>
                     <label style={styles.label}>Crop Type</label>
-                    <select
-                      style={styles.input}
-                      value={inputs.Crop_Type}
-                      onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}
-                    >
-                      {cropTypes.map((crop) => (
-                        <option key={crop} value={crop}>{crop}</option>
-                      ))}
+                    <select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>
+                      {cropTypes.map((crop) => (<option key={crop} value={crop}>{crop}</option>))}
                     </select>
                   </div>
                   <div>
                     <label style={styles.label}>Fertilizer</label>
-                    <select
-                      style={styles.input}
-                      value={inputs.Fertilizer_Name}
-                      onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}
-                    >
-                      {fertilizerNames.map((fert) => (
-                        <option key={fert} value={fert}>{fert}</option>
-                      ))}
+                    <select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>
+                      {fertilizerNames.map((fert) => (<option key={fert} value={fert}>{fert}</option>))}
                     </select>
                   </div>
                   <div>
                     <label style={styles.label}>Quantity (kg/ha)</label>
-                    <input
-                      type="number"
-                      style={styles.input}
-                      value={inputs.Fertilizer_Quantity}
-                      onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: parseFloat(e.target.value) })}
-                    />
+                    <input type="number" style={styles.input} value={inputs.Fertilizer_Quantity} onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: parseFloat(e.target.value) })} />
                   </div>
                 </div>
                 <button style={styles.analyzeButton} onClick={handleAnalyze} disabled={loading}>
@@ -907,13 +834,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </div>
                     <div style={styles.suggestionsBox}>
                       <h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>
-                      {result.suggestions?.map((s, i) => (
-                        <p key={i} style={styles.suggestion}>• {s}</p>
-                      ))}
+                      {result.suggestions?.map((s, i) => (<p key={i} style={styles.suggestion}>• {s}</p>))}
                     </div>
-                    <button style={styles.pdfButton} onClick={generatePDF}>
-                      📄 Download PDF Report
-                    </button>
+                    <button style={styles.pdfButton} onClick={generatePDF}>📄 Download PDF Report</button>
                   </div>
                 )}
 
@@ -924,12 +847,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   ) : (
                     <table style={styles.table}>
                       <thead>
-                        <tr>
-                          <th style={styles.th}>Crop</th>
-                          <th style={styles.th}>Fertilizer</th>
-                          <th style={styles.th}>Status</th>
-                          <th style={styles.th}>Score</th>
-                        </tr>
+                        <tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr>
                       </thead>
                       <tbody>
                         {history.map((item, i) => {
@@ -953,7 +871,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </>
         )}
 
-        {/* ML TAB */}
         {activeTab === 'ml' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
@@ -961,19 +878,12 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* ANALYTICS TAB */}
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
             {analytics ? (
               <>
                 <div style={styles.summaryGrid}>
-                  <motion.div
-                    style={styles.summaryCard}
-                    initial={{ opacity: 0, y: 36, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.55, ease: "easeOut" }}
-                    whileHover={{ y: -6, scale: 1.02 }}
-                  >
+                  <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.55, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>📊</span>
                     <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {String(analytics.total_analyses)}
@@ -982,13 +892,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       Total Analyses
                     </FuzzyText>
                   </motion.div>
-                  <motion.div
-                    style={styles.summaryCard}
-                    initial={{ opacity: 0, y: 36, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.65, ease: "easeOut" }}
-                    whileHover={{ y: -6, scale: 1.02 }}
-                  >
+                  <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.65, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>✅</span>
                     <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {`${analytics.compatibility_rate}%`}
@@ -997,13 +901,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       Success Rate
                     </FuzzyText>
                   </motion.div>
-                  <motion.div
-                    style={styles.summaryCard}
-                    initial={{ opacity: 0, y: 36, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.75, ease: "easeOut" }}
-                    whileHover={{ y: -6, scale: 1.02 }}
-                  >
+                  <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.75, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>🎯</span>
                     <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
                       {`${analytics.average_score}%`}
@@ -1014,12 +912,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </motion.div>
                 </div>
 
-                <motion.div
-                  style={styles.chartCard}
-                  initial={{ opacity: 0, x: -40, filter: "blur(6px)" }}
-                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                  transition={{ duration: 0.55, ease: "easeOut" }}
-                >
+                <motion.div style={styles.chartCard} initial={{ opacity: 0, x: -40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
                   <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
                     Crop Distribution
                   </FuzzyText>
@@ -1032,12 +925,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                           </FuzzyText>
                         </div>
                         <span style={styles.chartBar}>
-                          <motion.span
-                            style={styles.chartFill}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${(count / analytics.total_analyses) * 100}%` }}
-                            transition={{ duration: 0.9, ease: "easeOut" }}
-                          />
+                          <motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />
                         </span>
                         <div style={styles.fuzzyCountWrap}>
                           <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
@@ -1049,12 +937,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 </motion.div>
 
-                <motion.div
-                  style={styles.chartCard}
-                  initial={{ opacity: 0, x: 40, filter: "blur(6px)" }}
-                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                  transition={{ duration: 0.55, ease: "easeOut" }}
-                >
+                <motion.div style={styles.chartCard} initial={{ opacity: 0, x: 40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
                   <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
                     Fertilizer Usage
                   </FuzzyText>
@@ -1067,12 +950,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                           </FuzzyText>
                         </div>
                         <span style={styles.chartBar}>
-                          <motion.span
-                            style={styles.chartFill}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${(count / analytics.total_analyses) * 100}%` }}
-                            transition={{ duration: 0.9, ease: "easeOut" }}
-                          />
+                          <motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />
                         </span>
                         <div style={styles.fuzzyCountWrap}>
                           <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
@@ -1090,23 +968,14 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* ADMIN TAB */}
         {activeTab === 'admin' && currentUser?.is_admin && (
           <div style={styles.adminContainer}>
             <h2 style={styles.adminTitle}>Admin Panel</h2>
             <div style={styles.adminTabs}>
-              <button style={styles.adminTab(adminManageType === 'soil')} onClick={() => setAdminManageType('soil')}>
-                Soil Types
-              </button>
-              <button style={styles.adminTab(adminManageType === 'crop')} onClick={() => setAdminManageType('crop')}>
-                Crop Types
-              </button>
-              <button style={styles.adminTab(adminManageType === 'fertilizer')} onClick={() => setAdminManageType('fertilizer')}>
-                Fertilizers
-              </button>
-              <button style={styles.adminTab(adminManageType === 'users')} onClick={() => setAdminManageType('users')}>
-                Users
-              </button>
+              <button style={styles.adminTab(adminManageType === 'soil')} onClick={() => setAdminManageType('soil')}>Soil Types</button>
+              <button style={styles.adminTab(adminManageType === 'crop')} onClick={() => setAdminManageType('crop')}>Crop Types</button>
+              <button style={styles.adminTab(adminManageType === 'fertilizer')} onClick={() => setAdminManageType('fertilizer')}>Fertilizers</button>
+              <button style={styles.adminTab(adminManageType === 'users')} onClick={() => setAdminManageType('users')}>Users</button>
             </div>
 
             <div style={styles.adminContent}>
@@ -1114,22 +983,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.manageSection}>
                   <h3>Manage Soil Types</h3>
                   <div style={styles.addItemRow}>
-                    <input
-                      type="text"
-                      placeholder="New soil type"
-                      value={newItem}
-                      onChange={(e) => setNewItem(e.target.value)}
-                      style={styles.input}
-                    />
+                    <input type="text" placeholder="New soil type" value={newItem} onChange={(e) => setNewItem(e.target.value)} style={styles.input} />
                     <button onClick={handleAddItem} style={styles.addButton}>Add</button>
                   </div>
                   <ul style={styles.itemList}>
-                    {soilTypes.map(type => (
-                      <li key={type} style={styles.listItem}>
-                        {type}
-                        <button onClick={() => handleRemoveItem(type)} style={styles.removeButton}>×</button>
-                      </li>
-                    ))}
+                    {soilTypes.map(type => (<li key={type} style={styles.listItem}>{type}<button onClick={() => handleRemoveItem(type)} style={styles.removeButton}>×</button></li>))}
                   </ul>
                 </div>
               )}
@@ -1138,22 +996,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.manageSection}>
                   <h3>Manage Crop Types</h3>
                   <div style={styles.addItemRow}>
-                    <input
-                      type="text"
-                      placeholder="New crop type"
-                      value={newItem}
-                      onChange={(e) => setNewItem(e.target.value)}
-                      style={styles.input}
-                    />
+                    <input type="text" placeholder="New crop type" value={newItem} onChange={(e) => setNewItem(e.target.value)} style={styles.input} />
                     <button onClick={handleAddItem} style={styles.addButton}>Add</button>
                   </div>
                   <ul style={styles.itemList}>
-                    {cropTypes.map(crop => (
-                      <li key={crop} style={styles.listItem}>
-                        {crop}
-                        <button onClick={() => handleRemoveItem(crop)} style={styles.removeButton}>×</button>
-                      </li>
-                    ))}
+                    {cropTypes.map(crop => (<li key={crop} style={styles.listItem}>{crop}<button onClick={() => handleRemoveItem(crop)} style={styles.removeButton}>×</button></li>))}
                   </ul>
                 </div>
               )}
@@ -1162,22 +1009,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.manageSection}>
                   <h3>Manage Fertilizer Names</h3>
                   <div style={styles.addItemRow}>
-                    <input
-                      type="text"
-                      placeholder="New fertilizer"
-                      value={newItem}
-                      onChange={(e) => setNewItem(e.target.value)}
-                      style={styles.input}
-                    />
+                    <input type="text" placeholder="New fertilizer" value={newItem} onChange={(e) => setNewItem(e.target.value)} style={styles.input} />
                     <button onClick={handleAddItem} style={styles.addButton}>Add</button>
                   </div>
                   <ul style={styles.itemList}>
-                    {fertilizerNames.map(fert => (
-                      <li key={fert} style={styles.listItem}>
-                        {fert}
-                        <button onClick={() => handleRemoveItem(fert)} style={styles.removeButton}>×</button>
-                      </li>
-                    ))}
+                    {fertilizerNames.map(fert => (<li key={fert} style={styles.listItem}>{fert}<button onClick={() => handleRemoveItem(fert)} style={styles.removeButton}>×</button></li>))}
                   </ul>
                 </div>
               )}
@@ -1187,17 +1023,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   <h3>All Users</h3>
                   <div style={styles.userGrid}>
                     <div style={styles.userList}>
-                      {users.map(user => (
-                        <div
-                          key={user._id}
-                          style={styles.userCard(selectedUserId === user._id)}
-                          onClick={() => handleSelectUser(user._id)}
-                        >
-                          <strong>{user.name}</strong>
-                          <div><small>{user.email}</small></div>
-                          <span style={styles.userBadge}>{user.is_admin ? 'Admin' : 'User'}</span>
-                        </div>
-                      ))}
+                      {users.map(user => (<div key={user._id} style={styles.userCard(selectedUserId === user._id)} onClick={() => handleSelectUser(user._id)}>
+                        <strong>{user.name}</strong><div><small>{user.email}</small></div>
+                        <span style={styles.userBadge}>{user.is_admin ? 'Admin' : 'User'}</span>
+                      </div>))}
                     </div>
                     {selectedUserId && (
                       <div style={styles.userDetails}>
@@ -1209,29 +1038,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             <p>Avg Score: {userAnalytics.average_score}%</p>
                             <h5>Recent History</h5>
                             <table style={styles.table}>
-                              <thead>
-                                <tr>
-                                  <th style={styles.th}>Crop</th>
-                                  <th style={styles.th}>Fertilizer</th>
-                                  <th style={styles.th}>Status</th>
-                                  <th style={styles.th}>Score</th>
-                                </tr>
-                              </thead>
+                              <thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead>
                               <tbody>
-                                {userHistory.map((item, i) => (
-                                  <tr key={i}>
-                                    <td style={styles.td}>{item.crop_type}</td>
-                                    <td style={styles.td}>{item.fertilizer}</td>
-                                    <td style={styles.td}>{item.compatibility}</td>
-                                    <td style={styles.td}>{item.score}%</td>
-                                  </table>
-                                ))}
+                                {userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}
                               </tbody>
                             </table>
                           </>
-                        ) : (
-                          <p>Select a user to view analytics</p>
-                        )}
+                        ) : (<p>Select a user to view analytics</p>)}
                       </div>
                     )}
                   </div>
@@ -1241,7 +1054,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* CHAT TAB */}
         {activeTab === 'chat' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Farm Chatbot</h2>
