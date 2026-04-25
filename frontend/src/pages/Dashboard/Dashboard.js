@@ -4,7 +4,6 @@ import autoTable from "jspdf-autotable";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
-import InfiniteMenu from "../../components/Home/InfiniteMenu";
 import FuzzyText from "../../components/Shared/FuzzyText";
 import { motion } from "framer-motion";
 
@@ -264,10 +263,47 @@ const styles = {
   homeMenuWall: {
     width: "100%",
     minHeight: "560px",
-    height: "70vh",
-    maxHeight: "720px",
+    height: "auto",
     borderRadius: "18px",
-    overflow: "hidden"
+    padding: "20px"
+  },
+
+  // NEW: Static menu grid styles
+  staticMenuGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "25px",
+    width: "100%"
+  },
+
+  staticMenuItem: {
+    background: "rgba(255,255,255,0.92)",
+    backdropFilter: "blur(10px)",
+    borderRadius: "20px",
+    padding: "35px 20px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    border: "1px solid rgba(255,255,255,0.3)",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+    textAlign: "center",
+    minHeight: "200px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
+  },
+
+  staticMenuTitle: {
+    fontSize: "24px",
+    fontWeight: "700",
+    marginBottom: "15px",
+    color: "#1a472a"
+  },
+
+  staticMenuDesc: {
+    fontSize: "14px",
+    color: "#555",
+    lineHeight: "1.5",
+    margin: 0
   },
   
   card: {
@@ -631,45 +667,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
   };
 
-  const menuItems = [
-    {
-      title: "🔬 Analysis",
-      description: "Analyze soil, weather, and farm conditions",
-      image: "https://picsum.photos/seed/analysis/300",
-      onClick: () => setActiveTab("analysis")
-    },
-    {
-      title: "🤖 ML Model",
-      description: "Predict the best fertilizer for your crop",
-      image: "https://picsum.photos/seed/ml-model/300",
-      onClick: () => setActiveTab("analysis")
-    },
-    {
-      title: "🤖 ML Model",
-      description: "Predict the best fertilizer for your crop",
-      image: "https://picsum.photos/seed/ml-model/300",
-      onClick: () => setActiveTab("ml")
-    },
-    {
-      title: "📈 Analytics",
-      description: "View trends and historical performance",
-      image: "https://picsum.photos/seed/analytics/300",
-      onClick: () => setActiveTab("analytics")
-    },
-    {
-      title: "📈 Analytics",
-      description: "View trends and historical performance",
-      image: "https://picsum.photos/seed/analytics/300",
-      onClick: () => setActiveTab("analytics")
-    },
-    {
-      title: "💬 Chatbot",
-      description: "Ask AI and get real-time help",
-      image: "https://picsum.photos/seed/chatbot/300",
-      onClick: () => setActiveTab("chat")
-    }
-  ];
-  
   return (
     <div style={styles.app}>
       {/* Header */}
@@ -679,7 +676,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <p style={styles.welcome}>Welcome, {currentUser?.name || 'Farmer'}!</p>
         </div>
         <nav style={styles.nav}>
-
           <button style={getNavButtonStyle('menu')} onClick={() => setActiveTab('menu')}>
             Home
           </button>
@@ -725,10 +721,28 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
       <main style={styles.main}>
         
+        {/* HOME TAB - STATIC MENU (NO ROTATION) */}
         {activeTab === "menu" && (
-            <div style={styles.homeMenuWall}>
-              <InfiniteMenu items={menuItems} scale={0.95} />
-            </div> 
+          <div style={styles.homeMenuWall}>
+            <div style={styles.staticMenuGrid}>
+              <div style={styles.staticMenuItem} onClick={() => setActiveTab("analysis")}>
+                <h3 style={styles.staticMenuTitle}>🔬 Analysis</h3>
+                <p style={styles.staticMenuDesc}>Analyze soil, weather, and farm conditions to determine crop compatibility and optimize farming strategies.</p>
+              </div>
+              <div style={styles.staticMenuItem} onClick={() => setActiveTab("ml")}>
+                <h3 style={styles.staticMenuTitle}>🤖 ML Model</h3>
+                <p style={styles.staticMenuDesc}>Use machine learning to predict the best fertilizers based on soil nutrients, crop type, and environmental factors.</p>
+              </div>
+              <div style={styles.staticMenuItem} onClick={() => setActiveTab("analytics")}>
+                <h3 style={styles.staticMenuTitle}>📈 Analytics</h3>
+                <p style={styles.staticMenuDesc}>View historical data, performance trends, and insights to improve long-term agricultural productivity.</p>
+              </div>
+              <div style={styles.staticMenuItem} onClick={() => setActiveTab("chat")}>
+                <h3 style={styles.staticMenuTitle}>💬 Chatbot</h3>
+                <p style={styles.staticMenuDesc}>Interact with AI to get real-time farming advice, troubleshooting, and recommendations.</p>
+              </div>
+            </div>
+          </div>
         )}
   
         {activeTab === "analysis" && (
