@@ -6,6 +6,7 @@ import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 import FuzzyText from "../../components/Shared/FuzzyText";
 import { motion } from "framer-motion";
+import Silk from "../../components/Home/Silk";  // ✅ Silk background import
 
 
 const styles = {
@@ -14,7 +15,19 @@ const styles = {
     padding: "30px",
     background: "linear-gradient(135deg, #eef2ff, #f8fafc)",
     minHeight: "100vh",
-    fontFamily: "Inter, sans-serif"
+    fontFamily: "Inter, sans-serif",
+    position: "relative",
+    zIndex: 1
+  },
+
+  silkBackground: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    zIndex: 0,
+    pointerEvents: "none"
   },
 
   rightPanel: {
@@ -268,7 +281,6 @@ const styles = {
     padding: "20px"
   },
 
-  // NEW: Static menu grid styles
   staticMenuGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(4, 1fr)",
@@ -365,7 +377,9 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     borderRadius: "12px",
-    boxShadow: "0 8px 25px rgba(0,0,0,0.15)"
+    boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+    position: "relative",
+    zIndex: 2
   },
 
   th: {
@@ -669,6 +683,17 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   return (
     <div style={styles.app}>
+      {/* ✅ SILK BACKGROUND - NOW VISIBLE ON ALL TABS */}
+      <div style={styles.silkBackground}>
+        <Silk 
+          speed={3}
+          scale={1}
+          color="#f59e0b"
+          noiseIntensity={1.2}
+          rotation={0}
+        />
+      </div>
+
       {/* Header */}
       <header style={styles.header}>
         <div>
@@ -1224,7 +1249,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                                     <td style={styles.td}>{item.fertilizer}</td>
                                     <td style={styles.td}>{item.compatibility}</td>
                                     <td style={styles.td}>{item.score}%</td>
-                                  </tr>
+                                  </table>
                                 ))}
                               </tbody>
                             </table>
