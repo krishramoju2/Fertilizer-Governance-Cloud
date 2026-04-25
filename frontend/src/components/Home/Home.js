@@ -2,7 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import Silk from "./Silk";
 
-import InfiniteMenu from "./InfiniteMenu"; 
+// Import InfiniteMenu but we'll modify how it renders
+import InfiniteMenu from "./InfiniteMenu";
 
 export default function Home({ setActiveTab }) {
   
@@ -28,11 +29,11 @@ export default function Home({ setActiveTab }) {
       onClick: () => setActiveTab("chat")
     }
   ];
-    
   
   return (
-      <div style={{ ...styles.container, position: "relative" }}>  
-      {/* 🔥 Silk Background */}
+    <div style={{ ...styles.container, position: "relative" }}>
+      
+      {/* 🔥 Silk Background — FIXED Z-INDEX */}
       <div style={styles.silkBackground}>
         <Silk 
           speed={3}
@@ -42,14 +43,14 @@ export default function Home({ setActiveTab }) {
           rotation={0}
         />
       </div>
-            
+      
+      {/* MAIN CARD */}
       <motion.div
         style={styles.card}
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        
         {/* HEADER */}
         <h1 style={styles.title}>🌾 FarmAdvisor Pro</h1>
         <p style={styles.subtitle}>
@@ -98,7 +99,6 @@ export default function Home({ setActiveTab }) {
 
         {/* EXTRA INFO SECTION */}
         <div style={styles.bottomSection}>
-          
           {/* FEATURES */}
           <div style={styles.infoCard}>
             <h3 style={styles.infoTitle}>🚀 Features</h3>
@@ -120,15 +120,25 @@ export default function Home({ setActiveTab }) {
               <li>Choose crops based on soil type</li>
             </ul>
           </div>
-
         </div>
-
       </motion.div>
 
+      {/* STATIC MENU SECTION — NO ROTATION */}
       <div style={styles.menuSection}>
-        <InfiniteMenu items={menuItems} />
+        {/* Static grid of cards instead of rotating InfiniteMenu */}
+        <div style={styles.staticMenuGrid}>
+          {menuItems.map((item, index) => (
+            <div 
+              key={index}
+              style={styles.staticMenuItem}
+              onClick={item.onClick}
+            >
+              <h3 style={styles.staticMenuTitle}>{item.title}</h3>
+              <p style={styles.staticMenuDesc}>{item.description}</p>
+            </div>
+          ))}
+        </div>
       </div>
-            
     </div>
   );
 }
@@ -144,32 +154,20 @@ const styles = {
     background: "transparent"
   },
 
-  menuCard: {
-    background: "rgba(255,255,255,0.85)",
-    borderRadius: "14px",
-    padding: "20px",
-    textAlign: "center",
-    backdropFilter: "blur(10px)",
-    border: "1px solid rgba(0,0,0,0.05)",
-    cursor: "pointer",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center"
-  },
-
+  // 🔥 FIXED: Silk background now visible
   silkBackground: {
-    position: "fixed",   // 🔥 important
+    position: "fixed",
     top: 0,
     left: 0,
     width: "100vw",
     height: "100vh",
-    zIndex: -1
+    zIndex: 0,  // Changed from -1 to 0
+    pointerEvents: "none"  // Allows clicks to pass through to cards
   },
 
   card: {
     width: "950px",
-    background: "rgba(255,255,255,0.75)",
+    background: "rgba(255,255,255,0.85)",  // Increased opacity for better readability
     backdropFilter: "blur(12px)",
     borderRadius: "18px",
     padding: "40px",
@@ -184,11 +182,40 @@ const styles = {
     marginTop: "60px",
     position: "relative",
     zIndex: 1,
-    minHeight: "560px",
-    height: "70vh",
-    maxHeight: "720px",
-    borderRadius: "18px",
-    overflow: "hidden",
+    minHeight: "auto"
+  },
+
+  // NEW: Static menu grid (no rotation)
+  staticMenuGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "20px",
+    width: "100%"
+  },
+
+  staticMenuItem: {
+    background: "rgba(255,255,255,0.85)",
+    backdropFilter: "blur(10px)",
+    borderRadius: "16px",
+    padding: "24px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    border: "1px solid rgba(255,255,255,0.2)",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
+  },
+
+  staticMenuTitle: {
+    fontSize: "18px",
+    fontWeight: "600",
+    marginBottom: "12px",
+    color: "#7c2d12"
+  },
+
+  staticMenuDesc: {
+    fontSize: "13px",
+    color: "#555",
+    lineHeight: "1.5",
+    margin: 0
   },
 
   title: {
@@ -205,7 +232,6 @@ const styles = {
     lineHeight: "1.5"
   },
 
-  /* NEW: STATS */
   statsRow: {
     display: "flex",
     gap: "15px",
@@ -237,7 +263,6 @@ const styles = {
     transition: "all 0.3s ease"
   },
 
-  /* NEW: BOTTOM SECTION */
   bottomSection: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
@@ -265,3 +290,14 @@ const styles = {
     color: "#444"
   }
 };
+
+// Add hover effect
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+  .static-menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.95);
+  }
+`;
+document.head.appendChild(styleSheet);
