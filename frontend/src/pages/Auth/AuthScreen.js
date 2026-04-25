@@ -3,6 +3,12 @@ import api from "../../services/api";
 import { GoogleLogin } from "@react-oauth/google";
 import Galaxy from "../../components/Auth/Galaxy";
 
+// Import your 4 images from the same folder (Auth folder)
+import agritechImg from "./agritech.png";
+import chatbotImg from "./chatbot.png";
+import harvestImg from "./harvest.png";
+import innovationImg from "./innovation.png";
+
 export default function AuthScreen({ setToken, setCurrentUser }) {
   const [isLogin, setIsLogin] = useState(true);
   const [soilTypes, setSoilTypes] = useState(["Loamy", "Sandy", "Clay"]);
@@ -35,7 +41,6 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         if (res.data.success && res.data.data && res.data.data.length > 0) {
           setSoilTypes(res.data.data);
         } else {
-          // Keep fallback if API returns empty
           console.warn("No soil types from API, using fallback");
         }
       } catch (err) {
@@ -45,7 +50,6 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
           retries++;
           setTimeout(fetchSoilTypes, 2000);
         } else {
-          // Fallback already set in useState
           console.log("Using fallback soil types after retries exhausted");
         }
       }
@@ -68,7 +72,6 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
       const res = await api.post(endpoint, payload);
 
       if (res.data.success) {
-        // Handle different token response structures
         const token = res.data.data?.token || res.data.token;
         const user = res.data.data?.user || res.data.user;
 
@@ -128,13 +131,14 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
     setIsLogin(!isLogin);
     setFormData({
       ...formData,
-      password: "", // Clear password when switching
-      name: "", // Clear name when switching to login
+      password: "",
+      name: "",
     });
   };
 
   return (
     <div style={styles.container}>
+      {/* Galaxy Animation Background (visible through images) */}
       <div style={styles.bgLayer}>
         <Galaxy
           mouseRepulsion
@@ -152,8 +156,31 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         />
       </div>
 
+      {/* Semi-transparent overlay to make card readable while keeping galaxy visible */}
       <div style={styles.overlay} />
 
+      {/* ===== 4 CORNER IMAGES ===== */}
+      {/* Top Left */}
+      <div style={styles.cornerImageTL}>
+        <img src={agritechImg} alt="Agritech" style={styles.decoImage} />
+      </div>
+
+      {/* Top Right */}
+      <div style={styles.cornerImageTR}>
+        <img src={chatbotImg} alt="Chatbot" style={styles.decoImage} />
+      </div>
+
+      {/* Bottom Left */}
+      <div style={styles.cornerImageBL}>
+        <img src={harvestImg} alt="Harvest" style={styles.decoImage} />
+      </div>
+
+      {/* Bottom Right */}
+      <div style={styles.cornerImageBR}>
+        <img src={innovationImg} alt="Innovation" style={styles.decoImage} />
+      </div>
+
+      {/* Login/Register Card */}
       <div style={styles.card}>
         <h2 style={styles.title}>{isLogin ? "Login" : "Register"}</h2>
 
@@ -251,8 +278,77 @@ const styles = {
   overlay: {
     position: "absolute",
     inset: 0,
-    background: "radial-gradient(circle at 30% 20%, rgba(26,71,42,0.25), rgba(0,0,0,0.45))",
+    background: "radial-gradient(circle at 30% 20%, rgba(26,71,42,0.2), rgba(0,0,0,0.3))",
     zIndex: 1
+  },
+
+  // ===== CORNER IMAGE STYLES =====
+  cornerImageTL: {
+    position: "absolute",
+    top: "20px",
+    left: "20px",
+    zIndex: 2,
+    width: "100px",
+    height: "100px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  cornerImageTR: {
+    position: "absolute",
+    top: "20px",
+    right: "20px",
+    zIndex: 2,
+    width: "100px",
+    height: "100px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  cornerImageBL: {
+    position: "absolute",
+    bottom: "20px",
+    left: "20px",
+    zIndex: 2,
+    width: "100px",
+    height: "100px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  cornerImageBR: {
+    position: "absolute",
+    bottom: "20px",
+    right: "20px",
+    zIndex: 2,
+    width: "100px",
+    height: "100px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(4px)",
+    transition: "transform 0.3s ease"
+  },
+
+  decoImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    opacity: 0.85,
+    transition: "opacity 0.3s ease, transform 0.3s ease"
   },
 
   card: {
@@ -333,3 +429,16 @@ const styles = {
     borderRadius: "6px"
   }
 };
+
+// Add hover effect styles dynamically (optional)
+// You can add this to a separate CSS file if preferred
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+  .corner-image:hover {
+    transform: scale(1.05);
+  }
+  .corner-image img:hover {
+    opacity: 1;
+  }
+`;
+document.head.appendChild(styleSheet);
