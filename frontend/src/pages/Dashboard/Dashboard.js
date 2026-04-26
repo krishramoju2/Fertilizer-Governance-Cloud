@@ -451,7 +451,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // ✅ FIXED: Removed useCallback to ensure fresh data
+  // ✅ FIXED: Removed useCallback to ensure fresh data on every call
   const loadUserData = async () => {
     try {
       console.log("📡 Fetching history and analytics...");
@@ -505,7 +505,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // ✅ FIXED: Removed loadUserData from dependencies
+  // ✅ FIXED: Removed loadUserData from dependencies to prevent stale closure
   const hasLoadedInitialData = useRef(false);
   
   useEffect(() => {
@@ -530,7 +530,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
     
     loadData();
-  }, [currentUser, fetchConfig, loadUsers]); // ✅ loadUserData removed from deps
+  }, [currentUser, fetchConfig, loadUsers]);
 
   useEffect(() => {
     if (history.length > 0 && !result) {
@@ -542,7 +542,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [history, result]);
 
-  // ✅ FIXED: Added await loadUserData
+  // ✅ FIXED: Added await loadUserData() to refresh history after analysis
   const handleAnalyze = async () => {
     console.log("🔴 1. Analyze clicked");
     console.log("🔴 2. Inputs being sent:", inputs);
@@ -1019,9 +1019,16 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             <p>Avg Score: {userAnalytics.average_score}%</p>
                             <h5>Recent History</h5>
                             <table style={styles.table}>
-                              <thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead>
+                              <thead>
+                                <tr>
+                                  <th style={styles.th}>Crop</th>
+                                  <th style={styles.th}>Fertilizer</th>
+                                  <th style={styles.th}>Status</th>
+                                  <th style={styles.th}>Score</th>
+                                </table>
+                              </thead>
                               <tbody>
-                                {userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td><td>))}
+                                {userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></table>))}
                               </tbody>
                             </table>
                           </>
@@ -1047,5 +1054,3 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
-
-
