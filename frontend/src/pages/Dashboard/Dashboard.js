@@ -35,12 +35,13 @@ const styles = {
     zIndex: 0,
     pointerEvents: "none"
   },
+  
   rightPanel: {
     display: "flex",
     flexDirection: "column",
     gap: "20px",
-    width: "100%",        // ✅ ADD THIS
-    minWidth: 0           // ✅ ADD THIS (prevents collapse)
+    width: "100%",
+    minWidth: 0
   },
   
   description: { fontSize: "14px", color: "#555", marginTop: "5px", lineHeight: "1.5" },
@@ -158,7 +159,12 @@ const styles = {
     marginBottom: "20px",
     border: "1px solid rgba(255,255,255,0.3)"
   },
-  analysisGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "25px",alignItems: "start"},
+  analysisGrid: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", // ✅ FIX
+    gap: "25px",
+    alignItems: "start"
+  },
   inputGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginTop: "10px" },
   input: {
     width: "100%",
