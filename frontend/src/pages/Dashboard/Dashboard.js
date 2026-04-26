@@ -4,13 +4,14 @@ import autoTable from "jspdf-autotable";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
+import FuzzyText from "../../components/Shared/FuzzyText";
 import { motion, AnimatePresence } from "framer-motion";
 import Silk from "../../components/Home/Silk";
 
 const styles = {
   app: {
     padding: "30px",
-    background: "linear-gradient(135deg, #eef2ff, #f8fafc)",
+    background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
     minHeight: "100vh",
     fontFamily: "Inter, sans-serif",
     position: "relative",
@@ -44,15 +45,16 @@ const styles = {
   errorMessage: { color: "red", margin: "10px 0" },
   successMessage: { color: "green", margin: "10px 0" },
   resultCard: {
-    background: "linear-gradient(135deg, #ffffff, #f1f5f9)",
-    padding: "24px",
-    borderRadius: "18px",
+    background: "linear-gradient(135deg, #1e293b, #0f172a)",
+    padding: "32px",
+    borderRadius: "24px",
     marginBottom: "20px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.10)",
-    border: "1px solid rgba(226,232,240,0.8)"
+    boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    color: "white"
   },
   resultHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" },
-  resultTitle: { fontSize: "20px", fontWeight: "700", color: "#1a472a" },
+  resultTitle: { fontSize: "22px", fontWeight: "800", color: "#4ade80" },
   scoreCircle: {
     textAlign: "center",
     background: "linear-gradient(135deg, #4f46e5, #22c55e)",
@@ -69,15 +71,15 @@ const styles = {
   scoreLabel: { fontSize: "10px", color: "rgba(255,255,255,0.85)", marginTop: "2px" },
   resultGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" },
   resultItem: {
-    padding: "12px",
-    borderRadius: "10px",
-    background: "#f8fafc",
-    border: "1px solid #e2e8f0"
+    padding: "14px",
+    borderRadius: "14px",
+    background: "rgba(255, 255, 255, 0.05)",
+    border: "1px solid rgba(255, 255, 255, 0.1)"
   },
   resultLabel: { fontWeight: "700", fontSize: "12px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", display: "block", marginBottom: "4px" },
-  resultValue: { display: "block", fontWeight: "600", color: "#1e293b", fontSize: "14px" },
+  resultValue: { display: "block", fontWeight: "700", color: "#f8fafc", fontSize: "15px" },
   resultDetail: { fontSize: "11px", color: "#94a3b8", marginTop: "2px", display: "block" },
-  suggestionsBox: { marginTop: "12px", padding: "14px", background: "linear-gradient(135deg, #f0fdf4, #ecfdf5)", borderRadius: "12px", border: "1px solid #bbf7d0" },
+  suggestionsBox: { marginTop: "12px", padding: "16px", background: "rgba(34, 197, 94, 0.05)", borderRadius: "16px", border: "1px solid rgba(34, 197, 94, 0.15)" },
   suggestionsTitle: { fontWeight: "700", color: "#166534", marginBottom: "8px", display: "block" },
   suggestion: { fontSize: "13px", color: "#15803d", marginBottom: "4px", lineHeight: "1.5" },
   pdfButton: {
@@ -132,7 +134,15 @@ const styles = {
   summaryValue: { fontSize: "24px", fontWeight: "700", color: "#ffffff", display: "block", marginTop: "8px" },
   summaryLabel: { fontSize: "11px", color: "rgba(255,255,255,0.85)", marginTop: "4px", display: "block", textTransform: "uppercase", letterSpacing: "1px" },
   summaryIcon: { fontSize: "16px", width: "32px", height: "32px", display: "grid", placeItems: "center", borderRadius: "10px", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)" },
-  label: { display: "block", marginBottom: "5px", fontWeight: "500", color: "#333" },
+  card: {
+    background: "rgba(255, 255, 255, 0.75)",
+    backdropFilter: "blur(16px)",
+    padding: "28px",
+    borderRadius: "24px",
+    border: "1px solid rgba(255, 255, 255, 0.4)",
+    boxShadow: "0 12px 40px rgba(31, 38, 135, 0.08)",
+  },
+  label: { display: "block", marginBottom: "6px", fontWeight: "600", color: "#475569", fontSize: "13px", textTransform: "uppercase", letterSpacing: "0.5px" },
   nav: { display: "flex", gap: "10px", flexWrap: "wrap" },
   analyzeButton: {
     marginTop: "20px",
@@ -263,7 +273,7 @@ const styles = {
   },
   agriCardTitle: { fontSize: "15px", fontWeight: "800", marginBottom: "5px", color: "#064e3b" },
   agriCardDesc: { fontSize: "10px", color: "#475569", lineHeight: "1.3", margin: 0 },
-  cardTitle: { fontSize: "18px", fontWeight: "600", marginBottom: "10px", color: "#1a472a" },
+  cardTitle: { fontSize: "20px", fontWeight: "800", marginBottom: "16px", color: "#0f172a", letterSpacing: "-0.5px" },
   analysisGrid: {
     display: "grid",
     gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
@@ -273,14 +283,16 @@ const styles = {
   inputGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginTop: "10px" },
   input: {
     width: "100%",
-    padding: "12px",
-    borderRadius: "10px",
+    padding: "14px 18px",
+    borderRadius: "14px",
     border: "1px solid #e2e8f0",
     fontSize: "14px",
     outline: "none",
-    transition: "all 0.2s ease",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     boxSizing: "border-box",
-    background: "#fff"
+    background: "#ffffff",
+    color: "#1e293b",
+    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.03)"
   },
   table: {
     width: "100%",
@@ -895,8 +907,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 ) : (
                   <div style={{
-                    background: "#eef2ff",
-                    border: "2px dashed #818cf8",
+                    background: "rgba(79, 70, 229, 0.04)",
+                    border: "2px dashed rgba(79, 70, 229, 0.2)",
                     borderRadius: "18px",
                     padding: "40px 24px",
                     textAlign: "center",
@@ -915,12 +927,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </div>
 
             <div style={{
-              background: "#ffffff",
-              border: "2px solid #e2e8f0",
-              borderRadius: "18px",
-              padding: "24px",
-              marginTop: "24px",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.08)"
+              background: "rgba(26, 71, 42, 0.03)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(26, 71, 42, 0.1)",
+              borderRadius: "24px",
+              padding: "32px",
+              marginTop: "32px",
+              boxShadow: "0 15px 35px rgba(0,0,0,0.05)"
             }}>
               <h3 style={{ fontSize: "20px", fontWeight: "700", color: "#1a472a", marginBottom: "18px", display: "flex", alignItems: "center", gap: "8px" }}>
                 📋 Recent Analyses
@@ -950,9 +963,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                           justifyContent: "space-between",
                           padding: "14px 18px",
                           borderRadius: "12px",
-                          background: idx % 2 === 0 ? "#f8fafc" : "#f1f5f9",
-                          border: "1px solid #e2e8f0",
-                          transition: "all 0.2s ease"
+                          background: idx % 2 === 0 ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 0.2)",
+                          backdropFilter: "blur(8px)",
+                          border: "1px solid rgba(255, 255, 255, 0.4)",
+                          transition: "all 0.3s ease"
                         }}
                       >
                         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
