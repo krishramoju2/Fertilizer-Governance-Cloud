@@ -225,70 +225,84 @@ const styles = {
     zIndex: 2
   },
   th: { padding: "12px", textAlign: "left", borderBottom: "2px solid #e2e8f0", borderRight: "1px solid #e2e8f0", fontWeight: "600", color: "#334155", background: "#f8fafc" },
-  td: { padding: "12px", textAlign: "left", borderBottom: "1px solid #e2e8f0", borderRight: "1px solid #e2e8f0", color: "#1e293b" },
-  
-  // 3D Carousel Styles
-  carouselStage: {
+  saturnStage: {
     perspective: "2000px",
     width: "100%",
-    height: "550px",
+    height: "650px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
-    overflow: "visible"
+    overflow: "visible",
+    marginTop: "-20px"
   },
-  prism: {
-    width: "420px",
-    height: "320px",
-    position: "relative",
-    transformStyle: "preserve-3d",
-    cursor: "grab"
+  planetContainer: {
+    position: "absolute",
+    width: "220px",
+    height: "220px",
+    zIndex: 5,
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  prismSide: (rotateY, translateZ, active) => ({
+  saturnPlanet: {
+    width: "180px",
+    height: "180px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle at 30% 30%, #fbbf24, #d97706, #78350f)",
+    boxShadow: "0 0 100px rgba(251, 191, 36, 0.4), inset -25px -25px 60px rgba(0,0,0,0.6)",
+    position: "relative"
+  },
+  saturnRingVisual: {
+    position: "absolute",
+    width: "480px",
+    height: "120px",
+    borderRadius: "50%",
+    border: "12px double rgba(251, 191, 36, 0.25)",
+    boxShadow: "0 0 40px rgba(251, 191, 36, 0.15), inset 0 0 30px rgba(251, 191, 36, 0.1)",
+    transform: "rotateX(75deg) rotateY(-10deg)",
+    zIndex: 4,
+    pointerEvents: "none",
+    background: "radial-gradient(ellipse at center, transparent 60%, rgba(251, 191, 36, 0.05) 100%)"
+  },
+  orbitRing: {
     position: "absolute",
     width: "100%",
     height: "100%",
-    left: 0,
-    top: 0,
-    background: active ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.65)",
-    backdropFilter: "blur(12px)",
-    borderRadius: "28px",
-    padding: "40px 30px",
+    transformStyle: "preserve-3d",
+    transform: "rotateX(70deg)", // Tilt the whole orbit
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  ringCardContainer: (angle) => ({
+    position: "absolute",
+    width: "300px",
+    height: "200px",
+    transformStyle: "preserve-3d",
+    transform: `rotateY(${angle}deg) translateZ(380px) rotateY(${-angle}deg) rotateX(-70deg)`, // Maintain upright position
+    transition: "all 0.5s cubic-bezier(0.23, 1, 0.32, 1)"
+  }),
+  saturnCard: {
+    width: "100%",
+    height: "100%",
+    background: "rgba(255, 255, 255, 0.92)",
+    backdropFilter: "blur(15px)",
+    borderRadius: "24px",
+    padding: "30px 25px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    border: active ? "2.5px solid #4f46e5" : "1px solid rgba(255, 255, 255, 0.3)",
-    boxShadow: active ? "0 25px 60px rgba(79,70,229,0.3)" : "0 10px 30px rgba(0,0,0,0.05)",
-    transform: `rotateY(${rotateY}deg) translateZ(${translateZ}px)`,
-    transition: "all 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
-    userSelect: "none",
-    boxSizing: "border-box"
-  }),
-  prismTitle: { fontSize: "28px", fontWeight: "800", marginBottom: "15px", background: "linear-gradient(135deg, #1a472a, #4f46e5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" },
-  prismDesc: { fontSize: "15px", color: "#475569", lineHeight: "1.6", margin: 0 },
-  prismNav: {
-    position: "absolute",
-    bottom: "20px",
-    display: "flex",
-    gap: "20px",
-    zIndex: 10
-  },
-  navCircle: {
-    width: "50px",
-    height: "50px",
-    borderRadius: "50%",
-    background: "#ffffff",
-    border: "none",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+    border: "1px solid rgba(255, 255, 255, 0.4)",
+    boxShadow: "0 15px 45px rgba(0,0,0,0.12)",
     cursor: "pointer",
-    display: "grid",
-    placeItems: "center",
-    fontSize: "20px",
-    transition: "all 0.2s ease"
-  }
+    boxSizing: "border-box"
+  },
+  saturnCardTitle: { fontSize: "22px", fontWeight: "800", marginBottom: "12px", color: "#1a472a" },
+  saturnCardDesc: { fontSize: "13px", color: "#475569", lineHeight: "1.5", margin: 0 }
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -315,11 +329,18 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [userHistory, setUserHistory] = useState([]);
   const [adminManageType, setAdminManageType] = useState('soil');
   const [newItem, setNewItem] = useState('');
-  const [prismRotation, setPrismRotation] = useState(0);
+  const [saturnRotation, setSaturnRotation] = useState(0);
+  const [isSaturnHovered, setIsSaturnHovered] = useState(false);
 
-  const rotatePrism = (dir) => {
-    setPrismRotation(prev => prev + (dir * 90));
-  };
+  useEffect(() => {
+    let frameId;
+    const animate = () => {
+      setSaturnRotation(prev => prev + (isSaturnHovered ? 0.15 : 0.6));
+      frameId = requestAnimationFrame(animate);
+    };
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [isSaturnHovered]);
 
   const showMessage = (text, type = 'success') => {
     setMessage({ text, type });
@@ -569,64 +590,40 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
       <main style={styles.main}>
         {activeTab === "menu" && (
-          <div style={styles.carouselStage}>
-            <motion.div 
-              style={styles.prism}
-              animate={{ rotateY: prismRotation }}
-              transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            >
-              {/* Analysis Side (0deg) */}
-              <motion.div 
-                style={styles.prismSide(0, 210, Math.abs(prismRotation % 360) === 0)}
-                whileHover={{ scale: 1.05, background: "rgba(255,255,255,1)" }}
-                onClick={() => setActiveTab("analysis")}
-              >
-                <div style={{ fontSize: "50px", marginBottom: "20px" }}>🔬</div>
-                <h3 style={styles.prismTitle}>Analysis</h3>
-                <p style={styles.prismDesc}>Analyze soil, weather, and farm conditions to determine crop compatibility and optimize farming strategies.</p>
-                <div style={{ marginTop: "20px", color: "#4f46e5", fontWeight: "700" }}>Open Tab →</div>
-              </motion.div>
+          <div 
+            style={styles.saturnStage}
+            onMouseEnter={() => setIsSaturnHovered(true)}
+            onMouseLeave={() => setIsSaturnHovered(false)}
+          >
+            {/* The Planet Saturn */}
+            <div style={styles.planetContainer}>
+              <div style={styles.saturnPlanet} />
+              <div style={styles.saturnRingVisual} />
+            </div>
 
-              {/* ML Model Side (90deg) */}
-              <motion.div 
-                style={styles.prismSide(90, 210, Math.abs(prismRotation % 360) === 90 || Math.abs(prismRotation % 360) === 270)}
-                whileHover={{ scale: 1.05, background: "rgba(255,255,255,1)" }}
-                onClick={() => setActiveTab("ml")}
-              >
-                <div style={{ fontSize: "50px", marginBottom: "20px" }}>🤖</div>
-                <h3 style={styles.prismTitle}>ML Model</h3>
-                <p style={styles.prismDesc}>Use machine learning to predict the best fertilizers based on soil nutrients, crop type, and environmental factors.</p>
-                <div style={{ marginTop: "20px", color: "#4f46e5", fontWeight: "700" }}>Open Tab →</div>
-              </motion.div>
-
-              {/* Analytics Side (180deg) */}
-              <motion.div 
-                style={styles.prismSide(180, 210, Math.abs(prismRotation % 360) === 180)}
-                whileHover={{ scale: 1.05, background: "rgba(255,255,255,1)" }}
-                onClick={() => setActiveTab("analytics")}
-              >
-                <div style={{ fontSize: "50px", marginBottom: "20px" }}>📈</div>
-                <h3 style={styles.prismTitle}>Analytics</h3>
-                <p style={styles.prismDesc}>View historical data, performance trends, and insights to improve long-term agricultural productivity.</p>
-                <div style={{ marginTop: "20px", color: "#4f46e5", fontWeight: "700" }}>Open Tab →</div>
-              </motion.div>
-
-              {/* Chatbot Side (270deg) */}
-              <motion.div 
-                style={styles.prismSide(270, 210, Math.abs(prismRotation % 360) === 270 || Math.abs(prismRotation % 360) === 90)}
-                whileHover={{ scale: 1.05, background: "rgba(255,255,255,1)" }}
-                onClick={() => setActiveTab("chat")}
-              >
-                <div style={{ fontSize: "50px", marginBottom: "20px" }}>💬</div>
-                <h3 style={styles.prismTitle}>Chatbot</h3>
-                <p style={styles.prismDesc}>Interact with AI to get real-time farming advice, troubleshooting, and recommendations.</p>
-                <div style={{ marginTop: "20px", color: "#4f46e5", fontWeight: "700" }}>Open Tab →</div>
-              </motion.div>
-            </motion.div>
-
-            <div style={styles.prismNav}>
-              <button style={styles.navCircle} onClick={() => rotatePrism(1)}>←</button>
-              <button style={styles.navCircle} onClick={() => rotatePrism(-1)}>→</button>
+            {/* The Orbiting Cards */}
+            <div style={styles.orbitRing}>
+              {[
+                { id: "analysis", title: "Analysis", icon: "🔬", desc: "Analyze soil, weather, and farm conditions to determine crop compatibility.", angle: 0 },
+                { id: "ml", title: "ML Model", icon: "🤖", desc: "Use machine learning to predict the best fertilizers based on nutrients.", angle: 90 },
+                { id: "analytics", title: "Analytics", icon: "📈", desc: "View historical data, performance trends, and productivity insights.", angle: 180 },
+                { id: "chat", title: "Chatbot", icon: "💬", desc: "Interact with AI to get real-time farming advice and troubleshooting.", angle: 270 }
+              ].map((item) => (
+                <div 
+                  key={item.id}
+                  style={styles.ringCardContainer(item.angle + saturnRotation)}
+                >
+                  <motion.div 
+                    style={styles.saturnCard}
+                    whileHover={{ scale: 1.1, boxShadow: "0 25px 60px rgba(0,0,0,0.2)" }}
+                    onClick={() => setActiveTab(item.id)}
+                  >
+                    <div style={{ fontSize: "40px", marginBottom: "15px" }}>{item.icon}</div>
+                    <h3 style={styles.saturnCardTitle}>{item.title}</h3>
+                    <p style={styles.saturnCardDesc}>{item.desc}</p>
+                  </motion.div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -843,3 +840,4 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
