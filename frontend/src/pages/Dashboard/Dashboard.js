@@ -517,7 +517,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.historyCard}>
                   <h3 style={styles.cardTitle}>Recent Analyses</h3>
                   
-                  {/* Direct debug display */}
+                  {/* Debug display */}
                   <div style={{ background: "#e0e0e0", padding: "10px", marginBottom: "10px", borderRadius: "5px" }}>
                     <strong>🔍 DEBUG:</strong> History length = {history.length}
                     <button 
@@ -532,37 +532,35 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </button>
                   </div>
                   
-                  {/* FORCE DISPLAY - Plain HTML table with no CSS dependencies */}
-                  <div style={{ marginTop: "10px" }}>
-                    {history.length === 0 ? (
-                      <p>No analyses yet. Click "Analyze" to get started.</p>
-                    ) : (
-                      <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse", background: "white" }}>
-                        <thead>
-                          <tr style={{ background: "#f0f0f0" }}>
-                            <th>#</th>
-                            <th>Crop</th>
-                            <th>Fertilizer</th>
-                            <th>Status</th>
-                            <th>Score</th>
-                            <th>Date</th>
+                  {/* Table display */}
+                  {history.length === 0 ? (
+                    <p>No analyses yet. Click "Analyze" to get started.</p>
+                  ) : (
+                    <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse", background: "white" }}>
+                      <thead>
+                        <tr style={{ background: "#f0f0f0" }}>
+                          <th>#</th>
+                          <th>Crop</th>
+                          <th>Fertilizer</th>
+                          <th>Status</th>
+                          <th>Score</th>
+                          <th>Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {history.slice().reverse().map((item, idx) => (
+                          <tr key={idx}>
+                            <td>{idx + 1}</td>
+                            <td>{item.input_data?.Crop_Type || "N/A"}</td>
+                            <td>{item.input_data?.Fertilizer_Name || "N/A"}</td>
+                            <td>{item.result?.overall_compatibility || "N/A"}</td>
+                            <td>{item.result?.overall_score || 0}%</td>
+                            <td>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {history.slice().reverse().map((item, idx) => (
-                            <tr key={idx}>
-                              <td>{idx + 1}</td>
-                              <td>{item.input_data?.Crop_Type || "N/A"}</td>
-                              <td>{item.input_data?.Fertilizer_Name || "N/A"}</td>
-                              <td>{item.result?.overall_compatibility || "N/A"}</td>
-                              <td>{item.result?.overall_score || 0}%</td>
-                              <td>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
-                            <tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </div>
             </div>
