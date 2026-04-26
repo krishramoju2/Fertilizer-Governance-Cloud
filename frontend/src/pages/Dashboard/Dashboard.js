@@ -205,7 +205,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     setTimeout(() => setMessage({ text: '', type: '' }), 5000);
   };
 
-  // Farm Profile - Load user farm details
   useEffect(() => {
     if (currentUser?.farm_details) {
       setInputs(prev => ({
@@ -217,7 +216,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [currentUser]);
 
-  // Fetch dropdown options for Admin
   const fetchConfig = useCallback(async () => {
     try {
       const [soilRes, cropRes, fertRes] = await Promise.all([
@@ -233,7 +231,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Load user data including history and analytics
   const loadUserData = async () => {
     try {
       const [historyRes, analyticsRes] = await Promise.all([
@@ -295,7 +292,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [history, result]);
 
-  // Fertilizer Analysis
   const handleAnalyze = async () => {
     setLoading(true);
     try {
@@ -303,7 +299,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       if (response.data.success) {
         setResult(response.data.result);
         showMessage('Analysis completed successfully!');
-        await loadUserData(); // Refresh history
+        await loadUserData();
       }
     } catch (err) {
       showMessage(err.response?.data?.message || 'Analysis failed', 'error');
@@ -312,7 +308,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // PDF Report Generation
   const generatePDF = () => {
     if (!result) return;
     const doc = new jsPDF();
@@ -363,7 +358,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     doc.save(`FarmReport_${inputs.Crop_Type}_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
-  // Admin: Add dropdown item
   const handleAddItem = async () => {
     if (!newItem.trim()) return;
     let endpoint = '';
@@ -382,7 +376,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // Admin: Remove dropdown item
   const handleRemoveItem = async (item) => {
     let endpoint = '';
     if (adminManageType === 'soil') endpoint = `/admin/config/soil-types/${encodeURIComponent(item)}`;
@@ -428,7 +421,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   return (
     <div style={styles.app}>
-      {/* ReactBits Silk Background */}
       <div style={styles.silkBackground}>
         <Silk speed={3} scale={1} color="#f59e0b" noiseIntensity={1.2} rotation={0} />
       </div>
@@ -449,7 +441,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       {message.text && <div style={message.type === 'error' ? styles.errorMessage : styles.successMessage}>{message.text}</div>}
 
       <main style={styles.main}>
-        {/* HOME TAB */}
         {activeTab === "menu" && (
           <div style={styles.homeMenuWall}>
             <div style={styles.staticMenuGrid}>
@@ -473,7 +464,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* ANALYSIS TAB */}
         {activeTab === "analysis" && (
           <>
             <div style={styles.card}>
@@ -482,7 +472,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </div>
 
             <div style={styles.analysisGrid}>
-              {/* Input Form */}
               <div style={styles.card}>
                 <h2 style={styles.cardTitle}>Farm Inputs</h2>
                 <div style={styles.inputGrid}>
@@ -496,7 +485,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <button style={styles.analyzeButton} onClick={handleAnalyze} disabled={loading}>{loading ? "Analyzing..." : "🔬 Analyze"}</button>
               </div>
 
-              {/* Results + History */}
               <div style={styles.rightPanel}>
                 {result && (
                   <div style={styles.resultCard}>
@@ -515,7 +503,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 )}
 
-                {/* History Table */}
                 <div style={styles.historyCard}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
                     <h3 style={styles.cardTitle}>Recent Analyses</h3>
@@ -544,10 +531,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                                   borderRadius: "12px",
                                   fontSize: "12px",
                                   fontWeight: "500",
-                                  backgroundColor: resultData.overall_compatibility === "Highly Compatible" ? "#d4edda" : 
-                                                   resultData.overall_compatibility === "Moderately Compatible" ? "#fff3cd" : "#f8d7da",
-                                  color: resultData.overall_compatibility === "Highly Compatible" ? "#155724" : 
-                                         resultData.overall_compatibility === "Moderately Compatible" ? "#856404" : "#721c24"
+                                  backgroundColor: resultData.overall_compatibility === "Highly Compatible" ? "#d4edda" : resultData.overall_compatibility === "Moderately Compatible" ? "#fff3cd" : "#f8d7da",
+                                  color: resultData.overall_compatibility === "Highly Compatible" ? "#155724" : resultData.overall_compatibility === "Moderately Compatible" ? "#856404" : "#721c24"
                                 }}>
                                   {resultData.overall_compatibility || "N/A"}
                                 </span>
@@ -566,7 +551,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </>
         )}
 
-        {/* ML MODEL TAB */}
         {activeTab === 'ml' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
@@ -574,7 +558,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
         
-        {/* ANALYTICS TAB */}
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
             {analytics ? (
@@ -609,7 +592,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* ADMIN TAB */}
         {activeTab === 'admin' && currentUser?.is_admin && (
           <div style={styles.adminContainer}>
             <h2 style={styles.adminTitle}>Admin Panel</h2>
@@ -631,7 +613,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     {selectedUserId && (
                       <div style={styles.userDetails}>
                         <h4>User Analytics</h4>
-                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th><tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}</tbody></table></>) : (<p>Select a user to view analytics</p>)}
+                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}</tbody></table></>) : (<p>Select a user to view analytics</p>)}
                       </div>
                     )}
                   </div>
@@ -641,7 +623,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* CHAT TAB */}
         {activeTab === 'chat' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Farm Chatbot</h2>
