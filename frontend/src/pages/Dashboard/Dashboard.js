@@ -425,7 +425,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     setTimeout(() => setMessage({ text: '', type: '' }), 5000);
   };
 
-  // Update inputs from user farm details
   useEffect(() => {
     if (currentUser?.farm_details) {
       setInputs(prev => ({
@@ -437,7 +436,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [currentUser]);
 
-  // Fetch config (soil types, crop types, fertilizer names)
   const fetchConfig = useCallback(async () => {
     try {
       const [soilRes, cropRes, fertRes] = await Promise.all([
@@ -453,7 +451,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Load user data (history and analytics)
   const loadUserData = useCallback(async () => {
     try {
       console.log("📡 Fetching history and analytics...");
@@ -507,7 +504,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  // Initial data load - runs only once when currentUser is available
   const hasLoadedInitialData = useRef(false);
   
   useEffect(() => {
@@ -534,7 +530,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     loadData();
   }, [currentUser, fetchConfig, loadUserData, loadUsers]);
 
-  // Load most recent result from history
   useEffect(() => {
     if (history.length > 0 && !result) {
       const mostRecent = history[0];
@@ -545,7 +540,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, [history, result]);
 
-  // Handle analyze
   const handleAnalyze = async () => {
     console.log("🔴 1. Analyze clicked");
     console.log("🔴 2. Inputs being sent:", inputs);
@@ -580,7 +574,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  // Manual refresh function
   const refreshHistory = async () => {
     console.log("🔄 Manual refresh triggered");
     await loadUserData();
@@ -713,18 +706,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   return (
     <div style={styles.app}>
-      {/* Silk Background */}
       <div style={styles.silkBackground}>
-        <Silk
-          speed={3}
-          scale={1}
-          color="#f59e0b"
-          noiseIntensity={1.2}
-          rotation={0}
-        />
+        <Silk speed={3} scale={1} color="#f59e0b" noiseIntensity={1.2} rotation={0} />
       </div>
 
-      {/* Header */}
       <header style={styles.header}>
         <div>
           <h1 style={styles.title}>🌾 FarmAdvisor Pro</h1>
@@ -735,19 +720,12 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>Analysis</button>
           <button style={getNavButtonStyle('ml')} onClick={() => setActiveTab('ml')}>ML Model</button>
           <button style={getNavButtonStyle('analytics')} onClick={() => setActiveTab('analytics')}>Analytics</button>
-          {currentUser?.is_admin && (
-            <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>Admin</button>
-          )}
+          {currentUser?.is_admin && <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>Admin</button>}
           <button style={getNavButtonStyle('chat')} onClick={() => setActiveTab('chat')}>Chatbot</button>
-          <button style={getNavButtonStyle('', true)} onClick={() => {
-            localStorage.removeItem('token');
-            setToken(null);
-            setCurrentUser(null);
-          }}>Logout</button>
+          <button style={getNavButtonStyle('', true)} onClick={() => { localStorage.removeItem('token'); setToken(null); setCurrentUser(null); }}>Logout</button>
         </nav>
       </header>
 
-      {/* Message */}
       {message.text && (
         <div style={message.type === 'error' ? styles.errorMessage : styles.successMessage}>
           {message.text}
@@ -755,7 +733,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       )}
 
       <main style={styles.main}>
-        {/* HOME TAB - STATIC MENU */}
         {activeTab === "menu" && (
           <div style={styles.homeMenuWall}>
             <div style={styles.staticMenuGrid}>
@@ -779,51 +756,39 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* ANALYSIS TAB */}
         {activeTab === "analysis" && (
           <>
             <div style={styles.card}>
               <h2 style={styles.cardTitle}>🔬 Farm Analysis</h2>
-              <p style={styles.description}>
-                Enter your farm conditions like temperature, moisture, soil type, crop,
-                and fertilizer details. This tool will analyze compatibility and suggest
-                improvements to maximize yield and efficiency.
-              </p>
+              <p style={styles.description}>Enter your farm conditions like temperature, moisture, soil type, crop, and fertilizer details. This tool will analyze compatibility and suggest improvements to maximize yield and efficiency.</p>
             </div>
 
             <div style={styles.analysisGrid}>
-              {/* Input Section */}
               <div style={styles.card}>
                 <h2 style={styles.cardTitle}>Farm Inputs</h2>
                 <div style={styles.inputGrid}>
-                  <div>
-                    <label style={styles.label}>Temperature (°C)</label>
+                  <div><label style={styles.label}>Temperature (°C)</label>
                     <input type="number" style={styles.input} value={inputs.Temperature} onChange={(e) => setInputs({ ...inputs, Temperature: parseFloat(e.target.value) })} />
                   </div>
-                  <div>
-                    <label style={styles.label}>Moisture (%)</label>
+                  <div><label style={styles.label}>Moisture (%)</label>
                     <input type="number" style={styles.input} value={inputs.Moisture} onChange={(e) => setInputs({ ...inputs, Moisture: parseFloat(e.target.value) })} />
                   </div>
-                  <div>
-                    <label style={styles.label}>Soil Type</label>
+                  <div><label style={styles.label}>Soil Type</label>
                     <select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>
                       {soilTypes.map((type) => (<option key={type} value={type}>{type}</option>))}
                     </select>
                   </div>
-                  <div>
-                    <label style={styles.label}>Crop Type</label>
+                  <div><label style={styles.label}>Crop Type</label>
                     <select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>
                       {cropTypes.map((crop) => (<option key={crop} value={crop}>{crop}</option>))}
                     </select>
                   </div>
-                  <div>
-                    <label style={styles.label}>Fertilizer</label>
+                  <div><label style={styles.label}>Fertilizer</label>
                     <select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>
                       {fertilizerNames.map((fert) => (<option key={fert} value={fert}>{fert}</option>))}
                     </select>
                   </div>
-                  <div>
-                    <label style={styles.label}>Quantity (kg/ha)</label>
+                  <div><label style={styles.label}>Quantity (kg/ha)</label>
                     <input type="number" style={styles.input} value={inputs.Fertilizer_Quantity} onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: parseFloat(e.target.value) })} />
                   </div>
                 </div>
@@ -832,7 +797,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 </button>
               </div>
 
-              {/* Results Section */}
               <div style={styles.rightPanel}>
                 {result && (
                   <div style={styles.resultCard}>
@@ -874,7 +838,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
                 <div style={styles.historyCard}>
                   <h3 style={styles.cardTitle}>Recent Analyses</h3>
-                  
                   {history.length === 0 ? (
                     <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
                   ) : (
@@ -888,26 +851,15 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {history.map((item, i) => {
-                          // ✅ FIX: Try multiple possible field names
-                          const input = item.input_data || item.input || {};
-                          const res = item.result || {};
-                          
-                          // Get crop type from different possible field names
-                          const crop = input.Crop_Type || input.crop_type || input.crop || "N/A";
-                          // Get fertilizer from different possible field names
-                          const fertilizer = input.Fertilizer_Name || input.fertilizer_name || input.fertilizer || "N/A";
-                          // Get status from result
-                          const status = res.overall_compatibility || res.compatibility || res.status || "N/A";
-                          // Get score
-                          const score = res.overall_score || res.score || 0;
-                          
+                        {history.slice().reverse().map((item, i) => {
+                          const inputData = item.input_data || item.input || {};
+                          const resultData = item.result || {};
                           return (
                             <tr key={i}>
-                              <td style={styles.td}>{crop}</td>
-                              <td style={styles.td}>{fertilizer}</td>
-                              <td style={styles.td}>{status}</td>
-                              <td style={styles.td}>{score ? `${score}%` : "N/A"}</td>
+                              <td style={styles.td}>{inputData.Crop_Type || "N/A"}</td>
+                              <td style={styles.td}>{inputData.Fertilizer_Name || "N/A"}</td>
+                              <td style={styles.td}>{resultData.overall_compatibility || "N/A"}</td>
+                              <td style={styles.td}>{resultData.overall_score ? `${resultData.overall_score}%` : "N/A"}</td>
                             </tr>
                           );
                         })}
@@ -915,8 +867,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </table>
                   )}
                 </div>
+              </div>
+            </div>
+          </>
+        )}
 
-        {/* ML TAB */}
         {activeTab === 'ml' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
@@ -924,7 +879,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* ANALYTICS TAB */}
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
             {analytics ? (
@@ -932,52 +886,34 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.summaryGrid}>
                   <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.55, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>📊</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
-                      {String(analytics.total_analyses)}
-                    </FuzzyText>
-                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
-                      Total Analyses
-                    </FuzzyText>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>{String(analytics.total_analyses)}</FuzzyText>
+                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>Total Analyses</FuzzyText>
                   </motion.div>
                   <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.65, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>✅</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
-                      {`${analytics.compatibility_rate}%`}
-                    </FuzzyText>
-                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
-                      Success Rate
-                    </FuzzyText>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>{`${analytics.compatibility_rate}%`}</FuzzyText>
+                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>Success Rate</FuzzyText>
                   </motion.div>
                   <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.75, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>🎯</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>
-                      {`${analytics.average_score}%`}
-                    </FuzzyText>
-                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>
-                      Avg Score
-                    </FuzzyText>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.12} hoverIntensity={0.34} fuzzRange={20}>{`${analytics.average_score}%`}</FuzzyText>
+                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.1} hoverIntensity={0.28} fuzzRange={16}>Avg Score</FuzzyText>
                   </motion.div>
                 </div>
 
                 <motion.div style={styles.chartCard} initial={{ opacity: 0, x: -40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
-                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
-                    Crop Distribution
-                  </FuzzyText>
+                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>Crop Distribution</FuzzyText>
                   <div style={styles.chartList}>
                     {Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (
                       <div key={crop} style={styles.chartItem}>
                         <div style={styles.fuzzyNameWrap}>
-                          <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
-                            {crop}
-                          </FuzzyText>
+                          <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>{crop}</FuzzyText>
                         </div>
                         <span style={styles.chartBar}>
                           <motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />
                         </span>
                         <div style={styles.fuzzyCountWrap}>
-                          <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
-                            {`${count} times`}
-                          </FuzzyText>
+                          <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>{`${count} times`}</FuzzyText>
                         </div>
                       </div>
                     ))}
@@ -985,24 +921,18 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 </motion.div>
 
                 <motion.div style={styles.chartCard} initial={{ opacity: 0, x: 40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
-                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>
-                    Fertilizer Usage
-                  </FuzzyText>
+                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.1} hoverIntensity={0.25} fuzzRange={14}>Fertilizer Usage</FuzzyText>
                   <div style={styles.chartList}>
                     {Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (
                       <div key={fert} style={styles.chartItem}>
                         <div style={styles.fuzzyNameWrap}>
-                          <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
-                            {fert}
-                          </FuzzyText>
+                          <FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>{fert}</FuzzyText>
                         </div>
                         <span style={styles.chartBar}>
                           <motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />
                         </span>
                         <div style={styles.fuzzyCountWrap}>
-                          <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>
-                            {`${count} times`}
-                          </FuzzyText>
+                          <FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.08} hoverIntensity={0.2} fuzzRange={10}>{`${count} times`}</FuzzyText>
                         </div>
                       </div>
                     ))}
@@ -1015,7 +945,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* ADMIN TAB */}
         {activeTab === 'admin' && currentUser?.is_admin && (
           <div style={styles.adminContainer}>
             <h2 style={styles.adminTitle}>Admin Panel</h2>
@@ -1102,7 +1031,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           </div>
         )}
 
-        {/* CHAT TAB */}
         {activeTab === 'chat' && (
           <div style={styles.card}>
             <h2 style={styles.cardTitle}>Farm Chatbot</h2>
