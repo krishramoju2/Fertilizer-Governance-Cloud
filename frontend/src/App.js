@@ -1,8 +1,3 @@
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AuthScreen from "./pages/Auth/AuthScreen";
@@ -17,16 +12,26 @@ function App() {
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     console.log("🔍 Saved token exists:", !!savedToken);
-    if (savedToken) {
-      setToken(savedToken);
-    } else {
+    
+    // ✅ Reset currentUser if no token exists
+    if (!savedToken) {
+      console.log("🔍 No token found, resetting currentUser");
+      setCurrentUser(null);
       setLoading(false);
+      return;
     }
+    
+    setToken(savedToken);
   }, []);
 
   // Fetch user when token is set
   useEffect(() => {
     if (!token) {
+      console.log("🔍 No token, skipping user fetch");
+      // ✅ Ensure currentUser is null when token is null
+      if (currentUser) {
+        setCurrentUser(null);
+      }
       return;
     }
 
@@ -44,12 +49,14 @@ function App() {
           console.error("❌ Invalid token response");
           localStorage.removeItem("token");
           setToken(null);
-          setLoading(false);
+          setCurrentUser(null);
         }
       } catch (error) {
         console.error("❌ Failed to fetch user:", error);
         localStorage.removeItem("token");
         setToken(null);
+        setCurrentUser(null);
+      } finally {
         setLoading(false);
       }
     };
@@ -73,9 +80,9 @@ function App() {
     );
   }
 
-  // ✅ IMPORTANT: Show AuthScreen if NO token OR NO currentUser
+  // ✅ Show AuthScreen if NO token OR NO currentUser
   if (!token || !currentUser) {
-    console.log("🔍 No token or user, showing AuthScreen. Token exists:", !!token, "User exists:", !!currentUser);
+    console.log("🔍 No token or user, showing AuthScreen. Token:", !!token, "User:", !!currentUser);
     return (
       <AuthScreen
         setToken={setToken}
