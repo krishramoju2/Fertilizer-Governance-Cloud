@@ -574,11 +574,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  const refreshHistory = async () => {
-    console.log("🔄 Manual refresh triggered");
-    await loadUserData();
-  };
-
   const generatePDF = () => {
     if (!result) return;
     const doc = new jsPDF();
