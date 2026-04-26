@@ -872,17 +872,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   </div>
                 )}
 
-                {/* History Table */}
                 <div style={styles.historyCard}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-                    <h3 style={styles.cardTitle}>Recent Analyses</h3>
-                    <button 
-                      onClick={refreshHistory} 
-                      style={{ padding: "5px 10px", fontSize: "12px", background: "#4f46e5", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
-                    >
-                      🔄 Refresh
-                    </button>
-                  </div>
+                  <h3 style={styles.cardTitle}>Recent Analyses</h3>
                   
                   {history.length === 0 ? (
                     <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
@@ -898,14 +889,25 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       </thead>
                       <tbody>
                         {history.map((item, i) => {
-                          const input = item.input_data || {};
+                          // ✅ FIX: Try multiple possible field names
+                          const input = item.input_data || item.input || {};
                           const res = item.result || {};
+                          
+                          // Get crop type from different possible field names
+                          const crop = input.Crop_Type || input.crop_type || input.crop || "N/A";
+                          // Get fertilizer from different possible field names
+                          const fertilizer = input.Fertilizer_Name || input.fertilizer_name || input.fertilizer || "N/A";
+                          // Get status from result
+                          const status = res.overall_compatibility || res.compatibility || res.status || "N/A";
+                          // Get score
+                          const score = res.overall_score || res.score || 0;
+                          
                           return (
                             <tr key={i}>
-                              <td style={styles.td}>{input.Crop_Type || "N/A"}</td>
-                              <td style={styles.td}>{input.Fertilizer_Name || "N/A"}</td>
-                              <td style={styles.td}>{res.overall_compatibility || "N/A"}</td>
-                              <td style={styles.td}>{res.overall_score ? `${res.overall_score}%` : "N/A"}</td>
+                              <td style={styles.td}>{crop}</td>
+                              <td style={styles.td}>{fertilizer}</td>
+                              <td style={styles.td}>{status}</td>
+                              <td style={styles.td}>{score ? `${score}%` : "N/A"}</td>
                             </tr>
                           );
                         })}
@@ -913,10 +915,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </table>
                   )}
                 </div>
-              </div>
-            </div>
-          </>
-        )}
 
         {/* ML TAB */}
         {activeTab === 'ml' && (
