@@ -157,37 +157,125 @@ const styles = {
     boxShadow: "0 6px 15px rgba(79,70,229,0.3)"
   },
   main: { marginTop: "20px", position: "relative", zIndex: 2 },
-  homeMenuWall: { width: "100%", minHeight: "560px", height: "auto", borderRadius: "18px", padding: "20px" },
-  staticMenuGrid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "25px", width: "100%" },
-  staticMenuItem: {
-    background: "rgba(255,255,255,0.92)",
-    backdropFilter: "blur(10px)",
-    borderRadius: "20px",
-    padding: "35px 20px",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    border: "1px solid rgba(255,255,255,0.3)",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-    textAlign: "center",
-    minHeight: "200px",
+  
+  agriCoreStage: {
+    perspective: "2000px",
+    width: "100%",
+    height: "350px",
     display: "flex",
-    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    overflow: "visible",
+    marginTop: "20px"
+  },
+  sideImageLeft: {
+    position: "absolute",
+    left: "20px",
+    width: "180px",
+    height: "120px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+    border: "2px solid rgba(74, 222, 128, 0.3)",
+    transform: "rotateY(25deg)",
+    zIndex: 2,
+    opacity: 0.9,
+    transition: "all 0.3s ease"
+  },
+  sideImageRight: {
+    position: "absolute",
+    right: "20px",
+    width: "180px",
+    height: "120px",
+    borderRadius: "15px",
+    overflow: "hidden",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+    border: "2px solid rgba(74, 222, 128, 0.3)",
+    transform: "rotateY(-25deg)",
+    zIndex: 2,
+    opacity: 0.9,
+    transition: "all 0.3s ease"
+  },
+  sideImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover"
+  },
+  agriPlanetContainer: {
+    position: "absolute",
+    width: "120px",
+    height: "120px",
+    zIndex: 5,
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
     justifyContent: "center"
   },
-  staticMenuTitle: { fontSize: "24px", fontWeight: "700", marginBottom: "15px", color: "#1a472a" },
-  staticMenuDesc: { fontSize: "14px", color: "#555", lineHeight: "1.5", margin: 0 },
-  card: {
-    background: "rgba(255,255,255,0.8)",
-    backdropFilter: "blur(10px)",
-    padding: "25px",
-    borderRadius: "16px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-    marginBottom: "20px",
-    border: "1px solid rgba(255,255,255,0.3)"
+  digitalAgriCore: {
+    width: "90px",
+    height: "90px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle at 30% 30%, #4ade80, #166534, #064e3b)",
+    boxShadow: "0 0 60px rgba(74, 222, 128, 0.4), inset -12px -12px 30px rgba(0,0,0,0.6)",
+    position: "relative",
+    display: "grid",
+    placeItems: "center",
+    fontSize: "40px",
+    border: "2px solid rgba(74, 222, 128, 0.5)"
   },
+  circuitOrbit: {
+    position: "absolute",
+    width: "280px",
+    height: "70px",
+    borderRadius: "50%",
+    border: "2px dashed rgba(74, 222, 128, 0.25)",
+    transform: "rotateX(78deg) rotateY(-10deg)",
+    zIndex: 4,
+    pointerEvents: "none",
+    background: "radial-gradient(ellipse at center, transparent 60%, rgba(74, 222, 128, 0.03) 100%)"
+  },
+  agriOrbitRing: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    transformStyle: "preserve-3d",
+    transform: "rotateX(78deg)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  agriCardContainer: (angle) => ({
+    position: "absolute",
+    width: "170px",
+    height: "115px",
+    transformStyle: "preserve-3d",
+    transform: `rotateY(${angle}deg) translateZ(210px) rotateY(${-angle}deg) rotateX(-78deg)`,
+    transition: "all 0.5s cubic-bezier(0.23, 1, 0.32, 1)"
+  }),
+  agriCard: {
+    width: "100%",
+    height: "100%",
+    background: "rgba(255, 255, 255, 0.94)",
+    backdropFilter: "blur(10px)",
+    borderRadius: "16px",
+    padding: "12px 10px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    border: "1px solid rgba(74, 222, 128, 0.3)",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.06)",
+    cursor: "pointer",
+    boxSizing: "border-box"
+  },
+  agriCardTitle: { fontSize: "15px", fontWeight: "800", marginBottom: "5px", color: "#064e3b" },
+  agriCardDesc: { fontSize: "10px", color: "#475569", lineHeight: "1.3", margin: 0 },
+  cardTitle: { fontSize: "18px", fontWeight: "600", marginBottom: "10px", color: "#1a472a" },
   analysisGrid: {
     display: "grid",
-    gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", // ✅ FIX
+    gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
     gap: "25px",
     alignItems: "start"
   },
@@ -203,7 +291,6 @@ const styles = {
     boxSizing: "border-box",
     background: "#fff"
   },
-  cardTitle: { fontSize: "18px", fontWeight: "600", marginBottom: "10px", color: "#1a472a" },
   table: {
     width: "100%",
     borderCollapse: "collapse",
@@ -513,24 +600,67 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
       <main style={styles.main}>
         {activeTab === "menu" && (
-          <div style={styles.homeMenuWall}>
-            <div style={styles.staticMenuGrid}>
-              <div style={styles.staticMenuItem} onClick={() => setActiveTab("analysis")}>
-                <h3 style={styles.staticMenuTitle}>🔬 Analysis</h3>
-                <p style={styles.staticMenuDesc}>Analyze soil, weather, and farm conditions to determine crop compatibility and optimize farming strategies.</p>
-              </div>
-              <div style={styles.staticMenuItem} onClick={() => setActiveTab("ml")}>
-                <h3 style={styles.staticMenuTitle}>🤖 ML Model</h3>
-                <p style={styles.staticMenuDesc}>Use machine learning to predict the best fertilizers based on soil nutrients, crop type, and environmental factors.</p>
-              </div>
-              <div style={styles.staticMenuItem} onClick={() => setActiveTab("analytics")}>
-                <h3 style={styles.staticMenuTitle}>📈 Analytics</h3>
-                <p style={styles.staticMenuDesc}>View historical data, performance trends, and insights to improve long-term agricultural productivity.</p>
-              </div>
-              <div style={styles.staticMenuItem} onClick={() => setActiveTab("chat")}>
-                <h3 style={styles.staticMenuTitle}>💬 Chatbot</h3>
-                <p style={styles.staticMenuDesc}>Interact with AI to get real-time farming advice, troubleshooting, and recommendations.</p>
-              </div>
+          <div 
+            style={styles.agriCoreStage}
+            onMouseEnter={() => setIsCoreHovered(true)}
+            onMouseLeave={() => setIsCoreHovered(false)}
+          >
+            {/* Side Images */}
+            <motion.div 
+              style={styles.sideImageLeft}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              whileHover={{ scale: 1.05, opacity: 1 }}
+            >
+              <img src="/agritech_farm.png" alt="Agritech Farm" style={styles.sideImage} />
+            </motion.div>
+
+            <motion.div 
+              style={styles.sideImageRight}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              whileHover={{ scale: 1.05, opacity: 1 }}
+            >
+              <img src="/agritech_drone.png" alt="Agritech Drone" style={styles.sideImage} />
+            </motion.div>
+
+            {/* The Holographic Agri-Core */}
+            <div style={styles.agriPlanetContainer}>
+              <motion.div 
+                style={styles.digitalAgriCore}
+                animate={{ scale: [1, 1.05, 1], rotateZ: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                🌿
+              </motion.div>
+              <div style={styles.circuitOrbit} />
+            </div>
+
+            {/* The Orbiting Cards */}
+            <div style={styles.agriOrbitRing}>
+              {[
+                { id: "analysis", title: "Analysis", icon: "🔬", desc: "Digital soil & weather profiling.", angle: 0 },
+                { id: "ml", title: "ML Model", icon: "🤖", desc: "AI-driven nutrient predictions.", angle: 90 },
+                { id: "analytics", title: "Analytics", icon: "📈", desc: "Farming performance insights.", angle: 180 },
+                { id: "chat", title: "Chatbot", icon: "💬", desc: "Expert AI agricultural advice.", angle: 270 }
+              ].map((item) => (
+                <div 
+                  key={item.id}
+                  style={styles.agriCardContainer(item.angle + coreRotation)}
+                >
+                  <motion.div 
+                    style={styles.agriCard}
+                    whileHover={{ scale: 1.1, border: "1.5px solid #4ade80", boxShadow: "0 0 20px rgba(74, 222, 128, 0.2)" }}
+                    onClick={() => setActiveTab(item.id)}
+                  >
+                    <div style={{ fontSize: "26px", marginBottom: "8px" }}>{item.icon}</div>
+                    <h3 style={styles.agriCardTitle}>{item.title}</h3>
+                    <p style={styles.agriCardDesc}>{item.desc}</p>
+                  </motion.div>
+                </div>
+              ))}
             </div>
           </div>
         )}
