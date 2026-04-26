@@ -161,7 +161,7 @@ const styles = {
   agriCoreStage: {
     perspective: "2000px",
     width: "100%",
-    height: "350px",
+    height: "380px", // Increased for larger panels
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -171,31 +171,31 @@ const styles = {
   },
   sideImageLeft: {
     position: "absolute",
-    left: "20px",
-    width: "180px",
-    height: "120px",
-    borderRadius: "15px",
+    left: "30px", // Pushed slightly inward
+    width: "280px", // Bigger
+    height: "190px",
+    borderRadius: "20px",
     overflow: "hidden",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-    border: "2px solid rgba(74, 222, 128, 0.3)",
-    transform: "rotateY(25deg)",
+    boxShadow: "0 15px 35px rgba(0,0,0,0.2)",
+    border: "2.5px solid rgba(74, 222, 128, 0.4)",
+    transform: "rotateY(20deg)", // Softer tilt for better clarity
     zIndex: 2,
-    opacity: 0.9,
-    transition: "all 0.3s ease"
+    opacity: 0.95,
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
   },
   sideImageRight: {
     position: "absolute",
-    right: "20px",
-    width: "180px",
-    height: "120px",
-    borderRadius: "15px",
+    right: "30px",
+    width: "280px",
+    height: "190px",
+    borderRadius: "20px",
     overflow: "hidden",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-    border: "2px solid rgba(74, 222, 128, 0.3)",
-    transform: "rotateY(-25deg)",
+    boxShadow: "0 15px 35px rgba(0,0,0,0.2)",
+    border: "2.5px solid rgba(74, 222, 128, 0.4)",
+    transform: "rotateY(-20deg)",
     zIndex: 2,
-    opacity: 0.9,
-    transition: "all 0.3s ease"
+    opacity: 0.95,
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
   },
   sideImage: {
     width: "100%",
