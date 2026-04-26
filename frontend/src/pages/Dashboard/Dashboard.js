@@ -233,14 +233,25 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   const loadUserData = async () => {
     try {
-      const [historyRes, analyticsRes] = await Promise.all([
-        api.get('/history'),
-        api.get('/analytics')
-      ]);
-      if (historyRes.data.success) setHistory(historyRes.data.history || []);
-      if (analyticsRes.data.success) setAnalytics(analyticsRes.data.analytics);
+      console.log("📡 LOADING USER DATA...");
+      const historyRes = await api.get('/history');
+      const analyticsRes = await api.get('/analytics');
+      
+      console.log("🔍 HISTORY RESPONSE:", historyRes.data);
+      console.log("🔍 ANALYTICS RESPONSE:", analyticsRes.data);
+      
+      if (historyRes.data.success && historyRes.data.history) {
+        console.log("✅ SETTING HISTORY WITH", historyRes.data.history.length, "RECORDS");
+        setHistory(historyRes.data.history);
+      } else {
+        console.log("❌ No history data or history API failed");
+      }
+      
+      if (analyticsRes.data.success) {
+        setAnalytics(analyticsRes.data.analytics);
+      }
     } catch (err) {
-      console.error('Error loading user data:', err);
+      console.error("❌ Error loading user data:", err);
     }
   };
 
@@ -508,36 +519,52 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <h3 style={styles.cardTitle}>Recent Analyses</h3>
                     <button onClick={refreshHistory} style={{ padding: "5px 10px", fontSize: "12px", background: "#4f46e5", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>🔄 Refresh</button>
                   </div>
-                  {history.length === 0 ? (
+                  
+                  {(!history || history.length === 0) ? (
                     <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
                   ) : (
                     <table style={styles.table}>
                       <thead>
-                        <tr><th style={styles.th}>#</th><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th><th style={styles.th}>Date</th></tr>
+                        <tr>
+                          <th style={styles.th}>#</th>
+                          <th style={styles.th}>Crop</th>
+                          <th style={styles.th}>Fertilizer</th>
+                          <th style={styles.th}>Status</th>
+                          <th style={styles.th}>Score</th>
+                          <th style={styles.th}>Date</th>
+                        </tr>
                       </thead>
                       <tbody>
-                        {history.slice().reverse().slice(0, 20).map((item, idx) => {
+                        {history.slice().reverse().map((item, idx) => {
                           const inputData = item.input_data || {};
                           const resultData = item.result || {};
                           const date = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'N/A';
+                          const crop = inputData.Crop_Type || inputData.crop_type || "N/A";
+                          const fertilizer = inputData.Fertilizer_Name || inputData.fertilizer_name || "N/A";
+                          const compatibility = resultData.overall_compatibility || resultData.compatibility || "N/A";
+                          const score = resultData.overall_score || resultData.score || 0;
+                          
+                          let bgColor = "#f8d7da";
+                          let textColor = "#721c24";
+                          if (compatibility === "Highly Compatible") {
+                            bgColor = "#d4edda";
+                            textColor = "#155724";
+                          } else if (compatibility === "Moderately Compatible") {
+                            bgColor = "#fff3cd";
+                            textColor = "#856404";
+                          }
+                          
                           return (
                             <tr key={idx}>
                               <td style={styles.td}>{idx + 1}</td>
-                              <td style={styles.td}>{inputData.Crop_Type || "N/A"}</td>
-                              <td style={styles.td}>{inputData.Fertilizer_Name || "N/A"}</td>
+                              <td style={styles.td}>{crop}</td>
+                              <td style={styles.td}>{fertilizer}</td>
                               <td style={styles.td}>
-                                <span style={{
-                                  padding: "4px 8px",
-                                  borderRadius: "12px",
-                                  fontSize: "12px",
-                                  fontWeight: "500",
-                                  backgroundColor: resultData.overall_compatibility === "Highly Compatible" ? "#d4edda" : resultData.overall_compatibility === "Moderately Compatible" ? "#fff3cd" : "#f8d7da",
-                                  color: resultData.overall_compatibility === "Highly Compatible" ? "#155724" : resultData.overall_compatibility === "Moderately Compatible" ? "#856404" : "#721c24"
-                                }}>
-                                  {resultData.overall_compatibility || "N/A"}
+                                <span style={{ padding: "4px 8px", borderRadius: "12px", fontSize: "12px", fontWeight: "500", backgroundColor: bgColor, color: textColor }}>
+                                  {compatibility}
                                 </span>
                               </td>
-                              <td style={styles.td}><span style={{ fontWeight: "bold", fontSize: "16px" }}>{resultData.overall_score || 0}%</span></td>
+                              <td style={styles.td}><span style={{ fontWeight: "bold", fontSize: "16px" }}>{score}%</span></td>
                               <td style={styles.td}>{date}</td>
                             </tr>
                           );
