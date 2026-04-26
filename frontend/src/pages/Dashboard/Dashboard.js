@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -156,8 +165,8 @@ const styles = {
     background: "#fff"
   },
   cardTitle: { fontSize: "18px", fontWeight: "600", marginBottom: "10px", color: "#1a472a" },
-  table: { 
-    width: "100%", 
+  table: {
+    width: "100%",
     borderCollapse: "collapse",
     border: "1px solid #e2e8f0",
     backgroundColor: "white"
@@ -519,14 +528,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   
                   <div style={{ background: "#e0e0e0", padding: "10px", marginBottom: "10px", borderRadius: "5px" }}>
                     <strong>🔍 DEBUG:</strong> History length = {history.length}
-                    <button 
-                      onClick={async () => {
-                        const res = await api.get('/history');
-                        console.log("Manual fetch:", res.data);
-                        if (res.data.success) setHistory([...res.data.history]);
-                      }}
-                      style={{ marginLeft: "10px", padding: "2px 8px" }}
-                    >
+                    <button onClick={async () => {
+                      const res = await api.get('/history');
+                      if (res.data.success) setHistory([...res.data.history]);
+                    }} style={{ marginLeft: "10px", padding: "2px 8px" }}>
                       Reload
                     </button>
                   </div>
@@ -554,7 +559,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             <td style={styles.td}>{item.result?.overall_compatibility || "N/A"}</td>
                             <td style={styles.td}>{item.result?.overall_score || 0}%</td>
                             <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
-                          </table>
+                          </tr>
                         ))}
                       </tbody>
                     </table>
@@ -627,7 +632,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     {selectedUserId && (
                       <div style={styles.userDetails}>
                         <h4>User Analytics</h4>
-                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}<td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}</tbody></table></>) : (<p>Select a user to view analytics</p>)}
+                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}</tbody></table></>) : (<p>Select a user to view analytics</p>)}
                       </div>
                     )}
                   </div>
@@ -649,13 +654,4 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
-
-
-
-
-
-
-
-
-
 
