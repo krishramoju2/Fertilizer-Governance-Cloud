@@ -159,7 +159,6 @@ def login():
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
-# ==================== GOOGLE LOGIN ====================
 @auth_bp.route('/google-login', methods=['POST', 'OPTIONS'])
 def google_login():
     if request.method == 'OPTIONS':
@@ -187,15 +186,22 @@ def google_login():
         if not email:
             return jsonify({'success': False, 'message': 'Email not provided'}), 400
         
+        print(f"🔍 Google login for email: {email}")
+        
+        # Check if user exists
         user = users_collection.find_one({'email': email})
+        print(f"🔍 User exists: {user is not None}")
         
         if not user:
+            # Create new user
             user_id = str(uuid.uuid4())
+            print(f"📝 Creating new Google user with ID: {user_id}")
             new_user = {
                 '_id': user_id,
                 'email': email,
                 'name': name,
                 'password': '',
+                'auth_provider': 'google',
                 'farm_details': {
                     'soil_type': 'Loamy',
                     'farm_size': 1,
@@ -208,15 +214,20 @@ def google_login():
                 'created_at': datetime.datetime.utcnow()
             }
             users_collection.insert_one(new_user)
-            user_id = new_user['_id']
+            print(f"✅ Created new Google user: {email}")
         else:
             user_id = str(user['_id'])
+            print(f"✅ Found existing Google user: {email} with ID: {user_id}")
         
+        # Generate token
+        print(f"🔑 Creating token for user_id: {user_id}")
         token = jwt.encode({
             'user_id': user_id,
             'email': email,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
         }, SECRET_KEY, algorithm='HS256')
+        
+        print(f"✅ Google login successful for {email}")
         
         return jsonify({
             'success': True,
@@ -226,12 +237,14 @@ def google_login():
                 'email': email,
                 'name': name,
                 'is_admin': False,
-                'farm_details': {'soil_type': 'Loamy'}
+                'farm_details': {'soil_type': 'Loamy', 'temperature': 26, 'humidity': 45}
             }
         })
         
     except Exception as e:
         print(f"❌ Google login error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
