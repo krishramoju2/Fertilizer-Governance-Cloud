@@ -15,9 +15,10 @@ logger = logging.getLogger(__name__)
 def get_analytics(**kwargs):
     try:
         current_user = kwargs['current_user']
+        user_id = str(current_user['_id'])
 
         # Get all user history
-        history = list(history_collection.find({'user_id': current_user['_id']}))
+        history = list(history_collection.find({'user_id': user_id}))
 
         if not history:
             return jsonify({
@@ -88,3 +89,4 @@ def get_analytics(**kwargs):
     except Exception as e:
         logger.error(f"Analytics error: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
