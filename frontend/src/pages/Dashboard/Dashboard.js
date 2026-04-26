@@ -158,7 +158,7 @@ const styles = {
     marginBottom: "20px",
     border: "1px solid rgba(255,255,255,0.3)"
   },
-  analysisGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "25px" },
+  analysisGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "25px",alignItems: "start"},
   inputGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginTop: "10px" },
   input: {
     width: "100%",
