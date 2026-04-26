@@ -7,9 +7,9 @@ const FuzzyText = ({
   fontFamily = 'inherit',
   color = '#fff',
   enableHover = true,
-  baseIntensity = 0.18,
-  hoverIntensity = 0.5,
-  fuzzRange = 30,
+  baseIntensity = 0.05,
+  hoverIntensity = 0.15,
+  fuzzRange = 10,
   fps = 60,
   direction = 'horizontal',
   transitionDuration = 0,
@@ -333,3 +333,4 @@ const FuzzyText = ({
 };
 
 export default FuzzyText;
+
