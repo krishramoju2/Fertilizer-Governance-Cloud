@@ -526,45 +526,37 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.historyCard}>
                   <h3 style={styles.cardTitle}>Recent Analyses</h3>
                   
-                  <div style={{ background: "#e0e0e0", padding: "10px", marginBottom: "10px", borderRadius: "5px" }}>
-                    <strong>🔍 DEBUG:</strong> History length = {history.length}
-                    <button onClick={async () => {
-                      const res = await api.get('/history');
-                      if (res.data.success) setHistory([...res.data.history]);
-                    }} style={{ marginLeft: "10px", padding: "2px 8px" }}>
-                      Reload
-                    </button>
+                  {/* FORCED VISIBLE TABLE - NO CSS DEPENDENCIES */}
+                  <div style={{ border: "2px solid red", padding: "10px", marginTop: "10px", background: "yellow" }}>
+                    <strong>🔴 EMERGENCY DISPLAY:</strong> History length = {history.length}
                   </div>
                   
-                  {history.length === 0 ? (
-                    <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
-                  ) : (
-                    <table style={styles.table}>
+                  <div style={{ overflowX: "auto", marginTop: "10px" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid blue", backgroundColor: "white" }}>
                       <thead>
                         <tr>
-                          <th style={styles.th}>#</th>
-                          <th style={styles.th}>Crop</th>
-                          <th style={styles.th}>Fertilizer</th>
-                          <th style={styles.th}>Status</th>
-                          <th style={styles.th}>Score</th>
-                          <th style={styles.th}>Date</th>
+                          <th style={{ border: "1px solid black", padding: "8px" }}>#</th>
+                          <th style={{ border: "1px solid black", padding: "8px" }}>Crop</th>
+                          <th style={{ border: "1px solid black", padding: "8px" }}>Fertilizer</th>
+                          <th style={{ border: "1px solid black", padding: "8px" }}>Status</th>
+                          <th style={{ border: "1px solid black", padding: "8px" }}>Score</th>
                         </tr>
                       </thead>
                       <tbody>
                         {history.slice().reverse().map((item, idx) => (
                           <tr key={idx}>
-                            <td style={styles.td}>{idx + 1}</td>
-                            <td style={styles.td}>{item.input_data?.Crop_Type || "N/A"}</td>
-                            <td style={styles.td}>{item.input_data?.Fertilizer_Name || "N/A"}</td>
-                            <td style={styles.td}>{item.result?.overall_compatibility || "N/A"}</td>
-                            <td style={styles.td}>{item.result?.overall_score || 0}%</td>
-                            <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
+                            <td style={{ border: "1px solid black", padding: "8px" }}>{idx + 1}</td>
+                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.input_data?.Crop_Type || "N/A"}</td>
+                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.input_data?.Fertilizer_Name || "N/A"}</td>
+                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.result?.overall_compatibility || "N/A"}</td>
+                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.result?.overall_score || 0}%</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                  )}
+                  </div>
                 </div>
+  
               </div>
             </div>
           </>
