@@ -1,3 +1,47 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -157,10 +201,10 @@ const styles = {
   },
   cardTitle: { fontSize: "18px", fontWeight: "600", marginBottom: "10px", color: "#1a472a" },
   table: { 
-  width: "100%", 
-  borderCollapse: "collapse",
-  border: "1px solid #e2e8f0",
-  backgroundColor: "white"
+    width: "100%", 
+    borderCollapse: "collapse",
+    border: "1px solid #e2e8f0",
+    backgroundColor: "white"
   },
   header: {
     background: "rgba(26, 71, 42, 0.85)",
@@ -430,8 +474,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
   };
 
-
-
   return (
     <div style={styles.app}>
       <div style={styles.silkBackground}>
@@ -485,6 +527,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </div>
 
             <div style={styles.analysisGrid}>
+              {/* LEFT COLUMN - INPUT FORM */}
               <div style={styles.card}>
                 <h2 style={styles.cardTitle}>Farm Inputs</h2>
                 <div style={styles.inputGrid}>
@@ -498,69 +541,126 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <button style={styles.analyzeButton} onClick={handleAnalyze} disabled={loading}>{loading ? "Analyzing..." : "🔬 Analyze"}</button>
               </div>
 
+              {/* RIGHT COLUMN - RESULTS + HISTORY (REBUILT FOR VISIBILITY) */}
               <div style={styles.rightPanel}>
+                
+                {/* RESULT CARD - Shows current analysis */}
                 {result && (
                   <div style={styles.resultCard}>
                     <div style={styles.resultHeader}>
                       <h2 style={styles.resultTitle}>{result.overall_compatibility}</h2>
-                      <div style={styles.scoreCircle}><span style={styles.scoreNumber}>{result.overall_score}%</span><span style={styles.scoreLabel}>Overall</span></div>
+                      <div style={styles.scoreCircle}>
+                        <span style={styles.scoreNumber}>{result.overall_score}%</span>
+                        <span style={styles.scoreLabel}>Overall</span>
+                      </div>
                     </div>
                     <div style={styles.resultGrid}>
-                      <div style={styles.resultItem}><span style={styles.resultLabel}>Temperature</span><span style={styles.resultValue}>{result.temperature_status}</span><span style={styles.resultDetail}>{result.temperature_range}</span></div>
-                      <div style={styles.resultItem}><span style={styles.resultLabel}>Moisture</span><span style={styles.resultValue}>{result.moisture_status}</span><span style={styles.resultDetail}>{result.moisture_range}</span></div>
-                      <div style={styles.resultItem}><span style={styles.resultLabel}>Soil</span><span style={styles.resultValue}>{result.soil_compatibility}</span></div>
-                      <div style={styles.resultItem}><span style={styles.resultLabel}>Quantity</span><span style={styles.resultValue}>{result.quantity_status}</span><span style={styles.resultDetail}>{result.quantity_range}</span></div>
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Temperature</span>
+                        <span style={styles.resultValue}>{result.temperature_status}</span>
+                        <span style={styles.resultDetail}>{result.temperature_range}</span>
+                      </div>
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Moisture</span>
+                        <span style={styles.resultValue}>{result.moisture_status}</span>
+                        <span style={styles.resultDetail}>{result.moisture_range}</span>
+                      </div>
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Soil</span>
+                        <span style={styles.resultValue}>{result.soil_compatibility}</span>
+                      </div>
+                      <div style={styles.resultItem}>
+                        <span style={styles.resultLabel}>Quantity</span>
+                        <span style={styles.resultValue}>{result.quantity_status}</span>
+                        <span style={styles.resultDetail}>{result.quantity_range}</span>
+                      </div>
                     </div>
-                    <div style={styles.suggestionsBox}><h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>{result.suggestions?.map((s, i) => (<p key={i} style={styles.suggestion}>• {s}</p>))}</div>
+                    <div style={styles.suggestionsBox}>
+                      <h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>
+                      {result.suggestions?.map((s, i) => (<p key={i} style={styles.suggestion}>• {s}</p>))}
+                    </div>
                     <button style={styles.pdfButton} onClick={generatePDF}>📄 Download PDF Report</button>
                   </div>
                 )}
 
-                <div style={styles.historyCard}>
-                  <h3 style={styles.cardTitle}>Recent Analyses</h3>
-                  
-                  {/* Debug display */}
-                  <div style={{ background: "#e0e0e0", padding: "10px", marginBottom: "10px", borderRadius: "5px" }}>
-                    <strong>🔍 DEBUG:</strong> History length = {history.length}
+                {/* HISTORY TABLE - REBUILT WITH GUARANTEED VISIBILITY */}
+                <div style={{ 
+                  marginTop: "20px", 
+                  background: "white", 
+                  padding: "20px", 
+                  borderRadius: "10px",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+                    <h3 style={{ fontSize: "18px", fontWeight: "600", color: "#1a472a", margin: 0 }}>Recent Analyses</h3>
                     <button 
                       onClick={async () => {
                         const res = await api.get('/history');
-                        console.log("Manual fetch:", res.data);
                         if (res.data.success) setHistory([...res.data.history]);
                       }}
-                      style={{ marginLeft: "10px", padding: "2px 8px" }}
+                      style={{ padding: "5px 12px", fontSize: "12px", background: "#4f46e5", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
                     >
-                      Reload
+                      🔄 Refresh
                     </button>
                   </div>
-                  
+
                   {history.length === 0 ? (
-                    <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
+                    <p style={{ color: "#777", textAlign: "center", padding: "40px" }}>No analyses yet. Click "Analyze" to get started.</p>
                   ) : (
-                    <table style={styles.table}>
-                      <thead>
-                        <tr>
-                          <th style={styles.th}>#</th>
-                          <th style={styles.th}>Crop</th>
-                          <th style={styles.th}>Fertilizer</th>
-                          <th style={styles.th}>Status</th>
-                          <th style={styles.th}>Score</th>
-                          <th style={styles.th}>Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {history.slice().reverse().map((item, idx) => (
-                          <tr key={idx}>
-                            <td style={styles.td}>{idx + 1}</td>
-                            <td style={styles.td}>{item.input_data?.Crop_Type || "N/A"}</td>
-                            <td style={styles.td}>{item.input_data?.Fertilizer_Name || "N/A"}</td>
-                            <td style={styles.td}>{item.result?.overall_compatibility || "N/A"}</td>
-                            <td style={styles.td}>{item.result?.overall_score || 0}%</td>
-                            <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #e2e8f0", backgroundColor: "white" }}>
+                        <thead>
+                          <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
+                            <th style={{ padding: "12px", textAlign: "left", fontWeight: "600", color: "#334155", borderRight: "1px solid #e2e8f0" }}>#</th>
+                            <th style={{ padding: "12px", textAlign: "left", fontWeight: "600", color: "#334155", borderRight: "1px solid #e2e8f0" }}>Crop</th>
+                            <th style={{ padding: "12px", textAlign: "left", fontWeight: "600", color: "#334155", borderRight: "1px solid #e2e8f0" }}>Fertilizer</th>
+                            <th style={{ padding: "12px", textAlign: "left", fontWeight: "600", color: "#334155", borderRight: "1px solid #e2e8f0" }}>Status</th>
+                            <th style={{ padding: "12px", textAlign: "left", fontWeight: "600", color: "#334155", borderRight: "1px solid #e2e8f0" }}>Score</th>
+                            <th style={{ padding: "12px", textAlign: "left", fontWeight: "600", color: "#334155" }}>Date</th>
+                          </table>
+                        </thead>
+                        <tbody>
+                          {history.slice().reverse().map((item, idx) => {
+                            const inputData = item.input_data || {};
+                            const resultData = item.result || {};
+                            const date = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'N/A';
+                            
+                            let statusColor = "#721c24";
+                            let statusBg = "#f8d7da";
+                            if (resultData.overall_compatibility === "Highly Compatible") {
+                              statusColor = "#155724";
+                              statusBg = "#d4edda";
+                            } else if (resultData.overall_compatibility === "Moderately Compatible") {
+                              statusColor = "#856404";
+                              statusBg = "#fff3cd";
+                            }
+                            
+                            return (
+                              <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                                <td style={{ padding: "12px", borderRight: "1px solid #e2e8f0", color: "#1e293b" }}>{idx + 1}</td>
+                                <td style={{ padding: "12px", borderRight: "1px solid #e2e8f0", color: "#1e293b" }}>{inputData.Crop_Type || "N/A"}</td>
+                                <td style={{ padding: "12px", borderRight: "1px solid #e2e8f0", color: "#1e293b" }}>{inputData.Fertilizer_Name || "N/A"}</td>
+                                <td style={{ padding: "12px", borderRight: "1px solid #e2e8f0" }}>
+                                  <span style={{ 
+                                    display: "inline-block",
+                                    padding: "4px 10px", 
+                                    borderRadius: "20px", 
+                                    fontSize: "12px", 
+                                    fontWeight: "500",
+                                    backgroundColor: statusBg,
+                                    color: statusColor
+                                  }}>
+                                    {resultData.overall_compatibility || "N/A"}
+                                  </span>
+                                </td>
+                                <td style={{ padding: "12px", borderRight: "1px solid #e2e8f0", color: "#1e293b", fontWeight: "bold" }}>{resultData.overall_score || 0}%</td>
+                                <td style={{ padding: "12px", color: "#1e293b", fontSize: "12px" }}>{date}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                 </div>
               </div>
@@ -630,7 +730,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     {selectedUserId && (
                       <div style={styles.userDetails}>
                         <h4>User Analytics</h4>
-                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}</tbody></table></>) : (<p>Select a user to view analytics</p>)}
+                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}</tbody></td></>) : (<p>Select a user to view analytics</p>)}
                       </div>
                     )}
                   </div>
