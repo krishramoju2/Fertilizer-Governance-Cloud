@@ -242,7 +242,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       
       if (historyRes.data.success && historyRes.data.history) {
         console.log("✅ SETTING HISTORY WITH", historyRes.data.history.length, "RECORDS");
-        setHistory(historyRes.data.history);
+        setHistory([...historyRes.data.history]);
       } else {
         console.log("❌ No history data or history API failed");
       }
