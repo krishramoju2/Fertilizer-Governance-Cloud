@@ -156,7 +156,12 @@ const styles = {
     background: "#fff"
   },
   cardTitle: { fontSize: "18px", fontWeight: "600", marginBottom: "10px", color: "#1a472a" },
-  table: { width: "100%", borderCollapse: "collapse" },
+  table: { 
+  width: "100%", 
+  borderCollapse: "collapse",
+  border: "1px solid #e2e8f0",
+  backgroundColor: "white"
+  },
   header: {
     background: "rgba(26, 71, 42, 0.85)",
     backdropFilter: "blur(10px)",
@@ -171,8 +176,8 @@ const styles = {
     position: "relative",
     zIndex: 2
   },
-  th: { padding: "12px", textAlign: "left", borderBottom: "2px solid #e2e8f0", fontWeight: "600", color: "#334155" },
-  td: { padding: "12px", textAlign: "left", borderBottom: "1px solid #f1f5f9" }
+  th: { padding: "12px", textAlign: "left", borderBottom: "2px solid #e2e8f0", borderRight: "1px solid #e2e8f0", fontWeight: "600", color: "#334155", background: "#f8fafc" },
+  td: { padding: "12px", textAlign: "left", borderBottom: "1px solid #e2e8f0", borderRight: "1px solid #e2e8f0", color: "#1e293b" }
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -529,30 +534,29 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </button>
                   </div>
                   
-                  {/* Table display */}
                   {history.length === 0 ? (
-                    <p>No analyses yet. Click "Analyze" to get started.</p>
+                    <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
                   ) : (
-                    <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse", background: "white" }}>
+                    <table style={styles.table}>
                       <thead>
-                        <tr style={{ background: "#f0f0f0" }}>
-                          <th>#</th>
-                          <th>Crop</th>
-                          <th>Fertilizer</th>
-                          <th>Status</th>
-                          <th>Score</th>
-                          <th>Date</th>
+                        <tr>
+                          <th style={styles.th}>#</th>
+                          <th style={styles.th}>Crop</th>
+                          <th style={styles.th}>Fertilizer</th>
+                          <th style={styles.th}>Status</th>
+                          <th style={styles.th}>Score</th>
+                          <th style={styles.th}>Date</th>
                         </tr>
                       </thead>
                       <tbody>
                         {history.slice().reverse().map((item, idx) => (
                           <tr key={idx}>
-                            <td>{idx + 1}</td>
-                            <td>{item.input_data?.Crop_Type || "N/A"}</td>
-                            <td>{item.input_data?.Fertilizer_Name || "N/A"}</td>
-                            <td>{item.result?.overall_compatibility || "N/A"}</td>
-                            <td>{item.result?.overall_score || 0}%</td>
-                            <td>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
+                            <td style={styles.td}>{idx + 1}</td>
+                            <td style={styles.td}>{item.input_data?.Crop_Type || "N/A"}</td>
+                            <td style={styles.td}>{item.input_data?.Fertilizer_Name || "N/A"}</td>
+                            <td style={styles.td}>{item.result?.overall_compatibility || "N/A"}</td>
+                            <td style={styles.td}>{item.result?.overall_score || 0}%</td>
+                            <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
                           </tr>
                         ))}
                       </tbody>
