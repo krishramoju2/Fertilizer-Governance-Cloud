@@ -1,3 +1,8 @@
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AuthScreen from "./pages/Auth/AuthScreen";
@@ -11,7 +16,7 @@ function App() {
   // Load token from localStorage on app start
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
-    console.log("Saved token exists:", !!savedToken);
+    console.log("🔍 Saved token exists:", !!savedToken);
     if (savedToken) {
       setToken(savedToken);
     } else {
@@ -25,26 +30,26 @@ function App() {
       return;
     }
 
-    console.log("Token found, fetching current user...");
+    console.log("🔍 Token found, fetching current user...");
     
     const fetchCurrentUser = async () => {
       try {
         const response = await api.get("/me");
-        console.log("/me response:", response.data);
+        console.log("🔍 /me response:", response.data);
         
         if (response.data.success) {
           console.log("✅ User loaded:", response.data.user.email);
           setCurrentUser(response.data.user);
         } else {
-          console.error("Invalid token response");
+          console.error("❌ Invalid token response");
           localStorage.removeItem("token");
           setToken(null);
+          setLoading(false);
         }
       } catch (error) {
-        console.error("Failed to fetch user:", error);
+        console.error("❌ Failed to fetch user:", error);
         localStorage.removeItem("token");
         setToken(null);
-      } finally {
         setLoading(false);
       }
     };
@@ -63,14 +68,14 @@ function App() {
         fontSize: "18px",
         color: "#1a472a"
       }}>
-        Loading FarmAdvisor...
+        🌾 Loading FarmAdvisor...
       </div>
     );
   }
 
   // ✅ IMPORTANT: Show AuthScreen if NO token OR NO currentUser
   if (!token || !currentUser) {
-    console.log("No token or user, showing AuthScreen");
+    console.log("🔍 No token or user, showing AuthScreen. Token exists:", !!token, "User exists:", !!currentUser);
     return (
       <AuthScreen
         setToken={setToken}
@@ -80,7 +85,7 @@ function App() {
   }
 
   // ✅ Only show Dashboard when we have BOTH token AND currentUser
-  console.log("User authenticated, showing Dashboard");
+  console.log("✅ User authenticated, showing Dashboard");
   return (
     <Dashboard
       token={token}
