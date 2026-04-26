@@ -39,7 +39,7 @@ const styles = {
   fuzzyNameWrap: { minWidth: "150px" },
   fuzzyCountWrap: { minWidth: "96px", display: "flex", justifyContent: "flex-end" },
   analyticsContainer: { display: "flex", flexDirection: "column", gap: "20px" },
-  summaryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px" },
+  summaryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "15px" },
   title: { fontSize: "22px", fontWeight: "700", letterSpacing: "0.5px" },
   welcome: { fontSize: "14px" },
   errorMessage: { color: "red", margin: "10px 0" },
@@ -121,18 +121,18 @@ const styles = {
   userDetails: { flex: 1 },
   summaryCard: {
     background: "linear-gradient(145deg, rgba(30,64,175,0.92), rgba(15,118,110,0.9))",
-    padding: "22px",
-    borderRadius: "18px",
-    boxShadow: "0 14px 34px rgba(15,23,42,0.22)",
+    padding: "16px", // Reduced
+    borderRadius: "14px",
+    boxShadow: "0 10px 25px rgba(15,23,42,0.15)",
     textAlign: "left",
     color: "white",
-    border: "1px solid rgba(255,255,255,0.25)",
+    border: "1px solid rgba(255,255,255,0.2)",
     position: "relative",
     overflow: "hidden"
   },
-  summaryValue: { fontSize: "30px", fontWeight: "700", color: "#ffffff", display: "block", marginTop: "10px" },
-  summaryLabel: { fontSize: "13px", color: "rgba(255,255,255,0.85)", marginTop: "6px", display: "block" },
-  summaryIcon: { fontSize: "20px", width: "40px", height: "40px", display: "grid", placeItems: "center", borderRadius: "12px", background: "rgba(255,255,255,0.18)", backdropFilter: "blur(6px)" },
+  summaryValue: { fontSize: "24px", fontWeight: "700", color: "#ffffff", display: "block", marginTop: "8px" },
+  summaryLabel: { fontSize: "11px", color: "rgba(255,255,255,0.85)", marginTop: "4px", display: "block", textTransform: "uppercase", letterSpacing: "1px" },
+  summaryIcon: { fontSize: "16px", width: "32px", height: "32px", display: "grid", placeItems: "center", borderRadius: "10px", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)" },
   label: { display: "block", marginBottom: "5px", fontWeight: "500", color: "#333" },
   nav: { display: "flex", gap: "10px", flexWrap: "wrap" },
   analyzeButton: {
@@ -307,33 +307,45 @@ const styles = {
   td: { padding: "12px", textAlign: "left", borderBottom: "1px solid #e2e8f0", borderRight: "1px solid #e2e8f0", color: "#1e293b" },
 
   chartCard: {
-    background: "rgba(255, 255, 255, 0.95)",
-    padding: "24px",
-    borderRadius: "20px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
-    border: "1px solid rgba(74, 222, 128, 0.15)",
+    background: "#ffffff",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    border: "1px solid #e2e8f0",
     flex: 1,
-    minWidth: "300px"
+    minWidth: "280px",
+    position: "relative",
+    overflow: "hidden"
   },
-  chartList: { display: "flex", flexDirection: "column", gap: "16px" },
-  chartItem: { display: "flex", alignItems: "center", gap: "15px" },
-  chartName: { width: "100px", fontSize: "14px", fontWeight: "600", color: "#374151" },
-  chartBar: { flex: 1, height: "10px", background: "#f1f5f9", borderRadius: "5px", overflow: "hidden", position: "relative" },
-  chartFill: { height: "100%", background: "linear-gradient(90deg, #4f46e5, #22c55e)", borderRadius: "5px" },
-  chartCount: { width: "70px", fontSize: "13px", fontWeight: "700", color: "#1a472a", textAlign: "right" },
+  chartList: { display: "flex", flexDirection: "column", gap: "12px" },
+  chartItem: { display: "flex", alignItems: "center", gap: "12px" },
+  chartName: { width: "80px", fontSize: "12px", fontWeight: "700", color: "#475569" },
+  chartBar: { flex: 1, height: "8px", background: "#f1f5f9", borderRadius: "4px", overflow: "hidden" },
+  chartFill: { height: "100%", background: "linear-gradient(90deg, #10b981, #3b82f6)", borderRadius: "4px" },
+  chartCount: { width: "30px", fontSize: "12px", fontWeight: "800", color: "#1a472a", textAlign: "right" },
+
+  graphPaper: {
+    backgroundImage: `
+      linear-gradient(rgba(226, 232, 240, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(226, 232, 240, 0.4) 1px, transparent 1px)
+    `,
+    backgroundSize: "20px 20px",
+    backgroundColor: "#ffffff",
+    border: "1px solid #cbd5e1"
+  },
 
   trendContainer: {
     marginTop: "20px",
-    background: "rgba(255, 255, 255, 0.95)",
+    background: "#ffffff",
     padding: "24px",
-    borderRadius: "20px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
-    border: "1px solid rgba(74, 222, 128, 0.15)",
+    borderRadius: "16px",
+    boxShadow: "0 10px 30px rgba(15,23,42,0.05)",
+    border: "1px solid #e2e8f0",
     width: "100%",
     boxSizing: "border-box"
   },
-  trendSvg: { width: "100%", height: "160px", overflow: "visible" },
-  trendPath: { fill: "none", stroke: "url(#lineGradient)", strokeWidth: 4, strokeLinecap: "round", strokeLinejoin: "round" },
+  trendSvg: { width: "100%", height: "180px", overflow: "visible" },
+  trendPath: { fill: "none", stroke: "url(#lineGradient)", strokeWidth: 3, strokeLinecap: "round", strokeLinejoin: "round" },
   trendArea: { fill: "url(#areaGradient)", stroke: "none" }
 };
 
@@ -826,93 +838,137 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           <div style={styles.analyticsContainer}>
             {analytics ? (
               <>
+                {/* 1. Compact Summary Header */}
                 <div style={styles.summaryGrid}>
-                  <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.55, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
-                    <span style={styles.summaryIcon}>📊</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" hoverIntensity={0.15} fuzzRange={10}>{String(analytics.total_analyses)}</FuzzyText>
-                    <span style={{ fontSize: "15px", fontWeight: "600", color: "rgba(255,255,255,0.92)", marginTop: "6px" }}>Total Analyses</span>
-                  </motion.div>
-                  <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.65, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
-                    <span style={styles.summaryIcon}>✅</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" hoverIntensity={0.15} fuzzRange={10}>{`${analytics.compatibility_rate}%`}</FuzzyText>
-                    <span style={{ fontSize: "15px", fontWeight: "600", color: "rgba(255,255,255,0.92)", marginTop: "6px" }}>Success Rate</span>
-                  </motion.div>
-                  <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.75, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
-                    <span style={styles.summaryIcon}>🎯</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" hoverIntensity={0.15} fuzzRange={10}>{`${analytics.average_score}%`}</FuzzyText>
-                    <span style={{ fontSize: "15px", fontWeight: "600", color: "rgba(255,255,255,0.92)", marginTop: "6px" }}>Avg Score</span>
-                  </motion.div>
+                  <div style={styles.summaryCard}>
+                    <div style={styles.summaryIcon}>📊</div>
+                    <span style={styles.summaryValue}>{analytics.total_analyses}</span>
+                    <span style={styles.summaryLabel}>Analyses</span>
+                  </div>
+                  <div style={styles.summaryCard}>
+                    <div style={styles.summaryIcon}>✅</div>
+                    <span style={styles.summaryValue}>{analytics.compatibility_rate}%</span>
+                    <span style={styles.summaryLabel}>Success</span>
+                  </div>
+                  <div style={styles.summaryCard}>
+                    <div style={styles.summaryIcon}>🎯</div>
+                    <span style={styles.summaryValue}>{analytics.average_score}%</span>
+                    <span style={styles.summaryLabel}>Avg Score</span>
+                  </div>
+                  <div style={styles.summaryCard}>
+                    <div style={styles.summaryIcon}>📅</div>
+                    <span style={styles.summaryValue}>{history.length}</span>
+                    <span style={styles.summaryLabel}>Sessions</span>
+                  </div>
                 </div>
 
-                <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-                  <motion.div style={styles.chartCard} initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }}>
-                    <h3 style={{ fontSize: "20px", fontWeight: "700", color: "#1a472a", marginBottom: "20px" }}>Crop Insights</h3>
-                    <div style={styles.chartList}>{Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (<div key={crop} style={styles.chartItem}><div style={styles.chartName}>{crop}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9 }} /></span><div style={styles.chartCount}>{count}</div></div>))}</div>
-                  </motion.div>
-                  <motion.div style={styles.chartCard} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }}>
-                    <h3 style={{ fontSize: "20px", fontWeight: "700", color: "#1a472a", marginBottom: "20px" }}>Fertilizer Pulse</h3>
-                    <div style={styles.chartList}>{Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (<div key={fert} style={styles.chartItem}><div style={styles.chartName}>{fert}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0, background: "linear-gradient(90deg, #6366f1, #a855f7)" }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9 }} /></span><div style={styles.chartCount}>{count}</div></div>))}</div>
-                  </motion.div>
-                </div>
-
-                <motion.div style={styles.trendContainer} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
-                    <div>
-                      <h3 style={{ fontSize: "22px", fontWeight: "700", color: "#1a472a", margin: 0 }}>Performance Trend</h3>
-                      <p style={{ fontSize: "14px", color: "#64748b", margin: "4px 0 0 0" }}>Historical analysis scores (Last 10 Cases)</p>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <span style={{ fontSize: "28px", fontWeight: "800", color: "#16a34a" }}>{analytics.average_score}%</span>
-                      <div style={{ fontSize: "11px", fontWeight: "700", color: "#16a34a", textTransform: "uppercase" }}>Avg Growth</div>
+                {/* 2. Visual Grid (The Big Charts) */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "20px", marginTop: "10px" }}>
+                  
+                  {/* CHART 1: Crop Distribution (PIE) */}
+                  <div style={{ ...styles.chartCard, ...styles.graphPaper }}>
+                    <h4 style={{ margin: "0 0 15px 0", fontSize: "14px", color: "#1e293b", fontWeight: "800" }}>CROP DISTRIBUTION MATRIX</h4>
+                    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                      <svg width="140" height="140" viewBox="0 0 40 40">
+                        {(() => {
+                          let total = Object.values(analytics.crop_distribution).reduce((a, b) => a + b, 0);
+                          let currentAngle = 0;
+                          const colors = ["#10b981", "#3b82f6", "#6366f1", "#f59e0b", "#ef4444"];
+                          return Object.entries(analytics.crop_distribution).map(([crop, count], idx) => {
+                            const percent = (count / total) * 100;
+                            const dashArray = `${percent} ${100 - percent}`;
+                            const dashOffset = -currentAngle;
+                            currentAngle += percent;
+                            return (
+                              <circle key={crop} r="15.9" cx="20" cy="20" fill="transparent"
+                                stroke={colors[idx % colors.length]} strokeWidth="6"
+                                strokeDasharray={dashArray} strokeDashoffset={dashOffset}
+                              />
+                            );
+                          });
+                        })()}
+                      </svg>
+                      <div style={{ flex: 1, fontSize: "12px" }}>
+                        {Object.entries(analytics.crop_distribution).map(([crop, count], idx) => (
+                          <div key={crop} style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                            <span style={{ color: "#64748b" }}>● {crop}</span>
+                            <span style={{ fontWeight: "700" }}>{count}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  
+
+                  {/* CHART 2: Fertilizer Pulse (BARS) */}
+                  <div style={{ ...styles.chartCard, ...styles.graphPaper }}>
+                    <h4 style={{ margin: "0 0 15px 0", fontSize: "14px", color: "#1e293b", fontWeight: "800" }}>NUTRIENT PULSE (APPLICATION)</h4>
+                    <div style={styles.chartList}>
+                      {Object.entries(analytics.fertilizer_distribution).slice(0, 5).map(([fert, count]) => (
+                        <div key={fert} style={styles.chartItem}>
+                          <div style={styles.chartName}>{fert}</div>
+                          <div style={styles.chartBar}>
+                            <div style={{ ...styles.chartFill, width: `${(count / analytics.total_analyses) * 100}%` }} />
+                          </div>
+                          <div style={styles.chartCount}>{count}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CHART 3: Environmental Correlation (SCATTER) */}
+                  <div style={{ ...styles.chartCard, ...styles.graphPaper }}>
+                    <h4 style={{ margin: "0 0 15px 0", fontSize: "14px", color: "#1e293b", fontWeight: "800" }}>ENVIRONMENTAL CORRELATION (TEMP VS SCORE)</h4>
+                    <svg width="100%" height="120" style={{ overflow: "visible" }}>
+                      <line x1="0" y1="110" x2="100%" y2="110" stroke="#cbd5e1" strokeWidth="1" />
+                      <line x1="10" y1="0" x2="10" y2="110" stroke="#cbd5e1" strokeWidth="1" />
+                      {history.slice(0, 15).map((h, i) => {
+                        const x = (h.input_data?.temperature || 25) * 2;
+                        const y = 110 - (h.result?.overall_score || 0);
+                        return <circle key={i} cx={`${(x / 60) * 100}%`} cy={y} r="4" fill="#3b82f6" opacity="0.6" />;
+                      })}
+                    </svg>
+                  </div>
+
+                  {/* CHART 4: Statistical Reliability (BOX PLOT) */}
+                  <div style={{ ...styles.chartCard, ...styles.graphPaper }}>
+                    <h4 style={{ margin: "0 0 15px 0", fontSize: "14px", color: "#1e293b", fontWeight: "800" }}>STATISTICAL RELIABILITY AUDIT</h4>
+                    <div style={{ display: "flex", flexDirection: "column", height: "120px", justifyContent: "center", padding: "0 40px" }}>
+                      <div style={{ height: "2px", background: "#cbd5e1", position: "relative" }}>
+                        <div style={{ position: "absolute", left: "20%", right: "20%", top: "-15px", bottom: "-15px", border: "2px solid #10b981", background: "rgba(16, 185, 129, 0.1)" }} />
+                        <div style={{ position: "absolute", left: "50%", top: "-15px", bottom: "-15px", width: "2px", background: "#10b981" }} />
+                        <div style={{ position: "absolute", left: "10%", top: "-10px", height: "20px", width: "2px", background: "#64748b" }} />
+                        <div style={{ position: "absolute", right: "10%", top: "-10px", height: "20px", width: "2px", background: "#64748b" }} />
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "25px", fontSize: "10px", color: "#94a3b8", fontWeight: "800" }}>
+                        <span>LOWER_BOUND</span>
+                        <span>MEDIAN_TRUST</span>
+                        <span>UPPER_BOUND</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Performance Trend (Line Chart) */}
+                <div style={{ ...styles.trendContainer, ...styles.graphPaper }}>
+                  <h4 style={{ margin: "0 0 20px 0", fontSize: "14px", color: "#1e293b", fontWeight: "800" }}>HISTORICAL PERFORMANCE TREND</h4>
                   <svg style={styles.trendSvg} viewBox="0 0 1000 160" preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#4f46e5" />
                         <stop offset="100%" stopColor="#22c55e" />
                       </linearGradient>
-                      <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#22c55e" stopOpacity="0.2" />
-                        <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
-                      </linearGradient>
                     </defs>
-                    {/* Area fill */}
-                    <motion.path 
-                      d={`M 0 160 ${history.slice(0, 10).map((h, i) => `L ${i * 111} ${160 - (h.result?.overall_score || 0) * 1.4}`).join(' ')} L 1000 160 Z`}
-                      style={styles.trendArea}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 1.5 }}
-                    />
-                    {/* Smooth Line */}
-                    <motion.path 
-                      d={`M 0 ${160 - (history[0]?.result?.overall_score || 0) * 1.4} ${history.slice(1, 10).map((h, i) => `L ${(i + 1) * 111} ${160 - (h.result?.overall_score || 0) * 1.4}`).join(' ')}`}
+                    <path 
+                      d={`M 0 ${160 - (history[0]?.result?.overall_score || 0) * 1.4} ${history.slice(1, 15).map((h, i) => `L ${(i + 1) * 71} ${160 - (h.result?.overall_score || 0) * 1.4}`).join(' ')}`}
                       style={styles.trendPath}
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 2, ease: "easeInOut" }}
                     />
-                    {/* Data Points */}
-                    {history.slice(0, 10).map((h, i) => (
-                      <motion.circle 
-                        key={i}
-                        cx={i * 111}
-                        cy={160 - (h.result?.overall_score || 0) * 1.4}
-                        r="5"
-                        fill="#ffffff"
-                        stroke="#22c55e"
-                        strokeWidth="2.5"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 1 + i * 0.1 }}
-                      />
+                    {history.slice(0, 15).map((h, i) => (
+                      <circle key={i} cx={i * 71} cy={160 - (h.result?.overall_score || 0) * 1.4} r="4" fill="#ffffff" stroke="#22c55e" strokeWidth="2" />
                     ))}
                   </svg>
-                </motion.div>
+                </div>
               </>
-            ) : (<p>Loading analytics...</p>)}
+            ) : (<p>Loading system analytics...</p>)}
           </div>
         )}
 
@@ -959,5 +1015,4 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
-
 
