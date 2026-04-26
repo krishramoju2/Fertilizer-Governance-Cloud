@@ -8,7 +8,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: "Hi! I'm your FarmAdvisor AI 🌱 Ask me about crops, fertilizers, or weather conditions."
+      text: "SYSTEM INITIALIZED. I am the Agri-Governance Diagnostic Assistant. Please provide your environmental parameters or query for technical analysis."
     }
   ]);
   
@@ -30,7 +30,7 @@ export default function Chatbot() {
       // Reveal thinking steps one by one
       if (thinking && thinking.length > 0) {
         for (let i = 0; i < thinking.length; i++) {
-          await new Promise(resolve => setTimeout(resolve, 700));
+          await new Promise(resolve => setTimeout(resolve, 600));
           setMessages(prev => [
             ...prev,
             { sender: "thinking", text: thinking[i] }
@@ -38,7 +38,7 @@ export default function Chatbot() {
         }
       }
 
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 400));
       setIsThinking(false);
 
       const botMessage = {
@@ -51,7 +51,7 @@ export default function Chatbot() {
       setIsThinking(false);
       setMessages(prev => [
         ...prev,
-        { sender: "bot", text: "Error connecting to server. Please try again." }
+        { sender: "bot", text: "SYSTEM ERROR: Connection to diagnostic server lost. Re-attempt advised." }
       ]);
     }
   };
@@ -62,24 +62,27 @@ export default function Chatbot() {
     {/* 🔥 Iridescence Background */}
     <div style={styles.bg}>
       <Iridescence 
-        color={[0.5, 0.6, 0.8]} 
-        speed={0.4} 
-        amplitude={0.05} 
+        color={[0.1, 0.2, 0.3]} 
+        speed={0.3} 
+        amplitude={0.03} 
         mouseReact={true}
       />
     </div>
           
       <div style={styles.card}>
-        <h2 style={{ marginBottom: "10px", fontWeight: "700" }}>
-        🤖 FarmAdvisor AI
+        <h2 style={{ marginBottom: "5px", fontWeight: "800", color: "#0f172a", fontSize: "20px" }}>
+        🛡️ Agri-Governance AI
         </h2>
+        <p style={{ fontSize: "11px", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "15px" }}>
+          Enterprise Diagnostic Protocol v4.0.2
+        </p>
 
-        {/* 🔥 NEW DESCRIPTION BOX */}
+        {/* 🔥 PROFESSIONAL DESCRIPTION BOX */}
         <div style={styles.infoBox}>
           <p style={styles.description}>
-            Interact with an AI-powered assistant to get instant agricultural guidance. 
-            Ask questions about fertilizers, crops, or predictions, and receive 
-            quick, intelligent responses to support your decisions.
+            Authorized diagnostic assistant for precision agriculture. This system provides 
+            verified governance guidance based on integrated environmental substrates and 
+            biochemical compatibility algorithms.
           </p>
         </div>
 
@@ -111,11 +114,11 @@ export default function Chatbot() {
           <input
             style={styles.input}
             value={input}
-            placeholder="Ask something..."
+            placeholder="Input diagnostic query..."
             onChange={(e) => setInput(e.target.value)}
           />
           <button style={styles.button} onClick={sendMessage}>
-            Send
+            EXECUTE
           </button>
         </div>
       </div>
@@ -135,37 +138,35 @@ const styles = {
   },
   
   card: {
-    width: "450px",
-    background: "rgba(255,255,255,0.8)",
-    backdropFilter: "blur(12px)",
-    borderRadius: "16px",
-    padding: "20px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+    width: "480px",
+    background: "rgba(255,255,255,0.95)",
+    backdropFilter: "blur(20px)",
+    borderRadius: "12px",
+    padding: "25px",
+    boxShadow: "0 20px 50px rgba(15, 23, 42, 0.15)",
     display: "flex",
     flexDirection: "column",
-    border: "1px solid rgba(255,255,255,0.3)",
+    border: "1px solid #e2e8f0",
     position: "relative",
     zIndex: 1
   },
 
-  /* 🔥 NEW STYLES */
   infoBox: {
-    background: "rgba(34,197,94,0.1)",
+    background: "#f8fafc",
     padding: "12px",
-    borderRadius: "10px",
-    marginBottom: "12px",
-    border: "1px solid rgba(34,197,94,0.2)"
+    borderRadius: "8px",
+    marginBottom: "15px",
+    borderLeft: "4px solid #0f172a"
   },
 
-  
   description: {
-    fontSize: "13.5px",
-    color: "#444",
+    fontSize: "13px",
+    color: "#334155",
     margin: 0,
-    lineHeight: "1.4"
+    lineHeight: "1.5",
+    fontWeight: "500"
   },
 
-  
   bg: {
     position: "absolute",
     top: 0,
@@ -176,57 +177,56 @@ const styles = {
   },
 
   chatBox: {
-    height: "320px",
+    height: "350px",
     overflowY: "auto",
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
-    marginBottom: "10px",
-    padding: "12px",
-    background: "rgba(255,255,255,0.6)",
-    borderRadius: "12px",
-    border: "1px solid rgba(0,0,0,0.05)"
+    gap: "10px",
+    marginBottom: "15px",
+    padding: "15px",
+    background: "#ffffff",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)"
   },
   
-  message: {
-    padding: "10px",
-    borderRadius: "10px",
-    maxWidth: "70%"
-  },
-
   userMessage: {
     alignSelf: "flex-end",
-    background: "linear-gradient(135deg, #4f46e5, #22c55e)",
+    background: "#0f172a",
     color: "white",
     padding: "10px 14px",
-    borderRadius: "12px",
-    maxWidth: "75%",
-    fontSize: "14px"
+    borderRadius: "8px",
+    maxWidth: "80%",
+    fontSize: "14px",
+    fontWeight: "500"
   },
 
   botMessage: {
     alignSelf: "flex-start",
     background: "#f1f5f9",
-    color: "#1e293b",
-    padding: "10px 14px",
-    borderRadius: "12px",
-    maxWidth: "85%",
+    color: "#0f172a",
+    padding: "12px 16px",
+    borderRadius: "8px",
+    maxWidth: "90%",
     fontSize: "14px",
     whiteSpace: "pre-wrap",
-    border: "1px solid #e2e8f0"
+    border: "1px solid #e2e8f0",
+    lineHeight: "1.6",
+    fontFamily: "'Inter', sans-serif"
   },
   
   thinkingMessage: {
     alignSelf: "flex-start",
-    background: "rgba(226, 232, 240, 0.4)",
-    color: "#64748b",
+    background: "#1e293b",
+    color: "#94a3b8",
     padding: "8px 12px",
-    borderRadius: "10px",
-    maxWidth: "80%",
-    fontSize: "12.5px",
-    fontStyle: "italic",
-    borderLeft: "3px solid #cbd5e1",
-    marginBottom: "4px"
+    borderRadius: "4px",
+    maxWidth: "95%",
+    fontSize: "12px",
+    fontFamily: "'Roboto Mono', monospace",
+    borderLeft: "2px solid #38bdf8",
+    marginBottom: "2px",
+    letterSpacing: "0.3px"
   },
 
   thinkingContainer: {
@@ -238,7 +238,7 @@ const styles = {
   thinkingDot: {
     width: "6px",
     height: "6px",
-    background: "#64748b",
+    background: "#0f172a",
     borderRadius: "50%",
     animation: "pulse 1.4s infinite ease-in-out"
   },
@@ -246,27 +246,31 @@ const styles = {
   inputRow: {
     display: "flex",
     gap: "10px",
-    marginTop: "8px"
+    marginTop: "5px"
   },
   
   input: {
     flex: 1,
     padding: "12px",
-    borderRadius: "10px",
-    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    border: "1px solid #cbd5e1",
     outline: "none",
-    fontSize: "14px"
+    fontSize: "14px",
+    background: "#f8fafc",
+    color: "#0f172a"
   },
   
   button: {
-    padding: "12px 16px",
-    background: "linear-gradient(135deg, #22c55e, #4f46e5)",
+    padding: "12px 24px",
+    background: "#0f172a",
     color: "white",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "8px",
     cursor: "pointer",
-    fontWeight: "600",
-    transition: "0.3s"
+    fontWeight: "700",
+    fontSize: "12px",
+    letterSpacing: "1px",
+    transition: "0.2s"
   }
 };
 
