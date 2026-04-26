@@ -29,27 +29,32 @@ def chatbot(**kwargs):
         suggestions = ml_result.get("suggestions", [])
         suggestion_text = "\n".join(suggestions) if suggestions else "✅ No suggestions available"
 
-        # ---------------- 🧠 GENERATE THINKING PROCESS ----------------
+        # ---------------- 🧠 SYSTEM LOGS (PROFESSIONAL THINKING) ----------------
         thinking = [
-            f"🔍 Analyzing your request for {input_data.get('Crop_Type')} with {input_data.get('Fertilizer_Name')}...",
-            f"🌡️ Checking temperature ({input_data.get('Temperature')}°C) against {input_data.get('Crop_Type')}'s optimal range ({ml_result.get('temperature_range')}).",
-            f"💧 Evaluating soil moisture ({input_data.get('Moisture')}%) for metabolic efficiency.",
-            f"🌱 Cross-referencing {input_data.get('Fertilizer_Name')} with {input_data.get('Soil_Type')} soil (Compatibility: {ml_result.get('soil_compatibility')}).",
-            f"⚖️ Validating application rate ({input_data.get('Fertilizer_Quantity')} kg/ha) against safety standards."
+            f"SYSTEM: Initializing Agricultural Diagnostic Engine for {input_data.get('Crop_Type')}...",
+            f"DATA_VALIDATION: Comparing thermal inputs ({input_data.get('Temperature')}°C) against biochemical thresholds.",
+            f"SOIL_ANALYSIS: Evaluating moisture saturation ({input_data.get('Moisture')}%) for optimal nutrient absorption.",
+            f"SYNERGY_CHECK: Cross-referencing {input_data.get('Fertilizer_Name')} with {input_data.get('Soil_Type')} soil substrate.",
+            f"PROTOCOL_VERIFICATION: Auditing application rate ({input_data.get('Fertilizer_Quantity')} kg/ha) against governance standards."
         ]
 
         # ---------------- RESPONSE ----------------
         reply = f"""
-🌿 **FINAL RECOMMENDATION** 🌿
+--- AGRICULTURAL COMPATIBILITY REPORT ---
 
-**Compatibility:** {ml_result.get('overall_compatibility', 'Unknown')}
-**Trust Score:** {ml_result.get('overall_score', 0)}%
+SUMMARY:
+COMPATIBILITY STATUS: {ml_result.get('overall_compatibility', 'Unknown').upper()}
+RELIABILITY INDEX: {ml_result.get('overall_score', 0)}%
 
-**Smart Advice:**
+EXECUTIVE GUIDANCE:
 {suggestion_text}
 
----
-*Conditions: {input_data.get('Temperature')}°C | {input_data.get('Moisture')}% | {input_data.get('Soil_Type')} Soil*
+TECHNICAL PARAMETERS:
+Temperature: {input_data.get('Temperature')}°C (Ref: {ml_result.get('temperature_range')})
+Moisture: {input_data.get('Moisture')}% (Ref: {ml_result.get('moisture_range')})
+Substrate: {input_data.get('Soil_Type')}
+Nutrient Agent: {input_data.get('Fertilizer_Name')}
+------------------------------------------
         """
 
         return jsonify({
