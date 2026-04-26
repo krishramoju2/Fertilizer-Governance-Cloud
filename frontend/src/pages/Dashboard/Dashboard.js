@@ -425,10 +425,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
   };
 
-  const refreshHistory = async () => {
-    await loadUserData();
-    showMessage('History refreshed!');
-  };
+
 
   return (
     <div style={styles.app}>
