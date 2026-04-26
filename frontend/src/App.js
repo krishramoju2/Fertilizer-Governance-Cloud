@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AuthScreen from "./pages/Auth/AuthScreen";
 import api from "./services/api";
@@ -7,6 +7,7 @@ function App() {
   const [token, setToken] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const hasFetchedUser = useRef(false); // ✅ Prevents duplicate /me calls
 
   // Load token from localStorage on app start
   useEffect(() => {
@@ -19,13 +20,20 @@ function App() {
     }
   }, []);
 
-  // Fetch user when token is set
+  // Fetch user when token is set (ONLY ONCE)
   useEffect(() => {
     if (!token) {
       return;
     }
 
+    // ✅ Skip if user already fetched
+    if (hasFetchedUser.current) {
+      console.log("User already fetched, skipping duplicate /me call");
+      return;
+    }
+
     console.log("Token found, fetching current user...");
+    hasFetchedUser.current = true; // ✅ Mark as fetched
     
     const fetchCurrentUser = async () => {
       try {
@@ -38,11 +46,13 @@ function App() {
           console.error("Invalid token response");
           localStorage.removeItem("token");
           setToken(null);
+          hasFetchedUser.current = false; // Reset on failure
         }
       } catch (error) {
         console.error("Failed to fetch user:", error);
         localStorage.removeItem("token");
         setToken(null);
+        hasFetchedUser.current = false; // Reset on failure
       } finally {
         setLoading(false);
       }
