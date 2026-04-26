@@ -29,25 +29,33 @@ def chatbot(**kwargs):
         suggestions = ml_result.get("suggestions", [])
         suggestion_text = "\n".join(suggestions) if suggestions else "✅ No suggestions available"
 
+        # ---------------- 🧠 GENERATE THINKING PROCESS ----------------
+        thinking = [
+            f"🔍 Analyzing your request for {input_data.get('Crop_Type')} with {input_data.get('Fertilizer_Name')}...",
+            f"🌡️ Checking temperature ({input_data.get('Temperature')}°C) against {input_data.get('Crop_Type')}'s optimal range ({ml_result.get('temperature_range')}).",
+            f"💧 Evaluating soil moisture ({input_data.get('Moisture')}%) for metabolic efficiency.",
+            f"🌱 Cross-referencing {input_data.get('Fertilizer_Name')} with {input_data.get('Soil_Type')} soil (Compatibility: {ml_result.get('soil_compatibility')}).",
+            f"⚖️ Validating application rate ({input_data.get('Fertilizer_Quantity')} kg/ha) against safety standards."
+        ]
+
         # ---------------- RESPONSE ----------------
         reply = f"""
-🌱 Compatibility: {ml_result.get('overall_compatibility', 'Unknown')}
-📊 Score: {ml_result.get('overall_score', 0)}
+🌿 **FINAL RECOMMENDATION** 🌿
 
-🌡 Temperature: {input_data.get('Temperature')}°C
-💧 Moisture: {input_data.get('Moisture')}%
-🌱 Soil: {input_data.get('Soil_Type')}
-🌾 Crop: {input_data.get('Crop_Type')}
-🧪 Fertilizer: {input_data.get('Fertilizer_Name')}
-📦 Quantity: {input_data.get('Fertilizer_Quantity')} kg/ha
+**Compatibility:** {ml_result.get('overall_compatibility', 'Unknown')}
+**Trust Score:** {ml_result.get('overall_score', 0)}%
 
-🧠 Smart Advice:
+**Smart Advice:**
 {suggestion_text}
+
+---
+*Conditions: {input_data.get('Temperature')}°C | {input_data.get('Moisture')}% | {input_data.get('Soil_Type')} Soil*
         """
 
         return jsonify({
             "success": True,
-            "reply": reply.strip()
+            "reply": reply.strip(),
+            "thinking": thinking
         }), 200
 
     except Exception as e:
@@ -55,4 +63,5 @@ def chatbot(**kwargs):
             "success": False,
             "error": str(e)
         }), 500
+
 
