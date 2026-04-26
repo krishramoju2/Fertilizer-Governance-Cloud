@@ -107,10 +107,11 @@ const Silk = ({ speed = 5, scale = 1, color = '#7B7481', noiseIntensity = 1.5, r
   );
 
   return (
-    <Canvas dpr={[1, 2]} frameloop="always">
+    <Canvas style={{ width: '100%', height: '100%', display: 'block' }} dpr={[1, 2]} frameloop="always">
       <SilkPlane ref={meshRef} uniforms={uniforms} />
     </Canvas>
   );
 };
 
 export default Silk;
+
