@@ -51,16 +51,16 @@ export default function MLModel() {
         <GradientBlinds
           gradientColors={['#4f46e5', '#22c55e']}
           angle={0}
-          noise={0.2}
+          noise={0.05} // Reduced noise
           blindCount={12}
           blindMinWidth={60}
           spotlightRadius={0.4}
           spotlightSoftness={1}
-          spotlightOpacity={0.8}
+          spotlightOpacity={0.5} // Lowered opacity
           mouseDampening={0.15}
-          distortAmount={0.1}
+          distortAmount={0.02} // Minimal distortion
           shineDirection="left"
-          mixBlendMode="lighten"
+          mixBlendMode="normal" // Stable blend mode
         />
       </div>
       {/* MAIN CARD */}
@@ -295,4 +295,3 @@ const styles = {
   }
   
 };
-
