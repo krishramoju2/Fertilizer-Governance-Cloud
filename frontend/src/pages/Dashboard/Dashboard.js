@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -563,12 +549,12 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         {history.slice().reverse().map((item, idx) => (
                           <tr key={idx}>
                             <td style={styles.td}>{idx + 1}</td>
-                            <td style={styles.td}>{item.input_data?.Crop_Type || "N/A"}</td
-                            <td style={styles.td}>{item.input_data?.Fertilizer_Name || "N/A"}</td
-                            <td style={styles.td}>{item.result?.overall_compatibility || "N/A"} </td
-                            <td style={styles.td}>{item.result?.overall_score || 0}%</td
-                            <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td
-                          </tr>
+                            <td style={styles.td}>{item.input_data?.Crop_Type || "N/A"}</td>
+                            <td style={styles.td}>{item.input_data?.Fertilizer_Name || "N/A"}</td>
+                            <td style={styles.td}>{item.result?.overall_compatibility || "N/A"}</td>
+                            <td style={styles.td}>{item.result?.overall_score || 0}%</td>
+                            <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
+                          </table>
                         ))}
                       </tbody>
                     </table>
@@ -641,7 +627,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     {selectedUserId && (
                       <div style={styles.userDetails}>
                         <h4>User Analytics</h4>
-                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}</td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></table>))}</tbody></table></>) : (<p>Select a user to view analytics</p>)}
+                        {userAnalytics ? (<><p>Total Analyses: {userAnalytics.total_analyses}</p><p>Success Rate: {userAnalytics.compatibility_rate}%</p><p>Avg Score: {userAnalytics.average_score}%</p><h5>Recent History</h5><table style={styles.table}><thead><tr><th style={styles.th}>Crop</th><th style={styles.th}>Fertilizer</th><th style={styles.th}>Status</th><th style={styles.th}>Score</th></tr></thead><tbody>{userHistory.map((item, i) => (<tr key={i}><td style={styles.td}>{item.crop_type}<td><td style={styles.td}>{item.fertilizer}</td><td style={styles.td}>{item.compatibility}</td><td style={styles.td}>{item.score}%</td></tr>))}</tbody></table></>) : (<p>Select a user to view analytics</p>)}
                       </div>
                     )}
                   </div>
@@ -663,3 +649,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
+
+
+
+
+
+
+
+
+
