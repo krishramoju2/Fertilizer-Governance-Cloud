@@ -793,7 +793,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         )}
 
         {activeTab === 'ml' && (
-          <div style={styles.card}>
+          <div style={{ ...styles.card, backdropFilter: "none" }}>
             <h2 style={styles.cardTitle}>ML Model Analysis</h2>
             <MLModel />
           </div>
@@ -865,7 +865,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         )}
 
         {activeTab === 'chat' && (
-          <div style={styles.card}>
+          <div style={{ ...styles.card, backdropFilter: "none" }}>
             <h2 style={styles.cardTitle}>Farm Chatbot</h2>
             <Chatbot />
           </div>
@@ -876,5 +876,4 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
-
 
