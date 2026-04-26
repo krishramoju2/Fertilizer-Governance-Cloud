@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AuthScreen from "./pages/Auth/AuthScreen";
 import api from "./services/api";
@@ -7,7 +7,6 @@ function App() {
   const [token, setToken] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const hasFetchedUser = useRef(false); // ✅ Prevents duplicate /me calls
 
   // Load token from localStorage on app start
   useEffect(() => {
@@ -20,20 +19,13 @@ function App() {
     }
   }, []);
 
-  // Fetch user when token is set (ONLY ONCE)
+  // Fetch user when token is set
   useEffect(() => {
     if (!token) {
       return;
     }
 
-    // ✅ Skip if user already fetched
-    if (hasFetchedUser.current) {
-      console.log("User already fetched, skipping duplicate /me call");
-      return;
-    }
-
     console.log("Token found, fetching current user...");
-    hasFetchedUser.current = true; // ✅ Mark as fetched
     
     const fetchCurrentUser = async () => {
       try {
@@ -41,18 +33,17 @@ function App() {
         console.log("/me response:", response.data);
         
         if (response.data.success) {
+          console.log("✅ User loaded:", response.data.user.email);
           setCurrentUser(response.data.user);
         } else {
           console.error("Invalid token response");
           localStorage.removeItem("token");
           setToken(null);
-          hasFetchedUser.current = false; // Reset on failure
         }
       } catch (error) {
         console.error("Failed to fetch user:", error);
         localStorage.removeItem("token");
         setToken(null);
-        hasFetchedUser.current = false; // Reset on failure
       } finally {
         setLoading(false);
       }
@@ -77,7 +68,7 @@ function App() {
     );
   }
 
-  // No token or no user — show login screen
+  // ✅ IMPORTANT: Show AuthScreen if NO token OR NO currentUser
   if (!token || !currentUser) {
     console.log("No token or user, showing AuthScreen");
     return (
@@ -88,7 +79,7 @@ function App() {
     );
   }
 
-  // User is authenticated — show dashboard
+  // ✅ Only show Dashboard when we have BOTH token AND currentUser
   console.log("User authenticated, showing Dashboard");
   return (
     <Dashboard
