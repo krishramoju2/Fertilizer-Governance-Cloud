@@ -4,7 +4,6 @@ import autoTable from "jspdf-autotable";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
-import FuzzyText from "../../components/Shared/FuzzyText";
 import { motion, AnimatePresence } from "framer-motion";
 import Silk from "../../components/Home/Silk";
 
