@@ -515,63 +515,54 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 )}
 
                 <div style={styles.historyCard}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-                    <h3 style={styles.cardTitle}>Recent Analyses</h3>
-                    <button onClick={refreshHistory} style={{ padding: "5px 10px", fontSize: "12px", background: "#4f46e5", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>🔄 Refresh</button>
+                  <h3 style={styles.cardTitle}>Recent Analyses</h3>
+                  
+                  {/* Direct debug display */}
+                  <div style={{ background: "#e0e0e0", padding: "10px", marginBottom: "10px", borderRadius: "5px" }}>
+                    <strong>🔍 DEBUG:</strong> History length = {history.length}
+                    <button 
+                      onClick={async () => {
+                        const res = await api.get('/history');
+                        console.log("Manual fetch:", res.data);
+                        if (res.data.success) setHistory([...res.data.history]);
+                      }}
+                      style={{ marginLeft: "10px", padding: "2px 8px" }}
+                    >
+                      Reload
+                    </button>
                   </div>
                   
-                  {(!history || history.length === 0) ? (
-                    <p style={styles.emptyText}>No analyses yet. Click "Analyze" to get started.</p>
-                  ) : (
-                    <table style={styles.table}>
-                      <thead>
-                        <tr>
-                          <th style={styles.th}>#</th>
-                          <th style={styles.th}>Crop</th>
-                          <th style={styles.th}>Fertilizer</th>
-                          <th style={styles.th}>Status</th>
-                          <th style={styles.th}>Score</th>
-                          <th style={styles.th}>Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {history.slice().reverse().map((item, idx) => {
-                          const inputData = item.input_data || {};
-                          const resultData = item.result || {};
-                          const date = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'N/A';
-                          const crop = inputData.Crop_Type || inputData.crop_type || "N/A";
-                          const fertilizer = inputData.Fertilizer_Name || inputData.fertilizer_name || "N/A";
-                          const compatibility = resultData.overall_compatibility || resultData.compatibility || "N/A";
-                          const score = resultData.overall_score || resultData.score || 0;
-                          
-                          let bgColor = "#f8d7da";
-                          let textColor = "#721c24";
-                          if (compatibility === "Highly Compatible") {
-                            bgColor = "#d4edda";
-                            textColor = "#155724";
-                          } else if (compatibility === "Moderately Compatible") {
-                            bgColor = "#fff3cd";
-                            textColor = "#856404";
-                          }
-                          
-                          return (
+                  {/* FORCE DISPLAY - Plain HTML table with no CSS dependencies */}
+                  <div style={{ marginTop: "10px" }}>
+                    {history.length === 0 ? (
+                      <p>No analyses yet. Click "Analyze" to get started.</p>
+                    ) : (
+                      <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse", background: "white" }}>
+                        <thead>
+                          <tr style={{ background: "#f0f0f0" }}>
+                            <th>#</th>
+                            <th>Crop</th>
+                            <th>Fertilizer</th>
+                            <th>Status</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {history.slice().reverse().map((item, idx) => (
                             <tr key={idx}>
-                              <td style={styles.td}>{idx + 1}</td>
-                              <td style={styles.td}>{crop}</td>
-                              <td style={styles.td}>{fertilizer}</td>
-                              <td style={styles.td}>
-                                <span style={{ padding: "4px 8px", borderRadius: "12px", fontSize: "12px", fontWeight: "500", backgroundColor: bgColor, color: textColor }}>
-                                  {compatibility}
-                                </span>
-                              </td>
-                              <td style={styles.td}><span style={{ fontWeight: "bold", fontSize: "16px" }}>{score}%</span></td>
-                              <td style={styles.td}>{date}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  )}
+                              <td>{idx + 1}</td>
+                              <td>{item.input_data?.Crop_Type || "N/A"}</td>
+                              <td>{item.input_data?.Fertilizer_Name || "N/A"}</td>
+                              <td>{item.result?.overall_compatibility || "N/A"}</td>
+                              <td>{item.result?.overall_score || 0}%</td>
+                              <td>{item.timestamp ? new Date(item.timestamp).toLocaleString() : "N/A"}</td>
+                            <tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
