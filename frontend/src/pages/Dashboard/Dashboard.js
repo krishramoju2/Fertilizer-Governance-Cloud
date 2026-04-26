@@ -133,13 +133,6 @@ const styles = {
   summaryValue: { fontSize: "30px", fontWeight: "700", color: "#ffffff", display: "block", marginTop: "10px" },
   summaryLabel: { fontSize: "13px", color: "rgba(255,255,255,0.85)", marginTop: "6px", display: "block" },
   summaryIcon: { fontSize: "20px", width: "40px", height: "40px", display: "grid", placeItems: "center", borderRadius: "12px", background: "rgba(255,255,255,0.18)", backdropFilter: "blur(6px)" },
-  chartList: { display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" },
-  chartItem: { display: "flex", alignItems: "center", gap: "12px" },
-  chartBar: { flex: 1, height: "12px", background: "rgba(148,163,184,0.25)", borderRadius: "999px", overflow: "hidden", boxShadow: "inset 0 1px 3px rgba(15,23,42,0.18)" },
-  chartFill: { height: "100%", background: "linear-gradient(90deg, #14b8a6, #22c55e, #84cc16)", borderRadius: "999px", boxShadow: "0 0 14px rgba(34,197,94,0.35)" },
-  chartCard: { background: "rgba(255,255,255,0.82)", border: "1px solid rgba(226,232,240,0.9)", borderRadius: "16px", padding: "22px", boxShadow: "0 12px 24px rgba(15,23,42,0.08)" },
-  chartName: { minWidth: "120px", fontWeight: "600", color: "#1e293b" },
-  chartCount: { minWidth: "72px", textAlign: "right", fontSize: "12px", color: "#334155", fontWeight: "600" },
   label: { display: "block", marginBottom: "5px", fontWeight: "500", color: "#333" },
   nav: { display: "flex", gap: "10px", flexWrap: "wrap" },
   analyzeButton: {
