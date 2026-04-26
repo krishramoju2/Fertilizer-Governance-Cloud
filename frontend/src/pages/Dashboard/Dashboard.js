@@ -32,10 +32,10 @@ const styles = {
     left: 0,
     width: "100vw",
     height: "100vh",
-    zIndex: 0,
+    zIndex: -1,
     pointerEvents: "none"
   },
-  
+
   rightPanel: {
     display: "flex",
     flexDirection: "column",
@@ -43,7 +43,7 @@ const styles = {
     width: "100%",
     minWidth: 0
   },
-  
+
   description: { fontSize: "14px", color: "#555", marginTop: "5px", lineHeight: "1.5" },
   fuzzyNameWrap: { minWidth: "150px" },
   fuzzyCountWrap: { minWidth: "96px", display: "flex", justifyContent: "flex-end" },
@@ -165,7 +165,7 @@ const styles = {
     transition: "all 0.3s ease",
     boxShadow: "0 6px 15px rgba(79,70,229,0.3)"
   },
-  main: { marginTop: "20px" },
+  main: { marginTop: "20px", position: "relative", zIndex: 2 },
   homeMenuWall: { width: "100%", minHeight: "560px", height: "auto", borderRadius: "18px", padding: "20px" },
   staticMenuGrid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "25px", width: "100%" },
   staticMenuItem: {
@@ -298,17 +298,17 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       console.log("📡 LOADING USER DATA...");
       const historyRes = await api.get('/history');
       const analyticsRes = await api.get('/analytics');
-      
+
       console.log("🔍 HISTORY RESPONSE:", historyRes.data);
       console.log("🔍 ANALYTICS RESPONSE:", analyticsRes.data);
-      
+
       if (historyRes.data.success && historyRes.data.history) {
         console.log("✅ SETTING HISTORY WITH", historyRes.data.history.length, "RECORDS");
         setHistory([...historyRes.data.history]);
       } else {
         console.log("❌ No history data or history API failed");
       }
-      
+
       if (analyticsRes.data.success) {
         setAnalytics(analyticsRes.data.analytics);
       }
@@ -345,7 +345,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   }, []);
 
   const hasLoadedInitialData = useRef(false);
-  
+
   useEffect(() => {
     if (!currentUser) return;
     if (hasLoadedInitialData.current) return;
@@ -666,7 +666,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             <MLModel />
           </div>
         )}
-        
+
         {activeTab === 'analytics' && (
           <div style={styles.analyticsContainer}>
             {analytics ? (
@@ -744,6 +744,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
 
 
 
