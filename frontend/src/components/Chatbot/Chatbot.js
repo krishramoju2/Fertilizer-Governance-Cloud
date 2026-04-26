@@ -46,8 +46,8 @@ export default function Chatbot() {
     <div style={styles.bg}>
       <Iridescence 
         color={[0.5, 0.6, 0.8]} 
-        speed={0.8} 
-        amplitude={0.1} 
+        speed={0.4} 
+        amplitude={0.05} 
         mouseReact={true}
       />
     </div>
