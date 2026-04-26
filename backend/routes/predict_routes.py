@@ -62,7 +62,11 @@ def predict(**kwargs):
             # ✅ USE input_data (NOT raw data)
             'input_data': {
                 'Crop_Type': input_data.get('Crop_Type'),
-                'Fertilizer_Name': input_data.get('Fertilizer_Name')
+                'Fertilizer_Name': input_data.get('Fertilizer_Name'),
+                'Temperature': input_data.get('Temperature'),
+                'Moisture': input_data.get('Moisture'),
+                'Soil_Type': input_data.get('Soil_Type'),
+                'Fertilizer_Quantity': input_data.get('Fertilizer_Quantity')
             },
 
             'result': {
@@ -92,3 +96,4 @@ def predict(**kwargs):
             'success': False,
             'message': str(e)
         }), 500
+
