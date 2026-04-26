@@ -4,7 +4,8 @@ import autoTable from "jspdf-autotable";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
-import { motion } from "framer-motion";
+import FuzzyText from "../../components/Shared/FuzzyText";
+import { motion, AnimatePresence } from "framer-motion";
 import Silk from "../../components/Home/Silk";
 
 const styles = {
@@ -149,7 +150,7 @@ const styles = {
     boxShadow: "0 6px 15px rgba(79,70,229,0.3)"
   },
   main: { marginTop: "20px", position: "relative", zIndex: 2 },
-  
+
   agriCoreStage: {
     perspective: "2000px",
     width: "100%",
@@ -345,7 +346,164 @@ const styles = {
   },
   trendSvg: { width: "100%", height: "180px", overflow: "visible" },
   trendPath: { fill: "none", stroke: "url(#lineGradient)", strokeWidth: 3, strokeLinecap: "round", strokeLinejoin: "round" },
-  trendArea: { fill: "url(#areaGradient)", stroke: "none" }
+  trendArea: { fill: "url(#areaGradient)", stroke: "none" },
+  modalOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: "rgba(15, 23, 42, 0.4)",
+    backdropFilter: "blur(12px)",
+    zIndex: 1000,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "20px"
+  },
+  modalContent: {
+    background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+    width: "100%",
+    maxWidth: "900px",
+    maxHeight: "90vh",
+    borderRadius: "32px",
+    overflowY: "auto",
+    position: "relative",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.35)",
+    padding: "48px",
+    border: "1px solid rgba(255, 255, 255, 0.8)"
+  },
+  modalClose: {
+    position: "absolute",
+    top: "24px",
+    right: "24px",
+    background: "#f1f5f9",
+    border: "none",
+    borderRadius: "50%",
+    width: "40px",
+    height: "40px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    fontSize: "20px",
+    color: "#64748b",
+    transition: "all 0.2s",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
+  },
+  keynoteHeader: {
+    marginBottom: "40px",
+    borderBottom: "1px solid #e2e8f0",
+    paddingBottom: "24px"
+  },
+  keynoteTitle: {
+    fontSize: "36px",
+    fontWeight: "900",
+    color: "#1a472a",
+    marginBottom: "8px",
+    letterSpacing: "-1px",
+    lineHeight: "1.1"
+  },
+  keynoteSubtitle: {
+    fontSize: "16px",
+    color: "#64748b",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px"
+  },
+  keynoteBadge: {
+    padding: "4px 12px",
+    borderRadius: "20px",
+    fontSize: "12px",
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px"
+  },
+  keynoteMainGrid: {
+    display: "grid",
+    gridTemplateColumns: "1.2fr 0.8fr",
+    gap: "40px"
+  },
+  keynoteSection: {
+    background: "#ffffff",
+    padding: "24px",
+    borderRadius: "24px",
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.05)"
+  },
+  keynoteSectionTitle: {
+    fontSize: "18px",
+    fontWeight: "800",
+    color: "#334155",
+    marginBottom: "20px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    textTransform: "uppercase",
+    letterSpacing: "1px"
+  },
+  keynoteDataGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: "16px"
+  },
+  keynoteParam: {
+    padding: "16px",
+    borderRadius: "16px",
+    background: "#f8fafc",
+    border: "1px solid #f1f5f9"
+  },
+  keynoteLabel: {
+    fontSize: "11px",
+    fontWeight: "700",
+    color: "#94a3b8",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    display: "block",
+    marginBottom: "4px"
+  },
+  keynoteValue: {
+    fontSize: "18px",
+    fontWeight: "700",
+    color: "#1e293b"
+  },
+  keynoteScoreCard: {
+    textAlign: "center",
+    padding: "32px",
+    borderRadius: "24px",
+    background: "linear-gradient(135deg, #1a472a, #2e7d32)",
+    color: "white",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 15px 30px rgba(26, 71, 42, 0.25)"
+  },
+  keynoteScoreValue: {
+    fontSize: "64px",
+    fontWeight: "900",
+    lineHeight: "1"
+  },
+  keynoteScoreLabel: {
+    fontSize: "14px",
+    opacity: "0.9",
+    marginTop: "8px",
+    textTransform: "uppercase",
+    letterSpacing: "2px"
+  },
+  keynoteSuggestions: {
+    marginTop: "24px"
+  },
+  keynoteSuggestionItem: {
+    padding: "12px 16px",
+    borderRadius: "12px",
+    background: "#f0fdf4",
+    borderLeft: "4px solid #22c55e",
+    marginBottom: "12px",
+    fontSize: "14px",
+    color: "#166534",
+    lineHeight: "1.5"
+  }
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -374,6 +532,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const [newItem, setNewItem] = useState('');
   const [coreRotation, setCoreRotation] = useState(0);
   const [isCoreHovered, setIsCoreHovered] = useState(false);
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
   useEffect(() => {
     let frameId;
@@ -633,13 +792,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
       <main style={styles.main}>
         {activeTab === "menu" && (
-          <div 
+          <div
             style={styles.agriCoreStage}
             onMouseEnter={() => setIsCoreHovered(true)}
             onMouseLeave={() => setIsCoreHovered(false)}
           >
             {/* Side Images */}
-            <motion.div 
+            <motion.div
               style={styles.sideImageLeft}
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -649,7 +808,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               <img src="/agritech_farm.png" alt="Agritech Farm" style={styles.sideImage} />
             </motion.div>
 
-            <motion.div 
+            <motion.div
               style={styles.sideImageRight}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -661,7 +820,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* The Holographic Agri-Core */}
             <div style={styles.agriPlanetContainer}>
-              <motion.div 
+              <motion.div
                 style={styles.digitalAgriCore}
                 animate={{ scale: [1, 1.05, 1], rotateZ: [0, 5, -5, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -679,11 +838,11 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 { id: "analytics", title: "Analytics", icon: "📈", desc: "Farming performance insights.", angle: 180 },
                 { id: "chat", title: "Chatbot", icon: "💬", desc: "Expert AI agricultural advice.", angle: 270 }
               ].map((item) => (
-                <div 
+                <div
                   key={item.id}
                   style={styles.agriCardContainer(item.angle + coreRotation)}
                 >
-                  <motion.div 
+                  <motion.div
                     style={styles.agriCard}
                     whileHover={{ scale: 1.1, border: "1.5px solid #4ade80", boxShadow: "0 0 20px rgba(74, 222, 128, 0.2)" }}
                     onClick={() => setActiveTab(item.id)}
@@ -781,15 +940,22 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     const scoreColor = score >= 75 ? "#16a34a" : score >= 50 ? "#d97706" : "#dc2626";
                     const scoreBg = score >= 75 ? "#dcfce7" : score >= 50 ? "#fef9c3" : "#fee2e2";
                     return (
-                      <div key={idx} style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "14px 18px",
-                        borderRadius: "12px",
-                        background: idx % 2 === 0 ? "#f8fafc" : "#f1f5f9",
-                        border: "1px solid #e2e8f0"
-                      }}>
+                      <motion.div
+                        key={idx}
+                        onClick={() => setSelectedAnalysis(item)}
+                        whileHover={{ scale: 1.02, x: 5, cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                        whileTap={{ scale: 0.98 }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "14px 18px",
+                          borderRadius: "12px",
+                          background: idx % 2 === 0 ? "#f8fafc" : "#f1f5f9",
+                          border: "1px solid #e2e8f0",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
                         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                           <span style={{
                             width: "34px", height: "34px", borderRadius: "50%",
@@ -817,12 +983,167 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                             {score}%
                           </span>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
               )}
             </div>
+
+            <AnimatePresence>
+              {selectedAnalysis && (
+                <motion.div
+                  style={styles.modalOverlay}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setSelectedAnalysis(null)}
+                >
+                  <motion.div
+                    style={styles.modalContent}
+                    initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                    animate={{ scale: 1, y: 0, opacity: 1 }}
+                    exit={{ scale: 0.9, y: 20, opacity: 0 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      style={styles.modalClose}
+                      onClick={() => setSelectedAnalysis(null)}
+                      whileHover={{ scale: 1.1, background: "#fee2e2", color: "#ef4444" }}
+                    >
+                      ✕
+                    </button>
+
+                    <div style={styles.keynoteHeader}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+                        <span style={{ ...styles.keynoteBadge, background: selectedAnalysis.result?.overall_score >= 75 ? "#dcfce7" : "#fee2e2", color: selectedAnalysis.result?.overall_score >= 75 ? "#16a34a" : "#dc2626" }}>
+                          {selectedAnalysis.result?.overall_compatibility || "Analysis Result"}
+                        </span>
+                        <span style={{ fontSize: "14px", color: "#94a3b8" }}>
+                          {new Date(selectedAnalysis.created_at).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        </span>
+                      </div>
+                      <h2 style={styles.keynoteTitle}>
+                        {selectedAnalysis.input_data?.Crop_Type} Crop Analysis
+                      </h2>
+                      <div style={styles.keynoteSubtitle}>
+                        <span>👨‍🌾 {currentUser?.name}</span>
+                        <span>|</span>
+                        <span>📍 {currentUser?.farm_details?.location || "Primary Farm"}</span>
+                      </div>
+                    </div>
+
+                    <div style={styles.keynoteMainGrid}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                        <div style={styles.keynoteSection}>
+                          <h3 style={styles.keynoteSectionTitle}>📋 Input Parameters</h3>
+                          <div style={styles.keynoteDataGrid}>
+                            <div style={styles.keynoteParam}>
+                              <span style={styles.keynoteLabel}>Soil Type</span>
+                              <span style={styles.keynoteValue}>{selectedAnalysis.input_data?.Soil_Type}</span>
+                            </div>
+                            <div style={styles.keynoteParam}>
+                              <span style={styles.keynoteLabel}>Fertilizer</span>
+                              <span style={styles.keynoteValue}>{selectedAnalysis.input_data?.Fertilizer_Name}</span>
+                            </div>
+                            <div style={styles.keynoteParam}>
+                              <span style={styles.keynoteLabel}>Temperature</span>
+                              <span style={styles.keynoteValue}>{selectedAnalysis.input_data?.Temperature}°C</span>
+                            </div>
+                            <div style={styles.keynoteParam}>
+                              <span style={styles.keynoteLabel}>Moisture</span>
+                              <span style={styles.keynoteValue}>{selectedAnalysis.input_data?.Moisture}%</span>
+                            </div>
+                            <div style={styles.keynoteParam}>
+                              <span style={styles.keynoteLabel}>Quantity</span>
+                              <span style={styles.keynoteValue}>{selectedAnalysis.input_data?.Fertilizer_Quantity} kg/ha</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={styles.keynoteSection}>
+                          <h3 style={styles.keynoteSectionTitle}>💡 Key Suggestions</h3>
+                          <div style={styles.keynoteSuggestions}>
+                            {selectedAnalysis.result?.suggestions?.map((s, i) => (
+                              <motion.div
+                                key={i}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                style={styles.keynoteSuggestionItem}
+                              >
+                                • {s}
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                        <div style={{
+                          ...styles.keynoteScoreCard,
+                          background: selectedAnalysis.result?.overall_score >= 75
+                            ? "linear-gradient(135deg, #166534, #22c55e)"
+                            : selectedAnalysis.result?.overall_score >= 50
+                              ? "linear-gradient(135deg, #92400e, #f59e0b)"
+                              : "linear-gradient(135deg, #991b1b, #ef4444)"
+                        }}>
+                          <span style={styles.keynoteScoreValue}>{selectedAnalysis.result?.overall_score}%</span>
+                          <span style={styles.keynoteScoreLabel}>Overall Compatibility</span>
+                        </div>
+
+                        <div style={styles.keynoteSection}>
+                          <h3 style={styles.keynoteSectionTitle}>📊 Performance</h3>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                            {[
+                              { label: "Temperature", status: selectedAnalysis.result?.temperature_status },
+                              { label: "Moisture", status: selectedAnalysis.result?.moisture_status },
+                              { label: "Soil", status: selectedAnalysis.result?.soil_compatibility },
+                              { label: "Quantity", status: selectedAnalysis.result?.quantity_status }
+                            ].map((stat, i) => (
+                              <div key={i}>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+                                  <span style={{ fontSize: "12px", fontWeight: "600", color: "#64748b" }}>{stat.label}</span>
+                                  <span style={{ fontSize: "12px", fontWeight: "700", color: "#1e293b" }}>{stat.status}</span>
+                                </div>
+                                <div style={{ height: "6px", background: "#f1f5f9", borderRadius: "3px", overflow: "hidden" }}>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: stat.status === "Optimal" || stat.status === "Compatible" ? "100%" : stat.status?.includes("Moderate") ? "60%" : "30%" }}
+                                    style={{
+                                      height: "100%",
+                                      background: stat.status === "Optimal" || stat.status === "Compatible" ? "#22c55e" : stat.status?.includes("Moderate") ? "#f59e0b" : "#ef4444"
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <button
+                          style={{
+                            ...styles.pdfButton,
+                            width: "100%",
+                            padding: "16px",
+                            borderRadius: "16px",
+                            marginTop: "auto"
+                          }}
+                          onClick={() => {
+                            setInputs(selectedAnalysis.input_data);
+                            setResult(selectedAnalysis.result);
+                            generatePDF();
+                          }}
+                        >
+                          📄 Download Keynote PDF
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </>
         )}
 
@@ -863,7 +1184,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
                 {/* 2. Visual Grid (The Big Charts) */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "20px", marginTop: "10px" }}>
-                  
+
                   {/* CHART 1: Crop Distribution (PIE) */}
                   <div style={{ ...styles.chartCard, ...styles.graphPaper }}>
                     <h4 style={{ margin: "0 0 15px 0", fontSize: "14px", color: "#1e293b", fontWeight: "800" }}>CROP DISTRIBUTION MATRIX</h4>
@@ -957,7 +1278,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         <stop offset="100%" stopColor="#22c55e" />
                       </linearGradient>
                     </defs>
-                    <path 
+                    <path
                       d={`M 0 ${160 - (history[0]?.result?.overall_score || 0) * 1.4} ${history.slice(1, 15).map((h, i) => `L ${(i + 1) * 71} ${160 - (h.result?.overall_score || 0) * 1.4}`).join(' ')}`}
                       style={styles.trendPath}
                     />
