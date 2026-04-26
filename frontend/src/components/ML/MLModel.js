@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import GradientBlinds from "./GradientBlinds";
-import { motion } from "framer-motion";
+
 
 export default function MLModel() {
   const [form, setForm] = useState({
