@@ -204,12 +204,13 @@ export default function MLModel() {
 const styles = {
   
   container: {
-    padding: "30px",
+    padding: "10px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    background: "linear-gradient(135deg, #eef2ff, #f8fafc)",
-    minHeight: "100vh"
+    background: "transparent",
+    minHeight: "auto",
+    position: "relative"
   },
   
   card: {
@@ -294,3 +295,4 @@ const styles = {
   }
   
 };
+
