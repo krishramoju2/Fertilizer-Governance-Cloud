@@ -228,18 +228,18 @@ const styles = {
   saturnStage: {
     perspective: "2000px",
     width: "100%",
-    height: "650px",
+    height: "420px", // Reduced from 650px
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
     overflow: "visible",
-    marginTop: "-20px"
+    marginTop: "-30px"
   },
   planetContainer: {
     position: "absolute",
-    width: "220px",
-    height: "220px",
+    width: "150px", // Reduced
+    height: "150px",
     zIndex: 5,
     pointerEvents: "none",
     display: "flex",
@@ -247,20 +247,20 @@ const styles = {
     justifyContent: "center"
   },
   saturnPlanet: {
-    width: "180px",
-    height: "180px",
+    width: "120px", // Reduced
+    height: "120px",
     borderRadius: "50%",
     background: "radial-gradient(circle at 30% 30%, #fbbf24, #d97706, #78350f)",
-    boxShadow: "0 0 100px rgba(251, 191, 36, 0.4), inset -25px -25px 60px rgba(0,0,0,0.6)",
+    boxShadow: "0 0 60px rgba(251, 191, 36, 0.35), inset -15px -15px 40px rgba(0,0,0,0.6)",
     position: "relative"
   },
   saturnRingVisual: {
     position: "absolute",
-    width: "480px",
-    height: "120px",
+    width: "320px", // Reduced from 480px
+    height: "80px", // Reduced
     borderRadius: "50%",
-    border: "12px double rgba(251, 191, 36, 0.25)",
-    boxShadow: "0 0 40px rgba(251, 191, 36, 0.15), inset 0 0 30px rgba(251, 191, 36, 0.1)",
+    border: "8px double rgba(251, 191, 36, 0.25)",
+    boxShadow: "0 0 30px rgba(251, 191, 36, 0.15), inset 0 0 20px rgba(251, 191, 36, 0.1)",
     transform: "rotateX(75deg) rotateY(-10deg)",
     zIndex: 4,
     pointerEvents: "none",
@@ -271,38 +271,38 @@ const styles = {
     width: "100%",
     height: "100%",
     transformStyle: "preserve-3d",
-    transform: "rotateX(70deg)", // Tilt the whole orbit
+    transform: "rotateX(70deg)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
   },
   ringCardContainer: (angle) => ({
     position: "absolute",
-    width: "300px",
-    height: "200px",
+    width: "220px", // Reduced from 300px
+    height: "150px", // Reduced from 200px
     transformStyle: "preserve-3d",
-    transform: `rotateY(${angle}deg) translateZ(380px) rotateY(${-angle}deg) rotateX(-70deg)`, // Maintain upright position
+    transform: `rotateY(${angle}deg) translateZ(280px) rotateY(${-angle}deg) rotateX(-70deg)`, // Radius reduced to 280px
     transition: "all 0.5s cubic-bezier(0.23, 1, 0.32, 1)"
   }),
   saturnCard: {
     width: "100%",
     height: "100%",
     background: "rgba(255, 255, 255, 0.92)",
-    backdropFilter: "blur(15px)",
-    borderRadius: "24px",
-    padding: "30px 25px",
+    backdropFilter: "blur(12px)",
+    borderRadius: "20px",
+    padding: "20px 15px", // Tighter padding
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     border: "1px solid rgba(255, 255, 255, 0.4)",
-    boxShadow: "0 15px 45px rgba(0,0,0,0.12)",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
     cursor: "pointer",
     boxSizing: "border-box"
   },
-  saturnCardTitle: { fontSize: "22px", fontWeight: "800", marginBottom: "12px", color: "#1a472a" },
-  saturnCardDesc: { fontSize: "13px", color: "#475569", lineHeight: "1.5", margin: 0 }
+  saturnCardTitle: { fontSize: "18px", fontWeight: "800", marginBottom: "8px", color: "#1a472a" },
+  saturnCardDesc: { fontSize: "11px", color: "#475569", lineHeight: "1.4", margin: 0 }
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -618,7 +618,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     whileHover={{ scale: 1.1, boxShadow: "0 25px 60px rgba(0,0,0,0.2)" }}
                     onClick={() => setActiveTab(item.id)}
                   >
-                    <div style={{ fontSize: "40px", marginBottom: "15px" }}>{item.icon}</div>
+                    <div style={{ fontSize: "32px", marginBottom: "10px" }}>{item.icon}</div>
                     <h3 style={styles.saturnCardTitle}>{item.title}</h3>
                     <p style={styles.saturnCardDesc}>{item.desc}</p>
                   </motion.div>
@@ -840,4 +840,3 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
-
