@@ -35,7 +35,14 @@ const styles = {
     zIndex: 0,
     pointerEvents: "none"
   },
-  rightPanel: { display: "flex", flexDirection: "column", gap: "20px" },
+  rightPanel: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+    width: "100%",        // ✅ ADD THIS
+    minWidth: 0           // ✅ ADD THIS (prevents collapse)
+  },
+  
   description: { fontSize: "14px", color: "#555", marginTop: "5px", lineHeight: "1.5" },
   fuzzyNameWrap: { minWidth: "150px" },
   fuzzyCountWrap: { minWidth: "96px", display: "flex", justifyContent: "flex-end" },
