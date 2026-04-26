@@ -256,8 +256,7 @@ const styles = {
   agriCard: {
     width: "100%",
     height: "100%",
-    background: "rgba(255, 255, 255, 0.94)",
-    backdropFilter: "blur(10px)",
+    background: "rgba(255, 255, 255, 0.96)",
     borderRadius: "16px",
     padding: "12px 10px",
     display: "flex",
@@ -807,27 +806,27 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.summaryGrid}>
                   <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.55, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>📊</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.05} hoverIntensity={0.15} fuzzRange={10}>{String(analytics.total_analyses)}</FuzzyText>
-                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.04} hoverIntensity={0.12} fuzzRange={8}>Total Analyses</FuzzyText>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" hoverIntensity={0.15} fuzzRange={10}>{String(analytics.total_analyses)}</FuzzyText>
+                    <span style={{ fontSize: "15px", fontWeight: "600", color: "rgba(255,255,255,0.92)", marginTop: "6px" }}>Total Analyses</span>
                   </motion.div>
                   <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.65, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>✅</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.05} hoverIntensity={0.15} fuzzRange={10}>{`${analytics.compatibility_rate}%`}</FuzzyText>
-                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.04} hoverIntensity={0.12} fuzzRange={8}>Success Rate</FuzzyText>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" hoverIntensity={0.15} fuzzRange={10}>{`${analytics.compatibility_rate}%`}</FuzzyText>
+                    <span style={{ fontSize: "15px", fontWeight: "600", color: "rgba(255,255,255,0.92)", marginTop: "6px" }}>Success Rate</span>
                   </motion.div>
                   <motion.div style={styles.summaryCard} initial={{ opacity: 0, y: 36, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.75, ease: "easeOut" }} whileHover={{ y: -6, scale: 1.02 }}>
                     <span style={styles.summaryIcon}>🎯</span>
-                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" baseIntensity={0.05} hoverIntensity={0.15} fuzzRange={10}>{`${analytics.average_score}%`}</FuzzyText>
-                    <FuzzyText fontSize="15px" fontWeight={600} color="rgba(255,255,255,0.92)" baseIntensity={0.04} hoverIntensity={0.12} fuzzRange={8}>Avg Score</FuzzyText>
+                    <FuzzyText fontSize="36px" fontWeight={700} color="#ffffff" hoverIntensity={0.15} fuzzRange={10}>{`${analytics.average_score}%`}</FuzzyText>
+                    <span style={{ fontSize: "15px", fontWeight: "600", color: "rgba(255,255,255,0.92)", marginTop: "6px" }}>Avg Score</span>
                   </motion.div>
                 </div>
                 <motion.div style={styles.chartCard} initial={{ opacity: 0, x: -40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
-                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.04} hoverIntensity={0.12} fuzzRange={8}>Crop Distribution</FuzzyText>
-                  <div style={styles.chartList}>{Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (<div key={crop} style={styles.chartItem}><div style={styles.fuzzyNameWrap}><FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.03} hoverIntensity={0.08} fuzzRange={4}>{crop}</FuzzyText></div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} /></span><div style={styles.fuzzyCountWrap}><FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.03} hoverIntensity={0.08} fuzzRange={4}>{`${count} times`}</FuzzyText></div></div>))}</div>
+                  <h3 style={{ fontSize: "26px", fontWeight: "700", color: "#1a472a", marginBottom: "15px" }}>Crop Distribution</h3>
+                  <div style={styles.chartList}>{Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (<div key={crop} style={styles.chartItem}><div style={styles.chartName}>{crop}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} /></span><div style={styles.chartCount}>{`${count} times`}</div></div>))}</div>
                 </motion.div>
                 <motion.div style={styles.chartCard} initial={{ opacity: 0, x: 40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
-                  <FuzzyText fontSize="26px" fontWeight={700} color="#1a472a" baseIntensity={0.04} hoverIntensity={0.12} fuzzRange={8}>Fertilizer Usage</FuzzyText>
-                  <div style={styles.chartList}>{Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (<div key={fert} style={styles.chartItem}><div style={styles.fuzzyNameWrap}><FuzzyText fontSize="16px" fontWeight={600} color="#1e293b" baseIntensity={0.03} hoverIntensity={0.08} fuzzRange={4}>{fert}</FuzzyText></div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} /></span><div style={styles.fuzzyCountWrap}><FuzzyText fontSize="14px" fontWeight={600} color="#334155" baseIntensity={0.03} hoverIntensity={0.08} fuzzRange={4}>{`${count} times`}</FuzzyText></div></div>))}</div>
+                  <h3 style={{ fontSize: "26px", fontWeight: "700", color: "#1a472a", marginBottom: "15px" }}>Fertilizer Usage</h3>
+                  <div style={styles.chartList}>{Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (<div key={fert} style={styles.chartItem}><div style={styles.chartName}>{fert}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} /></span><div style={styles.chartCount}>{`${count} times`}</div></div>))}</div>
                 </motion.div>
               </>
             ) : (<p>Loading analytics...</p>)}
@@ -877,4 +876,5 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
 
