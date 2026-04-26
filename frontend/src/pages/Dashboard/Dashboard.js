@@ -228,18 +228,18 @@ const styles = {
   saturnStage: {
     perspective: "2000px",
     width: "100%",
-    height: "420px", // Reduced from 650px
+    height: "320px", // Ultra compact
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
     overflow: "visible",
-    marginTop: "-30px"
+    marginTop: "20px" // Pushed down from navbar
   },
   planetContainer: {
     position: "absolute",
-    width: "150px", // Reduced
-    height: "150px",
+    width: "120px",
+    height: "120px",
     zIndex: 5,
     pointerEvents: "none",
     display: "flex",
@@ -247,21 +247,21 @@ const styles = {
     justifyContent: "center"
   },
   saturnPlanet: {
-    width: "120px", // Reduced
-    height: "120px",
+    width: "90px", // Smaller planet
+    height: "90px",
     borderRadius: "50%",
     background: "radial-gradient(circle at 30% 30%, #fbbf24, #d97706, #78350f)",
-    boxShadow: "0 0 60px rgba(251, 191, 36, 0.35), inset -15px -15px 40px rgba(0,0,0,0.6)",
+    boxShadow: "0 0 50px rgba(251, 191, 36, 0.3), inset -12px -12px 30px rgba(0,0,0,0.6)",
     position: "relative"
   },
   saturnRingVisual: {
     position: "absolute",
-    width: "320px", // Reduced from 480px
-    height: "80px", // Reduced
+    width: "260px", // Slimmer rings
+    height: "60px",
     borderRadius: "50%",
-    border: "8px double rgba(251, 191, 36, 0.25)",
-    boxShadow: "0 0 30px rgba(251, 191, 36, 0.15), inset 0 0 20px rgba(251, 191, 36, 0.1)",
-    transform: "rotateX(75deg) rotateY(-10deg)",
+    border: "6px double rgba(251, 191, 36, 0.25)",
+    boxShadow: "0 0 20px rgba(251, 191, 36, 0.15)",
+    transform: "rotateX(78deg) rotateY(-10deg)", // Flatter tilt
     zIndex: 4,
     pointerEvents: "none",
     background: "radial-gradient(ellipse at center, transparent 60%, rgba(251, 191, 36, 0.05) 100%)"
@@ -271,38 +271,38 @@ const styles = {
     width: "100%",
     height: "100%",
     transformStyle: "preserve-3d",
-    transform: "rotateX(70deg)",
+    transform: "rotateX(78deg)", // Flatter orbit to reduce vertical height
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
   },
   ringCardContainer: (angle) => ({
     position: "absolute",
-    width: "220px", // Reduced from 300px
-    height: "150px", // Reduced from 200px
+    width: "170px", // More compact cards
+    height: "115px",
     transformStyle: "preserve-3d",
-    transform: `rotateY(${angle}deg) translateZ(280px) rotateY(${-angle}deg) rotateX(-70deg)`, // Radius reduced to 280px
+    transform: `rotateY(${angle}deg) translateZ(210px) rotateY(${-angle}deg) rotateX(-78deg)`, // Reduced radius to 210px
     transition: "all 0.5s cubic-bezier(0.23, 1, 0.32, 1)"
   }),
   saturnCard: {
     width: "100%",
     height: "100%",
-    background: "rgba(255, 255, 255, 0.92)",
-    backdropFilter: "blur(12px)",
-    borderRadius: "20px",
-    padding: "20px 15px", // Tighter padding
+    background: "rgba(255, 255, 255, 0.94)",
+    backdropFilter: "blur(10px)",
+    borderRadius: "16px",
+    padding: "12px 10px", // Very tight padding
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    border: "1px solid rgba(255, 255, 255, 0.4)",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+    border: "1px solid rgba(255, 255, 255, 0.5)",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
     cursor: "pointer",
     boxSizing: "border-box"
   },
-  saturnCardTitle: { fontSize: "18px", fontWeight: "800", marginBottom: "8px", color: "#1a472a" },
-  saturnCardDesc: { fontSize: "11px", color: "#475569", lineHeight: "1.4", margin: 0 }
+  saturnCardTitle: { fontSize: "15px", fontWeight: "800", marginBottom: "5px", color: "#1a472a" },
+  saturnCardDesc: { fontSize: "10px", color: "#475569", lineHeight: "1.3", margin: 0 }
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -618,7 +618,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     whileHover={{ scale: 1.1, boxShadow: "0 25px 60px rgba(0,0,0,0.2)" }}
                     onClick={() => setActiveTab(item.id)}
                   >
-                    <div style={{ fontSize: "32px", marginBottom: "10px" }}>{item.icon}</div>
+                    <div style={{ fontSize: "26px", marginBottom: "8px" }}>{item.icon}</div>
                     <h3 style={styles.saturnCardTitle}>{item.title}</h3>
                     <p style={styles.saturnCardDesc}>{item.desc}</p>
                   </motion.div>
