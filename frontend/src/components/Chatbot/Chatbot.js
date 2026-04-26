@@ -100,16 +100,12 @@ export default function Chatbot() {
 const styles = {
   
   container: {
-    padding: "30px",
+    padding: "10px",
     display: "flex",
     justifyContent: "center",
-    background: `
-      radial-gradient(circle at 15% 20%, rgba(168,85,247,0.18) 0%, transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(34,197,94,0.18) 0%, transparent 40%),
-      linear-gradient(135deg, #f5f3ff, #ecfeff)
-    `,
-    backgroundAttachment: "fixed",
-    minHeight: "100vh"
+    background: "transparent",
+    minHeight: "auto",
+    position: "relative"
   },
   
   card: {
