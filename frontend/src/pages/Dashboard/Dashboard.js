@@ -311,7 +311,37 @@ const styles = {
     zIndex: 2
   },
   th: { padding: "12px", textAlign: "left", borderBottom: "2px solid #e2e8f0", borderRight: "1px solid #e2e8f0", fontWeight: "600", color: "#334155", background: "#f8fafc" },
-  td: { padding: "12px", textAlign: "left", borderBottom: "1px solid #e2e8f0", borderRight: "1px solid #e2e8f0", color: "#1e293b" }
+  td: { padding: "12px", textAlign: "left", borderBottom: "1px solid #e2e8f0", borderRight: "1px solid #e2e8f0", color: "#1e293b" },
+
+  chartCard: {
+    background: "rgba(255, 255, 255, 0.95)",
+    padding: "24px",
+    borderRadius: "20px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
+    border: "1px solid rgba(74, 222, 128, 0.15)",
+    flex: 1,
+    minWidth: "300px"
+  },
+  chartList: { display: "flex", flexDirection: "column", gap: "16px" },
+  chartItem: { display: "flex", alignItems: "center", gap: "15px" },
+  chartName: { width: "100px", fontSize: "14px", fontWeight: "600", color: "#374151" },
+  chartBar: { flex: 1, height: "10px", background: "#f1f5f9", borderRadius: "5px", overflow: "hidden", position: "relative" },
+  chartFill: { height: "100%", background: "linear-gradient(90deg, #4f46e5, #22c55e)", borderRadius: "5px" },
+  chartCount: { width: "70px", fontSize: "13px", fontWeight: "700", color: "#1a472a", textAlign: "right" },
+
+  trendContainer: {
+    marginTop: "20px",
+    background: "rgba(255, 255, 255, 0.95)",
+    padding: "24px",
+    borderRadius: "20px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
+    border: "1px solid rgba(74, 222, 128, 0.15)",
+    width: "100%",
+    boxSizing: "border-box"
+  },
+  trendSvg: { width: "100%", height: "160px", overflow: "visible" },
+  trendPath: { fill: "none", stroke: "url(#lineGradient)", strokeWidth: 4, strokeLinecap: "round", strokeLinejoin: "round" },
+  trendArea: { fill: "url(#areaGradient)", stroke: "none" }
 };
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -820,13 +850,73 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <span style={{ fontSize: "15px", fontWeight: "600", color: "rgba(255,255,255,0.92)", marginTop: "6px" }}>Avg Score</span>
                   </motion.div>
                 </div>
-                <motion.div style={styles.chartCard} initial={{ opacity: 0, x: -40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
-                  <h3 style={{ fontSize: "26px", fontWeight: "700", color: "#1a472a", marginBottom: "15px" }}>Crop Distribution</h3>
-                  <div style={styles.chartList}>{Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (<div key={crop} style={styles.chartItem}><div style={styles.chartName}>{crop}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} /></span><div style={styles.chartCount}>{`${count} times`}</div></div>))}</div>
-                </motion.div>
-                <motion.div style={styles.chartCard} initial={{ opacity: 0, x: 40, filter: "blur(6px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ duration: 0.55, ease: "easeOut" }}>
-                  <h3 style={{ fontSize: "26px", fontWeight: "700", color: "#1a472a", marginBottom: "15px" }}>Fertilizer Usage</h3>
-                  <div style={styles.chartList}>{Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (<div key={fert} style={styles.chartItem}><div style={styles.chartName}>{fert}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9, ease: "easeOut" }} /></span><div style={styles.chartCount}>{`${count} times`}</div></div>))}</div>
+
+                <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+                  <motion.div style={styles.chartCard} initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }}>
+                    <h3 style={{ fontSize: "20px", fontWeight: "700", color: "#1a472a", marginBottom: "20px" }}>Crop Insights</h3>
+                    <div style={styles.chartList}>{Object.entries(analytics.crop_distribution || {}).map(([crop, count]) => (<div key={crop} style={styles.chartItem}><div style={styles.chartName}>{crop}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0 }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9 }} /></span><div style={styles.chartCount}>{count}</div></div>))}</div>
+                  </motion.div>
+                  <motion.div style={styles.chartCard} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }}>
+                    <h3 style={{ fontSize: "20px", fontWeight: "700", color: "#1a472a", marginBottom: "20px" }}>Fertilizer Pulse</h3>
+                    <div style={styles.chartList}>{Object.entries(analytics.fertilizer_distribution || {}).map(([fert, count]) => (<div key={fert} style={styles.chartItem}><div style={styles.chartName}>{fert}</div><span style={styles.chartBar}><motion.span style={styles.chartFill} initial={{ width: 0, background: "linear-gradient(90deg, #6366f1, #a855f7)" }} animate={{ width: `${(count / analytics.total_analyses) * 100}%` }} transition={{ duration: 0.9 }} /></span><div style={styles.chartCount}>{count}</div></div>))}</div>
+                  </motion.div>
+                </div>
+
+                <motion.div style={styles.trendContainer} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+                    <div>
+                      <h3 style={{ fontSize: "22px", fontWeight: "700", color: "#1a472a", margin: 0 }}>Performance Trend</h3>
+                      <p style={{ fontSize: "14px", color: "#64748b", margin: "4px 0 0 0" }}>Historical analysis scores (Last 10 Cases)</p>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <span style={{ fontSize: "28px", fontWeight: "800", color: "#16a34a" }}>{analytics.average_score}%</span>
+                      <div style={{ fontSize: "11px", fontWeight: "700", color: "#16a34a", textTransform: "uppercase" }}>Avg Growth</div>
+                    </div>
+                  </div>
+                  
+                  <svg style={styles.trendSvg} viewBox="0 0 1000 160" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#4f46e5" />
+                        <stop offset="100%" stopColor="#22c55e" />
+                      </linearGradient>
+                      <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#22c55e" stopOpacity="0.2" />
+                        <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    {/* Area fill */}
+                    <motion.path 
+                      d={`M 0 160 ${history.slice(0, 10).map((h, i) => `L ${i * 111} ${160 - (h.result?.overall_score || 0) * 1.4}`).join(' ')} L 1000 160 Z`}
+                      style={styles.trendArea}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 1.5 }}
+                    />
+                    {/* Smooth Line */}
+                    <motion.path 
+                      d={`M 0 ${160 - (history[0]?.result?.overall_score || 0) * 1.4} ${history.slice(1, 10).map((h, i) => `L ${(i + 1) * 111} ${160 - (h.result?.overall_score || 0) * 1.4}`).join(' ')}`}
+                      style={styles.trendPath}
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 2, ease: "easeInOut" }}
+                    />
+                    {/* Data Points */}
+                    {history.slice(0, 10).map((h, i) => (
+                      <motion.circle 
+                        key={i}
+                        cx={i * 111}
+                        cy={160 - (h.result?.overall_score || 0) * 1.4}
+                        r="5"
+                        fill="#ffffff"
+                        stroke="#22c55e"
+                        strokeWidth="2.5"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 1 + i * 0.1 }}
+                      />
+                    ))}
+                  </svg>
                 </motion.div>
               </>
             ) : (<p>Loading analytics...</p>)}
@@ -876,4 +966,5 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
 
