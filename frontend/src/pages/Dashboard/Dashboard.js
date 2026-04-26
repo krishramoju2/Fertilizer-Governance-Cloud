@@ -423,22 +423,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     };
   };
 
-  // Function to clear all history (for testing)
-  const clearAllHistory = async () => {
-    if (window.confirm('Are you sure you want to clear all analysis history? This cannot be undone.')) {
-      try {
-        // Note: This endpoint may need to be implemented in your backend
-        const response = await api.delete('/history/all');
-        if (response.data.success) {
-          showMessage('All history cleared successfully!');
-          await loadUserData();
-        }
-      } catch (err) {
-        console.error('Error clearing history:', err);
-        showMessage('Could not clear history', 'error');
-      }
-    }
-  };
+
 
   return (
     <div style={styles.app}>
