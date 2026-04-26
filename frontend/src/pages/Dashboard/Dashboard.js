@@ -55,27 +55,62 @@ const styles = {
   successMessage: { color: "green", margin: "10px 0" },
   resultCard: {
     background: "linear-gradient(135deg, #ffffff, #f1f5f9)",
-    padding: "20px",
-    borderRadius: "14px",
+    padding: "24px",
+    borderRadius: "18px",
     marginBottom: "20px",
-    boxShadow: "0 8px 25px rgba(0,0,0,0.08)"
+    boxShadow: "0 10px 30px rgba(0,0,0,0.10)",
+    border: "1px solid rgba(226,232,240,0.8)"
   },
-  resultHeader: { display: "flex", justifyContent: "space-between", alignItems: "center" },
-  resultTitle: { fontSize: "18px", fontWeight: "bold" },
-  scoreCircle: { textAlign: "center" },
-  scoreNumber: { fontSize: "20px", fontWeight: "bold" },
-  scoreLabel: { fontSize: "12px" },
-  resultGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" },
-  resultItem: { padding: "10px", border: "1px solid #eee" },
-  resultLabel: { fontWeight: "bold" },
-  resultValue: { display: "block" },
-  resultDetail: { fontSize: "12px", color: "#777" },
-  suggestionsBox: { marginTop: "10px" },
-  suggestionsTitle: { fontWeight: "bold" },
-  suggestion: { fontSize: "14px" },
-  pdfButton: { marginTop: "10px", padding: "10px", background: "#2e7d32", color: "white", border: "none", cursor: "pointer" },
-  historyCard: { marginTop: "20px", background: "white", padding: "20px", borderRadius: "10px" },
-  emptyText: { color: "#777" },
+  resultHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" },
+  resultTitle: { fontSize: "20px", fontWeight: "700", color: "#1a472a" },
+  scoreCircle: {
+    textAlign: "center",
+    background: "linear-gradient(135deg, #4f46e5, #22c55e)",
+    borderRadius: "50%",
+    width: "70px",
+    height: "70px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 15px rgba(79,70,229,0.35)"
+  },
+  scoreNumber: { fontSize: "20px", fontWeight: "800", color: "#fff", lineHeight: 1 },
+  scoreLabel: { fontSize: "10px", color: "rgba(255,255,255,0.85)", marginTop: "2px" },
+  resultGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" },
+  resultItem: {
+    padding: "12px",
+    borderRadius: "10px",
+    background: "#f8fafc",
+    border: "1px solid #e2e8f0"
+  },
+  resultLabel: { fontWeight: "700", fontSize: "12px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", display: "block", marginBottom: "4px" },
+  resultValue: { display: "block", fontWeight: "600", color: "#1e293b", fontSize: "14px" },
+  resultDetail: { fontSize: "11px", color: "#94a3b8", marginTop: "2px", display: "block" },
+  suggestionsBox: { marginTop: "12px", padding: "14px", background: "linear-gradient(135deg, #f0fdf4, #ecfdf5)", borderRadius: "12px", border: "1px solid #bbf7d0" },
+  suggestionsTitle: { fontWeight: "700", color: "#166534", marginBottom: "8px", display: "block" },
+  suggestion: { fontSize: "13px", color: "#15803d", marginBottom: "4px", lineHeight: "1.5" },
+  pdfButton: {
+    marginTop: "14px",
+    padding: "10px 18px",
+    background: "linear-gradient(135deg, #1a472a, #2e7d32)",
+    color: "white",
+    border: "none",
+    cursor: "pointer",
+    borderRadius: "8px",
+    fontWeight: "600",
+    fontSize: "13px",
+    boxShadow: "0 4px 12px rgba(26,71,42,0.3)",
+    transition: "all 0.2s ease"
+  },
+  historyCard: {
+    background: "rgba(255,255,255,0.92)",
+    padding: "22px",
+    borderRadius: "18px",
+    border: "1px solid rgba(226,232,240,0.8)",
+    boxShadow: "0 8px 24px rgba(15,23,42,0.08)"
+  },
+  emptyText: { color: "#94a3b8", fontSize: "14px", textAlign: "center", padding: "20px 0" },
   adminContainer: { marginTop: "20px" },
   adminTitle: { fontSize: "20px", fontWeight: "bold" },
   adminTabs: { display: "flex", gap: "10px", marginBottom: "10px" },
@@ -537,37 +572,62 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 )}
 
                 <div style={styles.historyCard}>
-                  <h3 style={styles.cardTitle}>Recent Analyses</h3>
-                  
-                  {/* FORCED VISIBLE TABLE - NO CSS DEPENDENCIES */}
-                  <div style={{ border: "2px solid red", padding: "10px", marginTop: "10px", background: "yellow" }}>
-                    <strong>🔴 EMERGENCY DISPLAY:</strong> History length = {history.length}
-                  </div>
-                  
-                  <div style={{ overflowX: "auto", marginTop: "10px" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid blue", backgroundColor: "white" }}>
-                      <thead>
-                        <tr>
-                          <th style={{ border: "1px solid black", padding: "8px" }}>#</th>
-                          <th style={{ border: "1px solid black", padding: "8px" }}>Crop</th>
-                          <th style={{ border: "1px solid black", padding: "8px" }}>Fertilizer</th>
-                          <th style={{ border: "1px solid black", padding: "8px" }}>Status</th>
-                          <th style={{ border: "1px solid black", padding: "8px" }}>Score</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {history.slice().reverse().map((item, idx) => (
-                          <tr key={idx}>
-                            <td style={{ border: "1px solid black", padding: "8px" }}>{idx + 1}</td>
-                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.input_data?.Crop_Type || "N/A"}</td>
-                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.input_data?.Fertilizer_Name || "N/A"}</td>
-                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.result?.overall_compatibility || "N/A"}</td>
-                            <td style={{ border: "1px solid black", padding: "8px" }}>{item.result?.overall_score || 0}%</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <h3 style={{ ...styles.cardTitle, marginBottom: "16px" }}>📋 Recent Analyses</h3>
+
+                  {history.length === 0 ? (
+                    <p style={styles.emptyText}>No analyses yet. Run your first analysis above!</p>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {history.slice(0, 8).map((item, idx) => {
+                        const score = item.result?.overall_score || 0;
+                        const compat = item.result?.overall_compatibility || "N/A";
+                        const scoreColor = score >= 75 ? "#16a34a" : score >= 50 ? "#d97706" : "#dc2626";
+                        const scoreBg = score >= 75 ? "#f0fdf4" : score >= 50 ? "#fffbeb" : "#fef2f2";
+                        const scoreBorder = score >= 75 ? "#bbf7d0" : score >= 50 ? "#fde68a" : "#fecaca";
+                        return (
+                          <div key={idx} style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "12px 16px",
+                            borderRadius: "12px",
+                            background: idx % 2 === 0 ? "#f8fafc" : "#ffffff",
+                            border: "1px solid #e2e8f0",
+                            gap: "10px"
+                          }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+                              <span style={{
+                                width: "28px", height: "28px", borderRadius: "50%",
+                                background: "linear-gradient(135deg, #4f46e5, #22c55e)",
+                                color: "white", fontSize: "11px", fontWeight: "700",
+                                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                              }}>{idx + 1}</span>
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ fontWeight: "600", fontSize: "13px", color: "#1e293b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                  🌾 {item.input_data?.Crop_Type || "N/A"}
+                                </div>
+                                <div style={{ fontSize: "11px", color: "#64748b", marginTop: "2px" }}>
+                                  💊 {item.input_data?.Fertilizer_Name || "N/A"}
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                              <span style={{
+                                fontSize: "11px", fontWeight: "600", padding: "3px 8px",
+                                borderRadius: "20px", background: scoreBg,
+                                color: scoreColor, border: `1px solid ${scoreBorder}`,
+                                whiteSpace: "nowrap"
+                              }}>{compat}</span>
+                              <span style={{
+                                fontSize: "13px", fontWeight: "700", color: scoreColor,
+                                minWidth: "38px", textAlign: "right"
+                              }}>{score}%</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
   
               </div>
@@ -659,4 +719,3 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
-
