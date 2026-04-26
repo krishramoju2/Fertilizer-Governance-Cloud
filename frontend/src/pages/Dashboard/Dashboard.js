@@ -554,7 +554,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               </div>
 
               <div style={styles.rightPanel}>
-                {result && (
+                {result ? (
                   <div style={styles.resultCard}>
                     <div style={styles.resultHeader}>
                       <h2 style={styles.resultTitle}>{result.overall_compatibility}</h2>
@@ -569,68 +569,82 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <div style={styles.suggestionsBox}><h3 style={styles.suggestionsTitle}>💡 Suggestions</h3>{result.suggestions?.map((s, i) => (<p key={i} style={styles.suggestion}>• {s}</p>))}</div>
                     <button style={styles.pdfButton} onClick={generatePDF}>📄 Download PDF Report</button>
                   </div>
+                ) : (
+                  <div style={{
+                    ...styles.resultCard,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minHeight: "220px",
+                    background: "linear-gradient(135deg, #f8fafc, #eef2ff)",
+                    border: "2px dashed #c7d2fe"
+                  }}>
+                    <span style={{ fontSize: "48px", marginBottom: "12px" }}>🔬</span>
+                    <p style={{ color: "#6366f1", fontWeight: "600", fontSize: "15px", margin: 0 }}>No Result Yet</p>
+                    <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "6px", textAlign: "center" }}>Fill in your farm details and click Analyze to see results here.</p>
+                  </div>
                 )}
+              </div>
+            </div>
 
-                <div style={styles.historyCard}>
-                  <h3 style={{ ...styles.cardTitle, marginBottom: "16px" }}>📋 Recent Analyses</h3>
-
-                  {history.length === 0 ? (
-                    <p style={styles.emptyText}>No analyses yet. Run your first analysis above!</p>
-                  ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      {history.slice(0, 8).map((item, idx) => {
-                        const score = item.result?.overall_score || 0;
-                        const compat = item.result?.overall_compatibility || "N/A";
-                        const scoreColor = score >= 75 ? "#16a34a" : score >= 50 ? "#d97706" : "#dc2626";
-                        const scoreBg = score >= 75 ? "#f0fdf4" : score >= 50 ? "#fffbeb" : "#fef2f2";
-                        const scoreBorder = score >= 75 ? "#bbf7d0" : score >= 50 ? "#fde68a" : "#fecaca";
-                        return (
-                          <div key={idx} style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            padding: "12px 16px",
-                            borderRadius: "12px",
-                            background: idx % 2 === 0 ? "#f8fafc" : "#ffffff",
-                            border: "1px solid #e2e8f0",
-                            gap: "10px"
-                          }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
-                              <span style={{
-                                width: "28px", height: "28px", borderRadius: "50%",
-                                background: "linear-gradient(135deg, #4f46e5, #22c55e)",
-                                color: "white", fontSize: "11px", fontWeight: "700",
-                                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
-                              }}>{idx + 1}</span>
-                              <div style={{ minWidth: 0 }}>
-                                <div style={{ fontWeight: "600", fontSize: "13px", color: "#1e293b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                  🌾 {item.input_data?.Crop_Type || "N/A"}
-                                </div>
-                                <div style={{ fontSize: "11px", color: "#64748b", marginTop: "2px" }}>
-                                  💊 {item.input_data?.Fertilizer_Name || "N/A"}
-                                </div>
-                              </div>
+            <div style={{ ...styles.historyCard, marginTop: "25px" }}>
+              <h3 style={{ ...styles.cardTitle, marginBottom: "16px", fontSize: "20px" }}>📋 Recent Analyses</h3>
+              {history.length === 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "30px 0" }}>
+                  <span style={{ fontSize: "40px", marginBottom: "10px" }}>📭</span>
+                  <p style={styles.emptyText}>No analyses yet. Run your first analysis above!</p>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px" }}>
+                  {history.slice(0, 8).map((item, idx) => {
+                    const score = item.result?.overall_score || 0;
+                    const compat = item.result?.overall_compatibility || "N/A";
+                    const scoreColor = score >= 75 ? "#16a34a" : score >= 50 ? "#d97706" : "#dc2626";
+                    const scoreBg = score >= 75 ? "#f0fdf4" : score >= 50 ? "#fffbeb" : "#fef2f2";
+                    const scoreBorder = score >= 75 ? "#bbf7d0" : score >= 50 ? "#fde68a" : "#fecaca";
+                    return (
+                      <div key={idx} style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "14px 18px",
+                        borderRadius: "14px",
+                        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+                        border: "1px solid #e2e8f0",
+                        boxShadow: "0 2px 8px rgba(15,23,42,0.06)",
+                        gap: "12px"
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+                          <span style={{
+                            width: "32px", height: "32px", borderRadius: "50%",
+                            background: "linear-gradient(135deg, #4f46e5, #22c55e)",
+                            color: "white", fontSize: "12px", fontWeight: "700",
+                            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                          }}>{idx + 1}</span>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: "700", fontSize: "14px", color: "#1e293b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              🌾 {item.input_data?.Crop_Type || "N/A"}
                             </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-                              <span style={{
-                                fontSize: "11px", fontWeight: "600", padding: "3px 8px",
-                                borderRadius: "20px", background: scoreBg,
-                                color: scoreColor, border: `1px solid ${scoreBorder}`,
-                                whiteSpace: "nowrap"
-                              }}>{compat}</span>
-                              <span style={{
-                                fontSize: "13px", fontWeight: "700", color: scoreColor,
-                                minWidth: "38px", textAlign: "right"
-                              }}>{score}%</span>
+                            <div style={{ fontSize: "12px", color: "#64748b", marginTop: "3px" }}>
+                              💊 {item.input_data?.Fertilizer_Name || "N/A"}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
+                          <span style={{
+                            fontSize: "11px", fontWeight: "600", padding: "3px 10px",
+                            borderRadius: "20px", background: scoreBg,
+                            color: scoreColor, border: `1px solid ${scoreBorder}`,
+                            whiteSpace: "nowrap"
+                          }}>{compat}</span>
+                          <span style={{ fontSize: "16px", fontWeight: "800", color: scoreColor }}>{score}%</span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-  
-              </div>
+              )}
             </div>
           </>
         )}
@@ -719,3 +733,5 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
+
