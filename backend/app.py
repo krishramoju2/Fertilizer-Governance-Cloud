@@ -169,6 +169,29 @@ def home():
 def not_found(error):
     return jsonify({'success': False, 'message': 'Endpoint not found'}), 404
 
+import threading
+import time
+import requests
+
+def keep_alive():
+    """Background thread to ping the server every 10 minutes (600 seconds) to prevent Render from sleeping."""
+    while True:
+        try:
+            # Wait for 10 minutes
+            time.sleep(600)
+            # Ping the backend's own health endpoint.
+            # Using the production URL if available, otherwise fallback to localhost
+            url = "https://fertilizer-backend-jj59.onrender.com/api/health"
+            response = requests.get(url, timeout=10)
+            logger.info(f"Keep-alive ping successful: {response.status_code}")
+        except Exception as e:
+            logger.warning(f"Keep-alive ping failed: {e}")
+
+# Start the keep-alive thread in the background
+keep_alive_thread = threading.Thread(target=keep_alive, daemon=True)
+keep_alive_thread.start()
+logger.info("Keep-alive background thread started.")
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
