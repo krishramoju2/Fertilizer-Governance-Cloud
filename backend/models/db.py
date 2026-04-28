@@ -49,7 +49,7 @@ def get_mongo_connection():
 
         logger.info("Connecting to MongoDB...")
 
-        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=15000, connectTimeoutMS=15000)
 
         # test connection
         client.admin.command('ping')
@@ -102,3 +102,4 @@ def serialize_doc(doc):
 
 def check_db_connection():
     return DB_CONNECTED
+
