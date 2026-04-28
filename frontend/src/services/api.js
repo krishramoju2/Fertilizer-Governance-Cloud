@@ -4,7 +4,7 @@ const API_BASE = "https://fertilizer-backend-jj59.onrender.com/api";
 
 const api = axios.create({
   baseURL: API_BASE,
-  timeout: 30000,
+  timeout: 120000,
   headers: {
     "Content-Type": "application/json"
   }
