@@ -6,8 +6,9 @@ import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 import { motion, AnimatePresence } from "framer-motion";
 import Silk from "../../components/Home/Silk";
+import { styles } from "./DashboardStyles";
 
-const styles = {
+const _styles_ignore = {
   app: {
     padding: "30px",
     background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
