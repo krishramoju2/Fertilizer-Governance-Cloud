@@ -12,29 +12,108 @@ const termDefinitions = {
   fertilizerMatch: {
     title: "Fertilizer Match",
     definition: "How well your chosen fertilizer fits your soil and crop needs. A better match means the fertilizer can provide the nutrients your crops actually need.",
-    example: "If your soil is low in nitrogen, a high-nitrogen fertilizer like Urea would be a good match."
+    example: "If your soil is low in nitrogen, a high-nitrogen fertilizer like Urea would be a good match.",
+    calculation: "Match Score = (Nitrogen × 0.4) + (Phosphorus × 0.3) + (Potassium × 0.3) - (Soil Deficiency × 0.2)"
   },
   expectedGrowth: {
     title: "Expected Growth",
     definition: "An estimate of how much your crop yield may increase based on current conditions compared to optimal growing patterns.",
-    example: "With good fertilizer match and ideal weather, you might see 20-30% higher yield."
+    example: "With good fertilizer match and ideal weather, you might see 20-30% higher yield.",
+    calculation: "Growth % = (Base Score × 0.5) + (Temp Factor × 0.2) + (Moisture Factor × 0.2) + (Quantity Factor × 0.1)"
   },
   prediction: {
     title: "Prediction",
     definition: "Our AI's suggestion of whether your current fertilizer-soil-crop combination will work well together.",
-    example: "Highly Compatible = Great match! | Moderately Compatible = Decent | Not Compatible = Needs change"
+    example: "Highly Compatible = Great match! | Moderately Compatible = Decent | Not Compatible = Needs change",
+    calculation: "Prediction = Σ(Feature Weight × Feature Value) → Sigmoid(Σ) × 100"
   },
   confidence: {
     title: "Confidence",
     definition: "How sure our AI model is about its prediction. Higher confidence means more historical data supports this result.",
-    example: "85% confidence means we're quite sure the prediction is accurate."
+    example: "85% confidence means we're quite sure the prediction is accurate.",
+    calculation: "Confidence = (Matching Records / Total Records) × 100 + (Data Quality × 0.2)"
   },
   trustIndex: {
     title: "Trust Index",
     definition: "A reliability score showing how stable your farm data is today. Based on data quality and consistency.",
-    example: "Very High = Reliable data | Low = May need more tests for accuracy"
+    example: "Very High = Reliable data | Low = May need more tests for accuracy",
+    calculation: "Trust = (Model Prob × 0.4) + (Temp Rel × 0.2) + (Moist Rel × 0.2) + (Qty Rel × 0.1) + (Soil Rel × 0.1)"
   }
 };
+
+// ===== HOVER BUBBLE COMPONENT WITH CALCULATIONS =====
+
+function TermBubble({ term, showCalculation }) {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  return (
+    <div 
+      style={{ position: "relative", display: "inline-block" }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span style={{ 
+        borderBottom: "2px dashed rgba(16, 185, 129, 0.5)", 
+        paddingBottom: "2px",
+        cursor: "help",
+        color: "#10b981",
+        fontWeight: "600"
+      }}>
+        {term.title}
+      </span>
+      
+      {isHovered && (
+        <div style={{
+          position: "absolute",
+          top: "100%",
+          left: "0",
+          zIndex: 1000,
+          width: "320px",
+          padding: "16px",
+          backgroundColor: "rgba(15, 23, 42, 0.98)",
+          backdropFilter: "blur(12px)",
+          border: "1px solid rgba(16, 185, 129, 0.4)",
+          borderRadius: "12px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5)",
+          marginTop: "8px"
+        }}>
+          {/* Definition */}
+          <div style={{ color: "#10b981", fontWeight: "800", fontSize: "11px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>
+            Definition
+          </div>
+          <div style={{ color: "#e2e8f0", fontSize: "12px", lineHeight: "1.5", marginBottom: "12px" }}>
+            {term.definition}
+          </div>
+          
+          {/* Mathematical Calculation */}
+          <div style={{ 
+            padding: "12px", 
+            background: "rgba(0,0,0,0.3)", 
+            borderRadius: "8px",
+            borderLeft: "3px solid #38bdf8"
+          }}>
+            <div style={{ color: "#38bdf8", fontWeight: "800", fontSize: "11px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>
+              Calculation
+            </div>
+            <div style={{ color: "#94a3b8", fontSize: "11px", fontFamily: "monospace", lineHeight: "1.6" }}>
+              {term.calculation}
+            </div>
+          </div>
+          
+          {/* Example */}
+          <div style={{ marginTop: "12px", padding: "10px", background: "rgba(16, 185, 129, 0.1)", borderRadius: "6px" }}>
+            <div style={{ color: "#10b981", fontWeight: "700", fontSize: "10px", textTransform: "uppercase", marginBottom: "4px" }}>
+              Example
+            </div>
+            <div style={{ color: "#cbd5e1", fontSize: "11px", fontStyle: "italic" }}>
+              {term.example}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser, language, setLanguage }) {
   const t = (key) => translations[language]?.[key] || translations.en[key];
@@ -782,3 +861,4 @@ const td_style = (item) => ({
 });
 
 export default Dashboard;
+
