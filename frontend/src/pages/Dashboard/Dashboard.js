@@ -229,14 +229,14 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     const highTemp = recent.filter(h => (h.input_data?.Temperature || 0) > 32).length;
     const lowCompatibility = recent.filter(h => (h.result?.overall_score || 0) < 60).length;
 
-    if (highMoisture > 8) return "⚠️ ALERT: Your soil is consistently too wet (High Moisture). Consider clearing drainage channels or using raised beds to prevent root rot.";
-    if (highTemp > 8) return "🌡️ CLIMATE TIP: High temperature trends detected. We recommend morning-only irrigation and using straw mulch to keep the soil cool.";
-    if (lowCompatibility > 5) return "🛠️ STRATEGY CHANGE: Many recent tests show low compatibility. We suggest switching to a more balanced fertilizer like NPK 17-17-17 for better results.";
+    if (highMoisture > 8) return "ALERT: Your soil is consistently too wet (High Moisture). Consider clearing drainage channels or using raised beds to prevent root rot.";
+    if (highTemp > 8) return "CLIMATE TIP: High temperature trends detected. We recommend morning-only irrigation and using straw mulch to keep the soil cool.";
+    if (lowCompatibility > 5) return "STRATEGY CHANGE: Many recent tests show low compatibility. We suggest switching to a more balanced fertilizer like NPK 17-17-17 for better results.";
     
-    return "✅ STABLE GROWTH: Your recent farm tests show optimal conditions. Maintain your current schedule for a healthy harvest!";
+    return "STABLE GROWTH: Your recent farm tests show optimal conditions. Maintain your current schedule for a healthy harvest!";
   };
 
-  // 🎡 Scroll Navigation Logic
+  // Scroll Navigation Logic
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll({ container: scrollRef });
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 360]);
@@ -299,8 +299,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           y: trainY, 
           x: trainWobble,
           position: "fixed", 
-          right: "30px", 
-          top: "120px", 
+          right: "120px", 
+          top: "150px", 
           zIndex: 999,
           display: "flex",
           flexDirection: "column",
@@ -319,14 +319,14 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               style={{ width: "16px", height: "16px", background: "#fff", borderRadius: "50%", filter: "blur(4px)" }}
             />
           ))}
-          {/* Bigger Engine */}
-          <div style={{ width: "40px", height: "50px", background: "#10b981", borderRadius: "8px 8px 4px 4px", position: "relative", boxShadow: "0 0 25px #10b981, 0 4px 15px rgba(0,0,0,0.5)" }}>
-            <div style={{ position: "absolute", top: "8px", left: "8px", width: "24px", height: "15px", background: "rgba(0,0,0,0.4)", borderRadius: "3px" }} />
-            <div style={{ position: "absolute", bottom: "-4px", left: "-4px", width: "48px", height: "8px", background: "#064e3b", borderRadius: "100px" }} />
+          {/* Bigger Engine - High Contrast Silver/White */}
+          <div style={{ width: "42px", height: "54px", background: "#f8fafc", borderRadius: "8px 8px 4px 4px", position: "relative", boxShadow: "0 0 30px rgba(255, 255, 255, 0.5), 0 4px 15px rgba(0,0,0,0.5)" }}>
+            <div style={{ position: "absolute", top: "8px", left: "8px", width: "26px", height: "18px", background: "rgba(0,0,0,0.6)", borderRadius: "3px" }} />
+            <div style={{ position: "absolute", bottom: "-4px", left: "-4px", width: "50px", height: "10px", background: "#10b981", borderRadius: "100px" }} />
           </div>
-          {/* Bigger Cars */}
-          <div style={{ width: "32px", height: "36px", background: "#064e3b", borderRadius: "4px", border: "2px solid #10b981", boxShadow: "0 4px 10px rgba(0,0,0,0.3)" }} />
-          <div style={{ width: "32px", height: "36px", background: "#064e3b", borderRadius: "4px", border: "2px solid #10b981", boxShadow: "0 4px 10px rgba(0,0,0,0.3)" }} />
+          {/* Bigger Cars - High Contrast Emerald */}
+          <div style={{ width: "34px", height: "38px", background: "#10b981", borderRadius: "4px", border: "2px solid #fff", boxShadow: "0 4px 10px rgba(0,0,0,0.5)" }} />
+          <div style={{ width: "34px", height: "38px", background: "#10b981", borderRadius: "4px", border: "2px solid #fff", boxShadow: "0 4px 10px rgba(0,0,0,0.5)" }} />
         </div>
         
         {/* The Track (Locked in viewport behind the train) */}
@@ -417,35 +417,34 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   const renderSidebar = () => {
     const links = [
-      { id: 'menu', label: 'Farm Home', icon: '🏠' },
-      { id: 'analysis', label: 'Test Soil & Fertilizer', icon: '🧪' },
-      { id: 'ml', label: 'Smart Predictions', icon: '🤖' },
-      { id: 'analytics', label: 'Farm Reports', icon: '📈' },
-      { id: 'chat', label: 'Ask AI Expert', icon: '💬' }
+      { id: 'menu', label: 'Farm Home' },
+      { id: 'analysis', label: 'Test Soil & Fertilizer' },
+      { id: 'ml', label: 'Smart Predictions' },
+      { id: 'analytics', label: 'Farm Reports' },
+      { id: 'chat', label: 'Ask AI Expert' }
     ];
 
     return (
       <aside style={styles.sidebar}>
         <div style={styles.sidebarBrand}>
-          <div style={{ width: "32px", height: "32px", background: "#10b981", borderRadius: "8px", display: "grid", placeItems: "center", fontSize: "18px" }}>🌾</div>
+          <div style={{ width: "32px", height: "32px", background: "#10b981", borderRadius: "8px", display: "grid", placeItems: "center", fontSize: "14px", fontWeight: "900", color: "#fff" }}>AP</div>
           <span>Advisor Pro</span>
         </div>
         <nav style={styles.sidebarNav}>
           {links.map(link => (
             <button key={link.id} onClick={() => scrollToSection(link.id)} style={styles.sidebarLink(activeTab === link.id)}>
-              <span style={{ fontSize: "18px", marginRight: "10px" }}>{link.icon}</span>
               {link.label}
             </button>
           ))}
           {currentUser?.is_admin && (
             <button onClick={() => scrollToSection('admin')} style={styles.sidebarLink(activeTab === 'admin')}>
-              <span style={{ fontSize: "18px", marginRight: "10px" }}>🛡️</span> Admin Console
+              Admin Console
             </button>
           )}
         </nav>
         <div style={styles.sidebarFooter}>
           <button style={{ ...styles.secondaryButton, width: "100%", textAlign: "left", color: "#f87171", border: "none" }} onClick={handleSignOut}>
-             🚪 Sign Out
+             Sign Out
           </button>
         </div>
       </aside>
@@ -573,8 +572,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </div>
                   ) : (
                     <div style={{ ...styles.card, textAlign: "center", padding: "80px 20px" }}>
-                      <div style={{ fontSize: "40px", marginBottom: "16px" }}>🔍</div>
-                      <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>System Idle.<br />Run a test to see results here.</p>
+                      <div style={{ fontSize: "14px", color: "#10b981", fontWeight: "800", marginBottom: "16px" }}>SYSTEM IDLE</div>
+                      <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>Run a test to see results here.</p>
                     </div>
                   )}
                 </div>
