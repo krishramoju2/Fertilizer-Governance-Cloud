@@ -568,13 +568,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
       </div>
     </div>
   );
-};v>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+};
 
 export default Dashboard;
-
