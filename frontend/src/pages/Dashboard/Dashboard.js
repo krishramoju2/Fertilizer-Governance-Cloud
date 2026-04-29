@@ -239,11 +239,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   // 🎡 Scroll Navigation Logic
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll({ container: scrollRef });
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, -400]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, -800]);
-  const y3 = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 360]);
-  const scale1 = useTransform(scrollYProgress, [0, 1], [1, 1.5]);
 
   // Pre-defined transforms for the 10 nodes to follow Rules of Hooks
   const yNode0 = useTransform(scrollYProgress, [0, 1], [0, -100]);
@@ -658,3 +654,4 @@ const td_style = (item) => ({
 });
 
 export default Dashboard;
+
