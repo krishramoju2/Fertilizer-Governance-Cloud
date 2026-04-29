@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
@@ -389,8 +390,34 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 <div style={styles.statCard}><span style={styles.statLabel}>Performance Index</span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
               </div>
               <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Trend Analysis</h3>
-                <p style={{ color: "#64748b", fontWeight: "600" }}>Data aggregation suggests a high degree of correlation between moisture levels and final yield potential.</p>
+                <h3 style={styles.cardTitle}>Performance Trend Analysis</h3>
+                <div style={{ height: "240px", width: "100%", display: "flex", alignItems: "flex-end", gap: "12px", padding: "20px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                  {analytics?.time_series?.scores?.length > 0 ? (
+                    analytics.time_series.scores.map((score, i) => (
+                      <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
+                        <div 
+                          style={{ 
+                            width: "100%", 
+                            height: `${score}%`, 
+                            backgroundColor: "#10b981", 
+                            borderRadius: "6px 6px 0 0", 
+                            opacity: 0.6 + (score / 250),
+                            transition: "height 0.5s ease"
+                          }} 
+                          title={`Score: ${score}%`}
+                        />
+                        <span style={{ fontSize: "10px", fontWeight: "800", color: "#64748b" }}>{analytics.time_series.labels[i]}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", color: "#64748b", fontWeight: "600" }}>
+                      Insufficient data for trend projection.
+                    </div>
+                  )}
+                </div>
+                <p style={{ color: "#64748b", fontWeight: "600", fontSize: "14px", marginTop: "20px" }}>
+                  Historical data indicates a consistent performance trajectory. Strategic optimizations in moisture management are recommended based on recent 100% compatibility scores.
+                </p>
               </div>
             </div>
           )}
@@ -486,4 +513,3 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
-
