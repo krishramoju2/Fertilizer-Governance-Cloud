@@ -112,7 +112,11 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
     <div style={styles.container}>
       <div style={styles.loginCard}>
         <div style={styles.brandSection}>
-          <div style={styles.logo}>🌾</div>
+          <div style={styles.logo}>
+            <div style={{ width: "40px", height: "40px", background: "#10b981", borderRadius: "10px", margin: "0 auto", display: "grid", placeItems: "center", color: "#fff", fontWeight: "900", fontSize: "20px" }}>
+              AP
+            </div>
+          </div>
           <h1 style={styles.brandName}>FarmAdvisor <span style={{ color: "#10b981" }}>Pro</span></h1>
           <p style={styles.brandTagline}>Enterprise Governance Cloud</p>
         </div>
@@ -236,7 +240,6 @@ const styles = {
     marginBottom: "40px"
   },
   logo: {
-    fontSize: "32px",
     marginBottom: "16px"
   },
   brandName: {
