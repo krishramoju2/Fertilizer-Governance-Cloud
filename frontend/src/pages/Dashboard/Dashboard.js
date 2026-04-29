@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
-import { motion, AnimatePresence } from "framer-motion";
 import { styles } from "./DashboardStyles";
 
 function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
@@ -61,7 +60,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   }, []);
 
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     try {
       const [historyRes, analyticsRes] = await Promise.all([
         api.get('/history'),
@@ -72,9 +71,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     } catch (err) {
       console.error('Error loading user data:', err);
     }
-  };
+  }, []);
 
-  const loadAdminData = async () => {
+  const loadAdminData = useCallback(async () => {
     if (!currentUser?.is_admin) return;
     try {
       const res = await api.get('/admin/users');
@@ -82,31 +81,37 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     } catch (err) {
       console.error('Error loading admin data:', err);
     }
-  };
+  }, [currentUser]);
 
-  const loadUserAnalytics = async (userId) => {
+  const loadUserAnalytics = useCallback(async (userId) => {
     try {
       const res = await api.get(`/admin/user-analytics/${userId}`);
       if (res.data.success) setUserAnalytics(res.data.analytics);
     } catch (err) {
       console.error('Error loading user analytics:', err);
     }
-  };
+  }, []);
 
-  const loadUserHistory = async (userId) => {
+  const loadUserHistory = useCallback(async (userId) => {
     try {
       const res = await api.get(`/admin/user-history/${userId}`);
       if (res.data.success) setUserHistory(res.data.history);
     } catch (err) {
       console.error('Error loading user history:', err);
     }
+  }, []);
+
+  const handleSelectUser = (userId) => {
+    setSelectedUserId(userId);
+    loadUserAnalytics(userId);
+    loadUserHistory(userId);
   };
 
   useEffect(() => {
     fetchConfig();
     loadUserData();
     loadAdminData();
-  }, [fetchConfig, currentUser]);
+  }, [fetchConfig, loadUserData, loadAdminData]);
 
   const handleAnalyze = async () => {
     setLoading(true);
@@ -411,22 +416,50 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                </div>
                
                {adminManageType === 'users' ? (
-                 <div style={styles.tableContainer}>
-                    <table style={styles.table}>
-                      <thead>
-                        <tr><th style={styles.th}>Entity Name</th><th style={styles.th}>Contact Info</th><th style={styles.th}>Access Level</th><th style={styles.th}>Command</th></tr>
-                      </thead>
-                      <tbody>
-                        {users.map((u, i) => (
-                          <tr key={i}>
-                            <td style={styles.td}>{u.name}</td>
-                            <td style={styles.td}>{u.email}</td>
-                            <td style={styles.td}>{u.is_admin ? 'Strategic Admin' : 'Premium Partner'}</td>
-                            <td style={styles.td}><button style={{ color: "#10b981", background: "none", border: "none", fontWeight: "800", cursor: "pointer", fontSize: "12px" }} onClick={() => handleSelectUser(u._id)}>VIEW INTEL</button></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                 <div style={{ display: "grid", gridTemplateColumns: selectedUserId ? "1fr 300px" : "1fr", gap: "24px" }}>
+                   <div style={styles.tableContainer}>
+                      <table style={styles.table}>
+                        <thead>
+                          <tr><th style={styles.th}>Entity Name</th><th style={styles.th}>Contact Info</th><th style={styles.th}>Access Level</th><th style={styles.th}>Command</th></tr>
+                        </thead>
+                        <tbody>
+                          {users.map((u, i) => (
+                            <tr key={i} style={{ background: selectedUserId === u._id ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
+                              <td style={styles.td}>{u.name}</td>
+                              <td style={styles.td}>{u.email}</td>
+                              <td style={styles.td}>{u.is_admin ? 'Strategic Admin' : 'Premium Partner'}</td>
+                              <td style={styles.td}><button style={{ color: "#10b981", background: "none", border: "none", fontWeight: "800", cursor: "pointer", fontSize: "12px" }} onClick={() => handleSelectUser(u._id)}>VIEW INTEL</button></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                   </div>
+                   {selectedUserId && (
+                     <div style={{ ...styles.card, background: "rgba(255,255,255,0.02)", padding: "24px" }}>
+                       <h4 style={{ ...styles.cardTitle, fontSize: "16px" }}>User Intelligence</h4>
+                       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                         <div style={styles.statCard}>
+                           <span style={{ ...styles.statLabel, fontSize: "10px" }}>Total Operations</span>
+                           <span style={{ ...styles.statValue, fontSize: "20px" }}>{userAnalytics?.total_analyses || 0}</span>
+                         </div>
+                         <div style={styles.statCard}>
+                           <span style={{ ...styles.statLabel, fontSize: "10px" }}>Avg Score</span>
+                           <span style={{ ...styles.statValue, fontSize: "20px" }}>{userAnalytics?.average_score || 0}%</span>
+                         </div>
+                         <div>
+                           <p style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", marginBottom: "8px" }}>Recent Activity</p>
+                           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                             {userHistory.slice(0, 3).map((h, i) => (
+                               <div key={i} style={{ fontSize: "12px", padding: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "6px" }}>
+                                 <span style={{ color: "#10b981" }}>{h.crop_type}</span> - {h.score}%
+                               </div>
+                             ))}
+                           </div>
+                         </div>
+                       </div>
+                       <button style={{ ...styles.secondaryButton, marginTop: "20px", width: "100%", fontSize: "11px" }} onClick={() => setSelectedUserId(null)}>Close Intel</button>
+                     </div>
+                   )}
                  </div>
                ) : (
                  <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
