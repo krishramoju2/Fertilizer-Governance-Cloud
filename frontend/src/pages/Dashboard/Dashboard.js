@@ -270,20 +270,20 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
         <div style={styles.pageHeader}>
           <h1 style={styles.pageTitle}>
-            {activeTab === 'menu' && "Strategic Overview"}
-            {activeTab === 'analysis' && "Analysis Engine"}
-            {activeTab === 'ml' && "Predictive Models"}
-            {activeTab === 'analytics' && "System Intelligence"}
-            {activeTab === 'admin' && "Governance Console"}
-            {activeTab === 'chat' && "AI Knowledge Base"}
+            {activeTab === 'menu' && "Welcome to Your Farm Dashboard"}
+            {activeTab === 'analysis' && "Check Soil & Fertilizer"}
+            {activeTab === 'ml' && "Smart Crop Predictions"}
+            {activeTab === 'analytics' && "Your Farm Reports"}
+            {activeTab === 'admin' && "Admin Console"}
+            {activeTab === 'chat' && "Talk to AI Farm Expert"}
           </h1>
           <p style={styles.pageSubtitle}>
-            {activeTab === 'menu' && "Real-time monitoring of global farm operations and strategic performance."}
-            {activeTab === 'analysis' && "Execute deep-soil assessments and environmental compatibility tests."}
-            {activeTab === 'ml' && "Forecasting nutrient requirements using advanced predictive models."}
-            {activeTab === 'analytics' && "Historical data aggregation and performance benchmarking."}
-            {activeTab === 'admin' && "System-wide governance and administrative controls."}
-            {activeTab === 'chat' && "Natural language processing assistant for agricultural inquiries."}
+            {activeTab === 'menu' && "See how your farm is performing today."}
+            {activeTab === 'analysis' && "Fill in the details below to see if your fertilizer matches your soil."}
+            {activeTab === 'ml' && "Advanced predictions to help you choose the right crop."}
+            {activeTab === 'analytics' && "Summary of all your past tests and farm health."}
+            {activeTab === 'admin' && "Manage users and farm settings."}
+            {activeTab === 'chat' && "Ask any question about farming or fertilizers."}
           </p>
         </div>
 
@@ -336,16 +336,16 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           {activeTab === 'analysis' && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
               <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Parameter Specification</h3>
+                <h3 style={styles.cardTitle}>Enter Farm Details</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
                   <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Temperature (°C)</label><input type="number" style={styles.input} value={inputs.Temperature} onChange={(e) => setInputs({ ...inputs, Temperature: e.target.value })} /></div>
                   <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Moisture (%)</label><input type="number" style={styles.input} value={inputs.Moisture} onChange={(e) => setInputs({ ...inputs, Moisture: e.target.value })} /></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Soil Type</label><select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>{soilTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Crop Type</label><select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>{cropTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Fertilizer</label><select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>{fertilizerNames.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Soil Type</label><select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>{soilTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Crop Type</label><select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>{cropTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Fertilizer</label><select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>{fertilizerNames.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
                   <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Quantity (kg/ha)</label><input type="number" style={styles.input} value={inputs.Fertilizer_Quantity} onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: e.target.value })} /></div>
                 </div>
-                <button style={{ ...styles.button, marginTop: "32px", width: "100%" }} onClick={handleAnalyze} disabled={loading}>{loading ? "Executing Assessment..." : "Run Assessment Engine"}</button>
+                <button style={{ ...styles.button, marginTop: "32px", width: "100%" }} onClick={handleAnalyze} disabled={loading}>{loading ? "Checking..." : "Check Compatibility"}</button>
               </div>
 
               <div>
@@ -384,41 +384,19 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           {activeTab === 'analytics' && (
             <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
               <div style={styles.statsGrid}>
-                <div style={styles.statCard}><span style={styles.statLabel}>Aggregate Sessions</span><span style={styles.statValue}>{analytics?.total_analyses ?? 0}</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Success Ratio</span><span style={styles.statValue}>{analytics?.compatibility_rate ?? 0}%</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Performance Index</span><span style={styles.statValue}>{analytics?.average_score ?? 0}%</span></div>
+                <div style={styles.statCard}><span style={styles.statLabel}>Total Tests Done</span><span style={styles.statValue}>{analytics?.total_analyses ?? 0}</span></div>
+                <div style={styles.statCard}><span style={styles.statLabel}>Success Rate</span><span style={styles.statValue}>{analytics?.compatibility_rate ?? 0}%</span></div>
+                <div style={styles.statCard}><span style={styles.statLabel}>Average Farm Score</span><span style={styles.statValue}>{analytics?.average_score ?? 0}%</span></div>
               </div>
+              
               <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Performance Trend Analysis</h3>
-                <div style={{ height: "240px", width: "100%", display: "flex", alignItems: "flex-end", gap: "12px", padding: "20px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                  {analytics?.time_series?.scores && analytics.time_series.scores.length > 0 ? (
-                    analytics.time_series.scores.map((score, i) => (
-                      <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
-                        <div 
-                          style={{ 
-                            width: "100%", 
-                            height: `${Math.max(5, score)}%`, 
-                            backgroundColor: "#10b981", 
-                            borderRadius: "6px 6px 0 0", 
-                            opacity: 0.4 + (score / 150),
-                            transition: "height 0.5s ease"
-                          }} 
-                          title={`Score: ${score}%`}
-                        />
-                        <span style={{ fontSize: "10px", fontWeight: "800", color: "#64748b" }}>
-                          {analytics.time_series.labels && analytics.time_series.labels[i] ? analytics.time_series.labels[i] : '---'}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", color: "#64748b", fontWeight: "600" }}>
-                      System scanning for historical data... (Run an assessment to initialize)
-                    </div>
-                  )}
+                <h3 style={styles.cardTitle}>Farm Summary & Tips</h3>
+                <div style={{ padding: "16px", borderRadius: "12px", background: "rgba(16, 185, 129, 0.05)", border: "1px solid rgba(16, 185, 129, 0.1)" }}>
+                   <p style={{ color: "#10b981", fontWeight: "800", fontSize: "14px", marginBottom: "8px" }}>💡 Pro Tip for your Farm</p>
+                   <p style={{ color: "#94a3b8", fontWeight: "600", fontSize: "15px", lineHeight: "1.6" }}>
+                     Based on your last {analytics?.total_analyses ?? 0} tests, your farm is doing well. To get even better results, make sure to check your soil moisture regularly. Most crops grow best when the soil is not too dry and not too wet.
+                   </p>
                 </div>
-                <p style={{ color: "#64748b", fontWeight: "600", fontSize: "14px", marginTop: "20px" }}>
-                  The Intelligence Engine is monitoring your strategic performance. Once data thresholds are met, this visualization will provide predictive yield insights.
-                </p>
               </div>
             </div>
           )}
@@ -514,3 +492,4 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
