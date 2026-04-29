@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { GoogleLogin } from "@react-oauth/google";
+import { translations } from "../../utils/translations";
 
-export default function AuthScreen({ setToken, setCurrentUser }) {
+export default function AuthScreen({ setToken, setCurrentUser, language, setLanguage }) {
+  const t = (key) => translations[language]?.[key] || translations.en[key];
   const [isLogin, setIsLogin] = useState(true);
   const [soilTypes, setSoilTypes] = useState(["Loamy", "Sandy", "Clay"]);
   const [error, setError] = useState("");
@@ -110,6 +112,28 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
 
   return (
     <div style={styles.container}>
+      {/* Language Switcher Overlay */}
+      <div style={{ position: "fixed", top: "20px", right: "20px", display: "flex", gap: "10px", zIndex: 100 }}>
+        {["en", "hi", "te"].map(l => (
+          <button 
+            key={l}
+            onClick={() => setLanguage(l)}
+            style={{
+              padding: "8px 12px",
+              backgroundColor: language === l ? "#10b981" : "#0f172a",
+              color: "#fff",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "6px",
+              fontSize: "12px",
+              fontWeight: "700",
+              cursor: "pointer"
+            }}
+          >
+            {l === "en" ? "English" : l === "hi" ? "हिन्दी" : "తెలుగు"}
+          </button>
+        ))}
+      </div>
+
       <div style={styles.loginCard}>
         <div style={styles.brandSection}>
           <div style={styles.logo}>
@@ -117,15 +141,15 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
               AP
             </div>
           </div>
-          <h1 style={styles.brandName}>FarmAdvisor <span style={{ color: "#10b981" }}>Pro</span></h1>
-          <p style={styles.brandTagline}>Enterprise Governance Cloud</p>
+          <h1 style={styles.brandName}>{t('login_title')} <span style={{ color: "#10b981" }}>Pro</span></h1>
+          <p style={styles.brandTagline}>{t('tagline')}</p>
         </div>
 
         {error && <div style={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Corporate Email</label>
+            <label style={styles.label}>{t('corp_email')}</label>
             <input
               style={styles.input}
               type="email"
@@ -137,7 +161,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Access Key</label>
+            <label style={styles.label}>{t('access_key')}</label>
             <input
               style={styles.input}
               type="password"
@@ -151,7 +175,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
           {!isLogin && (
             <>
               <div style={styles.inputGroup}>
-                <label style={styles.label}>Full Name</label>
+                <label style={styles.label}>{t('full_name')}</label>
                 <input
                   style={styles.input}
                   type="text"
@@ -163,7 +187,7 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
               </div>
 
               <div style={styles.inputGroup}>
-                <label style={styles.label}>Soil Specification</label>
+                <label style={styles.label}>{t('soil_spec')}</label>
                 <select
                   style={styles.input}
                   value={formData.soil_type}
@@ -179,13 +203,13 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
           )}
 
           <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Authenticating..." : (isLogin ? "Sign In" : "Request Access")}
+            {loading ? "Authenticating..." : (isLogin ? t('signin_btn') : t('req_access_btn'))}
           </button>
         </form>
 
         <div style={styles.divider}>
           <div style={styles.line} />
-          <span style={styles.dividerText}>OR CONTINUE WITH</span>
+          <span style={styles.dividerText}>{t('or_continue')}</span>
           <div style={styles.line} />
         </div>
 
@@ -201,15 +225,15 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         </div>
 
         <p style={styles.footerText}>
-          {isLogin ? "New to the platform?" : "Already have access?"}
+          {isLogin ? t('new_platform') : t('already_access')}
           <button style={styles.switchButton} onClick={switchMode} disabled={loading}>
-            {isLogin ? "Request an Account" : "Sign In Here"}
+            {isLogin ? t('req_account') : t('signin_here')}
           </button>
         </p>
       </div>
 
       <p style={styles.legalText}>
-        © 2026 FarmAdvisor Pro. Strategic Governance Node. Secure & Confidential.
+        © 2026 {t('brand')}. {t('legal')}
       </p>
     </div>
   );
@@ -351,3 +375,4 @@ const styles = {
     letterSpacing: "0.5px"
   }
 };
+
