@@ -1,34 +1,3 @@
-
-
-
-
-
-
-
-
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import datetime
-import os
-import logging
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# ==================== CREATE APP ====================
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key')
-
-# ==================== CORS - WIDE OPEN FOR TESTING ====================
-# This allows ALL origins - once working, restrict it
-CORS(app, origins="*", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-     allow_headers=["*"], supports_credentials=True)
-
 # ==================== IMPORT BLUEPRINTS ====================
 from routes.auth_routes import auth_bp
 from routes.history_routes import history_bp
@@ -155,3 +124,4 @@ logger.info("Keep-alive background thread started.")
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+```
