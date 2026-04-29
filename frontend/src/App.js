@@ -7,6 +7,12 @@ function App() {
   const [token, setToken] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [language, setLanguage] = useState(localStorage.getItem("lang") || "en");
+
+  const updateLanguage = (lang) => {
+    setLanguage(lang);
+    localStorage.setItem("lang", lang);
+  };
 
   // Load token from localStorage on app start
   useEffect(() => {
@@ -83,6 +89,8 @@ function App() {
       <AuthScreen
         setToken={setToken}
         setCurrentUser={setCurrentUser}
+        language={language}
+        setLanguage={updateLanguage}
       />
     );
   }
@@ -95,8 +103,11 @@ function App() {
       setToken={setToken}
       currentUser={currentUser}
       setCurrentUser={setCurrentUser}
+      language={language}
+      setLanguage={updateLanguage}
     />
   );
 }
 
 export default App;
+
