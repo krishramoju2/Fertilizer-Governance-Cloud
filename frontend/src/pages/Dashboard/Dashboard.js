@@ -384,226 +384,236 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     <div style={styles.app}>
       {renderSidebar()}
       
-      <div style={{ ...styles.mainContent, position: "relative" }} ref={scrollRef}>
-        {renderParallax()}
-        {renderTopBar()}
+      <div style={{ flex: 1, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        {/* Fixed Parallax Background (constrained to main area) */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
+          {renderParallax()}
+        </div>
 
-        <div style={styles.contentArea}>
-          {message.text && (
-            <div style={{ position: "sticky", top: "20px", zIndex: 1000, marginBottom: "32px", padding: "16px", borderRadius: "12px", background: message.type === 'error' ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.1)", color: message.type === 'error' ? "#f87171" : "#4ade80", border: `1px solid ${message.type === 'error' ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)"}`, fontWeight: "600", fontSize: "14px" }}>
-              {message.text}
-            </div>
-          )}
+        {/* Scrollable Content Layer */}
+        <div 
+          style={{ ...styles.mainContent, position: "relative", zIndex: 1, background: "transparent" }} 
+          ref={scrollRef}
+        >
+          {renderTopBar()}
 
-          {/* ==================== SECTION: HOME ==================== */}
-          <section id="section-menu" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
-            <h1 style={styles.pageTitle}>Welcome to Your Farm Dashboard</h1>
-            <p style={styles.pageSubtitle}>See how your farm is performing today.</p>
-            <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
-              <div style={styles.statsGrid}>
-                <div style={styles.statCard}><span style={styles.statLabel}>Operations Logged</span><span style={styles.statValue}>{history.length}</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Mean Compatibility</span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Avg Yield Potential</span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>System Integrity</span><span style={styles.statValue}>100%</span></div>
+          <div style={styles.contentArea}>
+            {message.text && (
+              <div style={{ position: "sticky", top: "20px", zIndex: 1000, marginBottom: "32px", padding: "16px", borderRadius: "12px", background: message.type === 'error' ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.1)", color: message.type === 'error' ? "#f87171" : "#4ade80", border: `1px solid ${message.type === 'error' ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)"}`, fontWeight: "600", fontSize: "14px" }}>
+                {message.text}
               </div>
-              <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Recent Activity Log</h3>
-                <div style={styles.tableContainer}>
-                  <table style={styles.table}>
-                    <thead>
-                      <tr>
-                        <th style={styles.th}>Date</th>
-                        <th style={styles.th}>Crop Profile</th>
-                        <th style={styles.th}>Soil Spec</th>
-                        <th style={styles.th}>Result</th>
-                        <th style={styles.th}>Confidence</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {history.slice(0, 5).map((item, i) => (
-                        <tr key={i}>
-                          <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
-                          <td style={styles.td}>{item.input_data?.Crop_Type}</td>
-                          <td style={styles.td}>{item.input_data?.Soil_Type}</td>
-                          <td style={styles.td}>{item.result?.overall_compatibility}</td>
-                          <td style={styles.td}>{item.result?.overall_score}%</td>
+            )}
+
+            {/* ==================== SECTION: HOME ==================== */}
+            <section id="section-menu" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+              <h1 style={styles.pageTitle}>Welcome to Your Farm Dashboard</h1>
+              <p style={styles.pageSubtitle}>See how your farm is performing today.</p>
+              <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
+                <div style={styles.statsGrid}>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Operations Logged</span><span style={styles.statValue}>{history.length}</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Mean Compatibility</span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Avg Yield Potential</span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>System Integrity</span><span style={styles.statValue}>100%</span></div>
+                </div>
+                <div style={styles.card}>
+                  <h3 style={styles.cardTitle}>Recent Activity Log</h3>
+                  <div style={styles.tableContainer}>
+                    <table style={styles.table}>
+                      <thead>
+                        <tr>
+                          <th style={styles.th}>Date</th>
+                          <th style={styles.th}>Crop Profile</th>
+                          <th style={styles.th}>Soil Spec</th>
+                          <th style={styles.th}>Result</th>
+                          <th style={styles.th}>Confidence</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ==================== SECTION: TEST ==================== */}
-          <section id="section-analysis" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
-            <h1 style={styles.pageTitle}>Check Soil & Fertilizer</h1>
-            <p style={styles.pageSubtitle}>Fill in the details below to see if your fertilizer matches your soil.</p>
-            <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
-              <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Enter Farm Details</h3>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Temperature (°C)</label><input type="number" style={styles.input} value={inputs.Temperature} onChange={(e) => setInputs({ ...inputs, Temperature: e.target.value })} /></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Moisture (%)</label><input type="number" style={styles.input} value={inputs.Moisture} onChange={(e) => setInputs({ ...inputs, Moisture: e.target.value })} /></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Soil Type</label><select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>{soilTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Crop Type</label><select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>{cropTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Fertilizer</label><select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>{fertilizerNames.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                  <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Quantity (kg/ha)</label><input type="number" style={styles.input} value={inputs.Fertilizer_Quantity} onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: e.target.value })} /></div>
-                </div>
-                <button style={{ ...styles.button, marginTop: "32px", width: "100%" }} onClick={handleAnalyze} disabled={loading}>{loading ? "Checking..." : "Check Compatibility"}</button>
-              </div>
-
-              <div>
-                {result ? (
-                  <div style={styles.resultCard}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <h3 style={{ ...styles.cardTitle, marginBottom: 0 }}>Assessment Output</h3>
-                      <span style={styles.scoreBadge}>{result.overall_score}% Confidence</span>
-                    </div>
-                    <p style={{ fontSize: "20px", fontWeight: "800", color: "#10b981", margin: 0 }}>{result.overall_compatibility}</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                      {result.suggestions?.map((s, i) => (
-                        <div key={i} style={{ padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "8px", fontSize: "13px", borderLeft: "4px solid #10b981", fontWeight: "600", color: "#cbd5e1" }}>
-                          • {s}
-                        </div>
-                      ))}
-                    </div>
-                    <button style={styles.secondaryButton} onClick={() => generatePDF()}>Export Assessment PDF</button>
-                  </div>
-                ) : (
-                  <div style={{ ...styles.card, textAlign: "center", padding: "80px 20px" }}>
-                    <div style={{ fontSize: "40px", marginBottom: "16px" }}>🔍</div>
-                    <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>System Idle.<br />Run a test to see results here.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {/* ==================== SECTION: ML ==================== */}
-          <section id="section-ml" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
-            <h1 style={styles.pageTitle}>Smart Crop Predictions</h1>
-            <p style={styles.pageSubtitle}>Advanced predictions to help you choose the right crop.</p>
-            <div style={{ marginTop: "40px", ...styles.card }}>
-              <MLModel />
-            </div>
-          </section>
-
-          {/* ==================== SECTION: REPORTS ==================== */}
-          <section id="section-analytics" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
-            <h1 style={styles.pageTitle}>Your Farm Reports</h1>
-            <p style={styles.pageSubtitle}>Summary of all your past tests and farm health.</p>
-            <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
-              <div style={styles.statsGrid}>
-                <div style={styles.statCard}><span style={styles.statLabel}>Total Tests Done</span><span style={styles.statValue}>{analytics?.total_analyses ?? 0}</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Success Rate</span><span style={styles.statValue}>{analytics?.compatibility_rate ?? 0}%</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Average Farm Score</span><span style={styles.statValue}>{analytics?.average_score ?? 0}%</span></div>
-              </div>
-              
-              <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Farm Intelligence Summary</h3>
-                <div style={{ padding: "24px", borderRadius: "12px", background: "rgba(16, 185, 129, 0.05)", border: "1px solid rgba(16, 185, 129, 0.1)" }}>
-                   <p style={{ color: "#10b981", fontWeight: "900", fontSize: "14px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>Personalized Advice (Last 20 Sessions)</p>
-                   <p style={{ color: "#f1f5f9", fontWeight: "600", fontSize: "18px", lineHeight: "1.6", margin: 0 }}>
-                     {getPersonalizedTip()}
-                   </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ==================== SECTION: CHAT ==================== */}
-          <section id="section-chat" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
-            <h1 style={styles.pageTitle}>Talk to AI Farm Expert</h1>
-            <p style={styles.pageSubtitle}>Ask any question about farming or fertilizers.</p>
-            <div style={{ marginTop: "40px" }}>
-              <Chatbot />
-            </div>
-          </section>
-
-          {/* ==================== SECTION: ADMIN ==================== */}
-          {currentUser?.is_admin && (
-            <section id="section-admin" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
-              <h1 style={styles.pageTitle}>Admin Console</h1>
-              <p style={styles.pageSubtitle}>Manage users and farm settings.</p>
-              <div style={{ marginTop: "40px", ...styles.card }}>
-                 <div style={{ display: "flex", gap: "12px", marginBottom: "32px" }}>
-                    {['soil', 'crop', 'fertilizer', 'users'].map(type => (
-                      <button 
-                        key={type} 
-                        onClick={() => setAdminManageType(type)}
-                        style={{ ...styles.secondaryButton, padding: "10px 16px", fontSize: "12px", backgroundColor: adminManageType === type ? "rgba(16, 185, 129, 0.1)" : "transparent", borderColor: adminManageType === type ? "#10b981" : "rgba(255,255,255,0.1)", color: adminManageType === type ? "#10b981" : "#fff" }}
-                      >
-                        {type.toUpperCase()} MANAGEMENT
-                      </button>
-                    ))}
-                 </div>
-                 
-                 {adminManageType === 'users' ? (
-                   <div style={{ display: "grid", gridTemplateColumns: selectedUserId ? "1fr 300px" : "1fr", gap: "24px" }}>
-                     <div style={styles.tableContainer}>
-                        <table style={styles.table}>
-                          <thead>
-                            <tr>
-                              <th style={styles.th}>Name</th>
-                              <th style={styles.th}>Email</th>
-                              <th style={styles.th}>Access</th>
-                              <th style={styles.th}>Intel</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {users.map((u, i) => (
-                              <tr key={i} style={{ background: selectedUserId === u._id ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
-                                <td style={styles.td}>{u.name}</td>
-                                <td style={styles.td}>{u.email}</td>
-                                <td style={styles.td}>{u.is_admin ? 'Admin' : 'User'}</td>
-                                <td style={styles.td}><button style={{ color: "#10b981", background: "none", border: "none", fontWeight: "800", cursor: "pointer" }} onClick={() => handleSelectUser(u._id)}>VIEW</button></td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                     </div>
-                     {selectedUserId && (
-                       <div style={{ ...styles.card, background: "rgba(255,255,255,0.02)" }}>
-                          <h4 style={{ ...styles.cardTitle, fontSize: "14px" }}>User Intelligence</h4>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                            <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Tests:</span> {userAnalytics?.total_analyses || 0}</div>
-                            <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Compatibility:</span> {userAnalytics?.compatibility_rate || 0}%</div>
-                            <div style={{ fontSize: "12px", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "12px", fontWeight: "700" }}>Recent History</div>
-                            {userHistory.slice(0, 3).map((h, i) => (
-                              <div key={i} style={{ fontSize: "11px", padding: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
-                                {h.crop_type} - {h.score}%
-                              </div>
-                            ))}
-                          </div>
-                       </div>
-                     )}
-                   </div>
-                 ) : (
-                   <div>
-                     <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
-                       <input 
-                         style={styles.input} 
-                         placeholder={`Enter new ${adminManageType} record...`} 
-                         value={newItem} 
-                         onChange={(e) => setNewItem(e.target.value)} 
-                       />
-                       <button style={styles.button} onClick={handleAddItem}>Add Record</button>
-                     </div>
-                     <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                        {(adminManageType === 'soil' ? soilTypes : adminManageType === 'crop' ? cropTypes : fertilizerNames).map(item => (
-                          <div key={item} style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", borderRadius: "100px", fontSize: "12px", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: "8px" }}>
-                            {item}
-                            <button onClick={() => handleRemoveItem(item)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontWeight: "800" }}>×</button>
-                          </div>
+                      </thead>
+                      <tbody>
+                        {history.slice(0, 5).map((item, i) => (
+                          <tr key={i}>
+                            <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
+                            <td style={styles.td}>{item.input_data?.Crop_Type}</td>
+                            <td style={styles.td}>{item.input_data?.Soil_Type}</td>
+                            <td style={styles.td}>{item.result?.overall_compatibility}</td>
+                            <td style={styles.td}>{item.result?.overall_score}%</td>
+                          </tr>
                         ))}
-                     </div>
-                   </div>
-                 )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </section>
-          )}
+
+            {/* ==================== SECTION: TEST ==================== */}
+            <section id="section-analysis" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+              <h1 style={styles.pageTitle}>Check Soil & Fertilizer</h1>
+              <p style={styles.pageSubtitle}>Fill in the details below to see if your fertilizer matches your soil.</p>
+              <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
+                <div style={styles.card}>
+                  <h3 style={styles.cardTitle}>Enter Farm Details</h3>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Temperature (°C)</label><input type="number" style={styles.input} value={inputs.Temperature} onChange={(e) => setInputs({ ...inputs, Temperature: e.target.value })} /></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Moisture (%)</label><input type="number" style={styles.input} value={inputs.Moisture} onChange={(e) => setInputs({ ...inputs, Moisture: e.target.value })} /></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Soil Type</label><select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>{soilTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Crop Type</label><select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>{cropTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Select Fertilizer</label><select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>{fertilizerNames.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}>Quantity (kg/ha)</label><input type="number" style={styles.input} value={inputs.Fertilizer_Quantity} onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: e.target.value })} /></div>
+                  </div>
+                  <button style={{ ...styles.button, marginTop: "32px", width: "100%" }} onClick={handleAnalyze} disabled={loading}>{loading ? "Checking..." : "Check Compatibility"}</button>
+                </div>
+
+                <div>
+                  {result ? (
+                    <div style={styles.resultCard}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <h3 style={{ ...styles.cardTitle, marginBottom: 0 }}>Assessment Output</h3>
+                        <span style={styles.scoreBadge}>{result.overall_score}% Confidence</span>
+                      </div>
+                      <p style={{ fontSize: "20px", fontWeight: "800", color: "#10b981", margin: 0 }}>{result.overall_compatibility}</p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        {result.suggestions?.map((s, i) => (
+                          <div key={i} style={{ padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "8px", fontSize: "13px", borderLeft: "4px solid #10b981", fontWeight: "600", color: "#cbd5e1" }}>
+                            • {s}
+                          </div>
+                        ))}
+                      </div>
+                      <button style={styles.secondaryButton} onClick={() => generatePDF()}>Export Assessment PDF</button>
+                    </div>
+                  ) : (
+                    <div style={{ ...styles.card, textAlign: "center", padding: "80px 20px" }}>
+                      <div style={{ fontSize: "40px", marginBottom: "16px" }}>🔍</div>
+                      <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>System Idle.<br />Run a test to see results here.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* ==================== SECTION: ML ==================== */}
+            <section id="section-ml" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+              <h1 style={styles.pageTitle}>Smart Crop Predictions</h1>
+              <p style={styles.pageSubtitle}>Advanced predictions to help you choose the right crop.</p>
+              <div style={{ marginTop: "40px", ...styles.card }}>
+                <MLModel />
+              </div>
+            </section>
+
+            {/* ==================== SECTION: REPORTS ==================== */}
+            <section id="section-analytics" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+              <h1 style={styles.pageTitle}>Your Farm Reports</h1>
+              <p style={styles.pageSubtitle}>Summary of all your past tests and farm health.</p>
+              <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
+                <div style={styles.statsGrid}>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Total Tests Done</span><span style={styles.statValue}>{analytics?.total_analyses ?? 0}</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Success Rate</span><span style={styles.statValue}>{analytics?.compatibility_rate ?? 0}%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Average Farm Score</span><span style={styles.statValue}>{analytics?.average_score ?? 0}%</span></div>
+                </div>
+                
+                <div style={styles.card}>
+                  <h3 style={styles.cardTitle}>Farm Intelligence Summary</h3>
+                  <div style={{ padding: "24px", borderRadius: "12px", background: "rgba(16, 185, 129, 0.05)", border: "1px solid rgba(16, 185, 129, 0.1)" }}>
+                     <p style={{ color: "#10b981", fontWeight: "900", fontSize: "14px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>Personalized Advice (Last 20 Sessions)</p>
+                     <p style={{ color: "#f1f5f9", fontWeight: "600", fontSize: "18px", lineHeight: "1.6", margin: 0 }}>
+                       {getPersonalizedTip()}
+                     </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ==================== SECTION: CHAT ==================== */}
+            <section id="section-chat" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+              <h1 style={styles.pageTitle}>Talk to AI Farm Expert</h1>
+              <p style={styles.pageSubtitle}>Ask any question about farming or fertilizers.</p>
+              <div style={{ marginTop: "40px" }}>
+                <Chatbot />
+              </div>
+            </section>
+
+            {/* ==================== SECTION: ADMIN ==================== */}
+            {currentUser?.is_admin && (
+              <section id="section-admin" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+                <h1 style={styles.pageTitle}>Admin Console</h1>
+                <p style={styles.pageSubtitle}>Manage users and farm settings.</p>
+                <div style={{ marginTop: "40px", ...styles.card }}>
+                   <div style={{ display: "flex", gap: "12px", marginBottom: "32px" }}>
+                      {['soil', 'crop', 'fertilizer', 'users'].map(type => (
+                        <button 
+                          key={type} 
+                          onClick={() => setAdminManageType(type)}
+                          style={{ ...styles.secondaryButton, padding: "10px 16px", fontSize: "12px", backgroundColor: adminManageType === type ? "rgba(16, 185, 129, 0.1)" : "transparent", borderColor: adminManageType === type ? "#10b981" : "rgba(255,255,255,0.1)", color: adminManageType === type ? "#10b981" : "#fff" }}
+                        >
+                          {type.toUpperCase()} MANAGEMENT
+                        </button>
+                      ))}
+                   </div>
+                   
+                   {adminManageType === 'users' ? (
+                     <div style={{ display: "grid", gridTemplateColumns: selectedUserId ? "1fr 300px" : "1fr", gap: "24px" }}>
+                       <div style={styles.tableContainer}>
+                          <table style={styles.table}>
+                            <thead>
+                              <tr>
+                                <th style={styles.th}>Name</th>
+                                <th style={styles.th}>Email</th>
+                                <th style={styles.th}>Access</th>
+                                <th style={styles.th}>Intel</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {users.map((u, i) => (
+                                <tr key={i} style={{ background: selectedUserId === u._id ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
+                                  <td style={styles.td}>{u.name}</td>
+                                  <td style={styles.td}>{u.email}</td>
+                                  <td style={styles.td}>{u.is_admin ? 'Admin' : 'User'}</td>
+                                  <td style={styles.td}><button style={{ color: "#10b981", background: "none", border: "none", fontWeight: "800", cursor: "pointer" }} onClick={() => handleSelectUser(u._id)}>VIEW</button></td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                       </div>
+                       {selectedUserId && (
+                         <div style={{ ...styles.card, background: "rgba(255,255,255,0.02)" }}>
+                            <h4 style={{ ...styles.cardTitle, fontSize: "14px" }}>User Intelligence</h4>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                              <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Tests:</span> {userAnalytics?.total_analyses || 0}</div>
+                              <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Compatibility:</span> {userAnalytics?.compatibility_rate || 0}%</div>
+                              <div style={{ fontSize: "12px", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "12px", fontWeight: "700" }}>Recent History</div>
+                              {userHistory.slice(0, 3).map((h, i) => (
+                                <div key={i} style={{ fontSize: "11px", padding: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                                  {h.crop_type} - {h.score}%
+                                </div>
+                              ))}
+                            </div>
+                         </div>
+                       )}
+                     </div>
+                   ) : (
+                     <div>
+                       <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
+                         <input 
+                           style={styles.input} 
+                           placeholder={`Enter new ${adminManageType} record...`} 
+                           value={newItem} 
+                           onChange={(e) => setNewItem(e.target.value)} 
+                         />
+                         <button style={styles.button} onClick={handleAddItem}>Add Record</button>
+                       </div>
+                       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                          {(adminManageType === 'soil' ? soilTypes : adminManageType === 'crop' ? cropTypes : fertilizerNames).map(item => (
+                            <div key={item} style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", borderRadius: "100px", fontSize: "12px", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: "8px" }}>
+                              {item}
+                              <button onClick={() => handleRemoveItem(item)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontWeight: "800" }}>×</button>
+                            </div>
+                          ))}
+                       </div>
+                     </div>
+                   )}
+                </div>
+              </section>
+            )}
+          </div>
         </div>
       </div>
     </div>
