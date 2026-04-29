@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { GoogleLogin } from "@react-oauth/google";
-import Galaxy from "../../components/Auth/Galaxy";
 
-// Import your 4 images from the same folder (Auth folder)
-import agritechImg from "./agritech.png";
-import chatbotImg from "./chatbot.png";
-import harvestImg from "./harvest.png";
-import innovationImg from "./innovation.png";
+// Placeholder for the corporate hero image - User should update this path if needed
+const heroImg = "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=2070";
 
 export default function AuthScreen({ setToken, setCurrentUser }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,36 +21,21 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
     primary_crops: []
   });
 
-  // Reset error when switching between Login/Register
   useEffect(() => {
     setError("");
   }, [isLogin]);
 
-  // Fetch soil types from backend
   useEffect(() => {
-    let retries = 0;
-    const maxRetries = 3;
-
     const fetchSoilTypes = async () => {
       try {
         const res = await api.get("/config/soil-types");
         if (res.data.success && res.data.data && res.data.data.length > 0) {
           setSoilTypes(res.data.data);
-        } else {
-          console.warn("No soil types from API, using fallback");
         }
       } catch (err) {
         console.error("Soil types fetch failed:", err);
-
-        if (retries < maxRetries) {
-          retries++;
-          setTimeout(fetchSoilTypes, 2000);
-        } else {
-          console.log("Using fallback soil types after retries exhausted");
-        }
       }
     };
-
     fetchSoilTypes();
   }, []);
 
@@ -86,7 +67,6 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         setError(res.data.message || "Authentication failed");
       }
     } catch (err) {
-      console.error("Auth error:", err);
       setError(err.response?.data?.message || err.message || "Authentication failed");
     } finally {
       setLoading(false);
@@ -116,7 +96,6 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
         setError(response.data.message || "Google login failed");
       }
     } catch (err) {
-      console.error("Google login error:", err);
       setError(err.response?.data?.message || "Google login failed");
     } finally {
       setLoading(false);
@@ -129,315 +108,300 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
 
   const switchMode = () => {
     setIsLogin(!isLogin);
-    setFormData({
-      ...formData,
-      password: "",
-      name: "",
-    });
+    setFormData({ ...formData, password: "", name: "" });
   };
 
   return (
     <div style={styles.container}>
-      {/* Galaxy Animation Background (visible through images) */}
-      <div style={styles.bgLayer}>
-        <Galaxy
-          mouseRepulsion
-          mouseInteraction
-          density={1}
-          glowIntensity={0.3}
-          saturation={0}
-          hueShift={140}
-          twinkleIntensity={0.3}
-          rotationSpeed={0.1}
-          repulsionStrength={2}
-          autoCenterRepulsion={0}
-          starSpeed={0.5}
-          speed={1}
-        />
+      {/* Hero Background with mesh overlay */}
+      <div style={styles.heroBg}>
+        <div style={styles.meshOverlay} />
       </div>
 
-      {/* Semi-transparent overlay to make card readable while keeping galaxy visible */}
-      <div style={styles.overlay} />
+      <div style={styles.content}>
+        <div style={styles.leftSide}>
+          <h1 style={styles.brandTitle}>FarmAdvisor <span style={{color: '#4ade80'}}>Pro</span></h1>
+          <p style={styles.brandSubtitle}>
+            Precision Governance for Sustainable Agriculture. <br />
+            Empowering farmers with data-driven decision intelligence.
+          </p>
+          <div style={styles.statsContainer}>
+            <div style={styles.statItem}>
+              <span style={styles.statValue}>98%</span>
+              <span style={styles.statLabel}>Prediction Accuracy</span>
+            </div>
+            <div style={styles.statItem}>
+              <span style={styles.statValue}>10k+</span>
+              <span style={styles.statLabel}>Farmers Empowered</span>
+            </div>
+          </div>
+        </div>
 
-      {/* ===== 4 CORNER IMAGES ===== */}
-      {/* Top Left */}
-      <div style={styles.cornerImageTL}>
-        <img src={agritechImg} alt="Agritech" style={styles.decoImage} />
-      </div>
+        <div style={styles.rightSide}>
+          <div style={styles.card}>
+            <h2 style={styles.title}>{isLogin ? "Welcome Back" : "Join the Network"}</h2>
+            <p style={styles.subtitle}>{isLogin ? "Access your strategic dashboard" : "Register your farm for precision insights"}</p>
 
-      {/* Top Right */}
-      <div style={styles.cornerImageTR}>
-        <img src={chatbotImg} alt="Chatbot" style={styles.decoImage} />
-      </div>
+            {error && <p style={styles.error}>{error}</p>}
 
-      {/* Bottom Left */}
-      <div style={styles.cornerImageBL}>
-        <img src={harvestImg} alt="Harvest" style={styles.decoImage} />
-      </div>
-
-      {/* Bottom Right */}
-      <div style={styles.cornerImageBR}>
-        <img src={innovationImg} alt="Innovation" style={styles.decoImage} />
-      </div>
-
-      {/* Login/Register Card */}
-      <div style={styles.card}>
-        <h2 style={styles.title}>{isLogin ? "Login" : "Register"}</h2>
-
-        {error && <p style={styles.error}>{error}</p>}
-
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <input
-            style={styles.input}
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-          />
-
-          <input
-            style={styles.input}
-            type="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            required
-          />
-
-          {!isLogin && (
-            <>
+            <form onSubmit={handleSubmit} style={styles.form}>
               <input
                 style={styles.input}
-                type="text"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                type="email"
+                placeholder="Corporate Email Address"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
 
-              <select
+              <input
                 style={styles.input}
-                value={formData.soil_type}
-                onChange={(e) => setFormData({ ...formData, soil_type: e.target.value })}
+                type="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
-              >
-                {soilTypes && soilTypes.length > 0 ? (
-                  soilTypes.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))
-                ) : (
-                  <option value="" disabled>Loading soil types...</option>
-                )}
-              </select>
-            </>
-          )}
+              />
 
-          <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Processing..." : (isLogin ? "Login" : "Register")}
-          </button>
-        </form>
+              {!isLogin && (
+                <>
+                  <input
+                    style={styles.input}
+                    type="text"
+                    placeholder="Full Professional Name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
 
-        <div style={styles.divider}>OR</div>
+                  <select
+                    style={styles.input}
+                    value={formData.soil_type}
+                    onChange={(e) => setFormData({ ...formData, soil_type: e.target.value })}
+                    required
+                  >
+                    {soilTypes.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </>
+              )}
 
-        <div style={styles.googleWrapper}>
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-            useOneTap={false}
-          />
+              <button type="submit" style={styles.button} disabled={loading}>
+                {loading ? "Processing..." : (isLogin ? "Sign In" : "Get Started")}
+              </button>
+            </form>
+
+            <div style={styles.divider}>
+              <span style={styles.dividerLine}></span>
+              <span style={styles.dividerText}>SECURE ACCESS</span>
+              <span style={styles.dividerLine}></span>
+            </div>
+
+            <div style={styles.googleWrapper}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap={false}
+                theme="filled_blue"
+                shape="pill"
+              />
+            </div>
+
+            <p style={styles.switchText}>
+              {isLogin ? "Don't have an account?" : "Already part of the network?"}
+              <button style={styles.switchButton} onClick={switchMode} disabled={loading}>
+                {isLogin ? "Request Access" : "Sign In"}
+              </button>
+            </p>
+          </div>
         </div>
-
-        <button style={styles.switch} onClick={switchMode} disabled={loading}>
-          Switch to {isLogin ? "Register" : "Login"}
-        </button>
       </div>
+      
+      <footer style={styles.footer}>
+        © 2026 FarmAdvisor Governance Cloud. All Rights Reserved. Confidential & Proprietary.
+      </footer>
     </div>
   );
 }
 
-// Styles — UPDATED with larger corner images (170px)
 const styles = {
   container: {
     position: "relative",
+    width: "100%",
+    minHeight: "100vh",
+    backgroundColor: "#020617",
+    color: "#f8fafc",
+    fontFamily: "'Inter', sans-serif",
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    overflow: "hidden"
+    flexDirection: "column",
+    overflowX: "hidden"
   },
-
-  bgLayer: {
+  heroBg: {
     position: "absolute",
-    inset: 0,
-    zIndex: 0
-  },
-
-  overlay: {
-    position: "absolute",
-    inset: 0,
-    background: "radial-gradient(circle at 30% 20%, rgba(26,71,42,0.2), rgba(0,0,0,0.3))",
-    zIndex: 1
-  },
-
-  // ===== CORNER IMAGE STYLES — SIZE: 170px =====
-  cornerImageTL: {
-    position: "absolute",
-    top: "20px",
-    left: "20px",
-    zIndex: 2,
-    width: "225px",
-    height: "225px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  cornerImageTR: {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    zIndex: 2,
-    width: "225px",
-    height: "225px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  cornerImageBL: {
-    position: "absolute",
-    bottom: "20px",
-    left: "20px",
-    zIndex: 2,
-    width: "225px",
-    height: "225px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  cornerImageBR: {
-    position: "absolute",
-    bottom: "20px",
-    right: "20px",
-    zIndex: 2,
-    width: "225px",
-    height: "225px",
-    borderRadius: "15px",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-    background: "rgba(255,255,255,0.1)",
-    backdropFilter: "blur(4px)",
-    transition: "transform 0.3s ease"
-  },
-
-  decoImage: {
+    top: 0,
+    left: 0,
     width: "100%",
     height: "100%",
-    objectFit: "cover",
-    opacity: 0.85,
-    transition: "opacity 0.3s ease, transform 0.3s ease"
+    backgroundImage: `url(${heroImg})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    zIndex: 0,
+    opacity: 0.6
   },
-
-  card: {
+  meshOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: "radial-gradient(circle at 20% 30%, rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.95))",
+    zIndex: 1
+  },
+  content: {
     position: "relative",
     zIndex: 2,
-    background: "rgba(255,255,255,0.92)",
-    backdropFilter: "blur(10px)",
-    padding: "40px",
-    borderRadius: "15px",
-    width: "350px",
-    boxShadow: "0 8px 25px rgba(0,0,0,0.25)",
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 10%",
+    gap: "50px"
+  },
+  leftSide: {
+    maxWidth: "500px"
+  },
+  brandTitle: {
+    fontSize: "56px",
+    fontWeight: "900",
+    marginBottom: "20px",
+    letterSpacing: "-2px"
+  },
+  brandSubtitle: {
+    fontSize: "20px",
+    color: "#94a3b8",
+    lineHeight: "1.6",
+    marginBottom: "40px"
+  },
+  statsContainer: {
+    display: "flex",
+    gap: "40px"
+  },
+  statItem: {
+    display: "flex",
+    flexDirection: "column"
+  },
+  statValue: {
+    fontSize: "32px",
+    fontWeight: "800",
+    color: "#4ade80"
+  },
+  statLabel: {
+    fontSize: "12px",
+    color: "#64748b",
+    textTransform: "uppercase",
+    letterSpacing: "1px"
+  },
+  rightSide: {
+    width: "400px"
+  },
+  card: {
+    background: "rgba(15, 23, 42, 0.8)",
+    backdropFilter: "blur(20px)",
+    padding: "48px",
+    borderRadius: "24px",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
     textAlign: "center"
   },
-
   title: {
-    marginBottom: "20px",
-    color: "#1a472a",
-    fontSize: "24px",
-    fontWeight: "600"
+    fontSize: "28px",
+    fontWeight: "800",
+    marginBottom: "8px",
+    color: "#fff"
   },
-
+  subtitle: {
+    fontSize: "14px",
+    color: "#94a3b8",
+    marginBottom: "32px"
+  },
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "12px"
+    gap: "16px"
   },
-
   input: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "14px",
+    padding: "16px 20px",
+    borderRadius: "12px",
+    background: "rgba(2, 6, 23, 0.5)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    color: "#fff",
+    fontSize: "15px",
     outline: "none",
-    transition: "border-color 0.2s"
+    transition: "all 0.3s ease"
   },
-
   button: {
-    padding: "12px",
-    background: "linear-gradient(135deg, #2e7d32, #66bb6a)",
+    padding: "16px",
+    background: "linear-gradient(135deg, #10b981, #059669)",
     color: "white",
     border: "none",
-    borderRadius: "8px",
-    fontWeight: "600",
+    borderRadius: "12px",
+    fontWeight: "700",
+    fontSize: "16px",
     cursor: "pointer",
-    marginTop: "10px",
-    transition: "opacity 0.2s"
+    marginTop: "8px",
+    transition: "all 0.3s ease",
+    boxShadow: "0 10px 20px rgba(16, 185, 129, 0.2)"
   },
-
-  switch: {
-    marginTop: "15px",
-    background: "none",
-    border: "none",
-    color: "#2e7d32",
-    cursor: "pointer",
-    fontWeight: "500"
-  },
-
   divider: {
-    margin: "18px 0",
-    textAlign: "center",
-    color: "#777",
-    fontSize: "13px",
-    fontWeight: "500"
+    display: "flex",
+    alignItems: "center",
+    margin: "32px 0",
+    gap: "10px"
   },
-
+  dividerLine: {
+    flex: 1,
+    height: "1px",
+    background: "rgba(255, 255, 255, 0.1)"
+  },
+  dividerText: {
+    fontSize: "10px",
+    color: "#64748b",
+    fontWeight: "800",
+    letterSpacing: "2px"
+  },
   googleWrapper: {
     display: "flex",
     justifyContent: "center",
-    marginBottom: "10px"
+    marginBottom: "24px"
   },
-
-  error: {
-    color: "red",
-    marginBottom: "10px",
+  switchText: {
     fontSize: "14px",
-    background: "rgba(255,0,0,0.1)",
-    padding: "8px",
-    borderRadius: "6px"
+    color: "#94a3b8"
+  },
+  switchButton: {
+    background: "none",
+    border: "none",
+    color: "#4ade80",
+    cursor: "pointer",
+    fontWeight: "700",
+    marginLeft: "8px",
+    padding: 0
+  },
+  error: {
+    color: "#f87171",
+    background: "rgba(248, 113, 113, 0.1)",
+    padding: "12px",
+    borderRadius: "8px",
+    marginBottom: "20px",
+    fontSize: "14px",
+    border: "1px solid rgba(248, 113, 113, 0.2)"
+  },
+  footer: {
+    padding: "32px",
+    textAlign: "center",
+    fontSize: "12px",
+    color: "#475569",
+    borderTop: "1px solid rgba(255, 255, 255, 0.05)"
   }
 };
-
-// Add hover effect styles dynamically
-const styleSheet = document.createElement("style");
-styleSheet.textContent = `
-  .corner-image:hover {
-    transform: scale(1.05);
-  }
-  .corner-image img:hover {
-    opacity: 1;
-  }
-`;
-document.head.appendChild(styleSheet);
