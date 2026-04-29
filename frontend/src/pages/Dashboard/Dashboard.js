@@ -279,52 +279,76 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  const renderParallax = () => (
-    <div style={{ 
-      position: "sticky", 
-      top: 0, 
-      left: 0, 
-      width: "100%", 
-      height: "0", 
-      pointerEvents: "none", 
-      zIndex: 0, 
-      overflow: "visible" 
-    }}>
-      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100vh", overflow: "hidden" }}>
-        {/* Deep Background - Slowest */}
-        <motion.div style={{ y: y3, position: "absolute", top: "10%", left: "5%", width: "500px", height: "500px", borderRadius: "50%", filter: "blur(100px)", background: "rgba(16, 185, 129, 0.08)", boxShadow: "0 0 100px rgba(16, 185, 129, 0.05)" }} />
-        <motion.div style={{ y: y3, position: "absolute", top: "50%", left: "60%", width: "700px", height: "700px", borderRadius: "50%", filter: "blur(120px)", background: "rgba(59, 130, 246, 0.06)", boxShadow: "0 0 120px rgba(59, 130, 246, 0.03)" }} />
+  const renderParallax = () => {
+    // Distributed node configuration for a 5-section journey
+    const nodes = [
+      { top: "5%", left: "10%", size: "400px", color: "rgba(16, 185, 129, 0.07)", blur: "80px", speed: 0.1 },
+      { top: "15%", left: "70%", size: "300px", color: "rgba(59, 130, 246, 0.05)", blur: "60px", speed: 0.2 },
+      { top: "25%", left: "5%", size: "150px", color: "rgba(16, 185, 129, 0.1)", blur: "20px", speed: 0.4, rotate: true },
+      { top: "35%", left: "80%", size: "200px", color: "rgba(59, 130, 246, 0.08)", blur: "40px", speed: 0.15 },
+      { top: "45%", left: "15%", size: "500px", color: "rgba(16, 185, 129, 0.04)", blur: "100px", speed: 0.05 },
+      { top: "55%", left: "60%", size: "120px", color: "rgba(16, 185, 129, 0.15)", blur: "10px", speed: 0.5, rotate: true },
+      { top: "65%", left: "85%", size: "350px", color: "rgba(59, 130, 246, 0.06)", blur: "70px", speed: 0.12 },
+      { top: "75%", left: "10%", size: "250px", color: "rgba(16, 185, 129, 0.09)", blur: "30px", speed: 0.3 },
+      { top: "85%", left: "75%", size: "450px", color: "rgba(59, 130, 246, 0.03)", blur: "90px", speed: 0.08 },
+      { top: "92%", left: "20%", size: "180px", color: "rgba(16, 185, 129, 0.12)", blur: "15px", speed: 0.45, rotate: true },
+    ];
 
-        {/* Mid Ground - Interactive Nodes */}
-        <motion.div style={{ y: y1, rotate: rotate1, position: "absolute", top: "25%", left: "80%", width: "180px", height: "180px", border: "2px solid rgba(16, 185, 129, 0.2)", borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%", boxShadow: "inset 0 0 20px rgba(16, 185, 129, 0.1)" }} />
-        <motion.div style={{ y: y2, scale: scale1, position: "absolute", top: "40%", left: "10%", width: "250px", height: "250px", border: "2px solid rgba(59, 130, 246, 0.15)", borderRadius: "50% 50% 20% 80% / 25% 80% 20% 75%", boxShadow: "inset 0 0 30px rgba(59, 130, 246, 0.05)" }} />
-
-        {/* Foreground - Fastest & Sharpest */}
-        <motion.div style={{ y: y2, position: "absolute", top: "20%", left: "45%", width: "6px", height: "150px", background: "linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.4), transparent)", filter: "drop-shadow(0 0 10px rgba(16, 185, 129, 0.5))" }} />
-        <motion.div style={{ y: y1, position: "absolute", top: "75%", left: "25%", width: "120px", height: "120px", borderRadius: "24px", rotate: "45deg", border: "2px solid rgba(16, 185, 129, 0.3)", background: "rgba(16, 185, 129, 0.02)" }} />
+    return (
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }}>
+        {nodes.map((node, i) => {
+          // Calculate movement based on speed
+          // We use scrollYProgress (0 to 1) to move the node relative to its starting position
+          const moveY = useTransform(scrollYProgress, [0, 1], [0, -1000 * node.speed]);
+          const rotation = node.rotate ? rotate1 : 0;
+          
+          return (
+            <motion.div
+              key={i}
+              style={{
+                y: moveY,
+                rotate: rotation,
+                position: "absolute",
+                top: node.top,
+                left: node.left,
+                width: node.size,
+                height: node.size,
+                borderRadius: node.rotate ? "30% 70% 70% 30% / 30% 30% 70% 70%" : "50%",
+                background: node.color,
+                filter: `blur(${node.blur})`,
+                border: node.rotate ? `2px solid ${node.color.replace('0.', '0.2')}` : "none",
+                boxShadow: `0 0 40px ${node.color.replace('0.', '0.05')}`
+              }}
+            />
+          );
+        })}
         
-        {/* Floating Ambient Particles */}
-        {[...Array(8)].map((_, i) => (
+        {/* Constant Ambient Particles Field */}
+        {[...Array(15)].map((_, i) => (
           <motion.div
-            key={i}
-            animate={{ y: [0, -30, 0], x: [0, 10, 0], opacity: [0.2, 0.5, 0.2] }}
-            transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut" }}
+            key={`p-${i}`}
+            animate={{ 
+              y: [0, -40, 0], 
+              opacity: [0.1, 0.4, 0.1],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{ duration: 3 + (i % 5), repeat: Infinity, ease: "easeInOut" }}
             style={{
               position: "absolute",
-              top: `${10 + i * 12}%`,
-              left: `${5 + i * 12}%`,
-              width: "10px",
-              height: "10px",
+              top: `${(i * 7) % 100}%`,
+              left: `${(i * 13) % 100}%`,
+              width: "6px",
+              height: "6px",
               borderRadius: "50%",
               background: "#10b981",
-              boxShadow: "0 0 15px #10b981",
+              boxShadow: "0 0 12px #10b981",
               zIndex: 1
             }}
           />
         ))}
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderSidebar = () => {
     const links = [
@@ -384,17 +408,16 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     <div style={styles.app}>
       {renderSidebar()}
       
-      <div style={{ flex: 1, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        {/* Fixed Parallax Background (constrained to main area) */}
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
+      <div 
+        style={{ ...styles.mainContent, position: "relative", flex: 1, overflowY: "auto", background: "transparent" }} 
+        ref={scrollRef}
+      >
+        {/* The Parallax Field - Spans entire scrollable height */}
+        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
           {renderParallax()}
         </div>
 
-        {/* Scrollable Content Layer */}
-        <div 
-          style={{ ...styles.mainContent, position: "relative", zIndex: 1, background: "transparent" }} 
-          ref={scrollRef}
-        >
+        <div style={{ position: "relative", zIndex: 1 }}>
           {renderTopBar()}
 
           <div style={styles.contentArea}>
@@ -432,7 +455,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                         {history.slice(0, 5).map((item, i) => (
                           <tr key={i}>
                             <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
-                            <td style={styles.td}>{item.input_data?.Crop_Type}</td>
+                            <td style={td_style(item)}>{item.input_data?.Crop_Type}</td>
                             <td style={styles.td}>{item.input_data?.Soil_Type}</td>
                             <td style={styles.td}>{item.result?.overall_compatibility}</td>
                             <td style={styles.td}>{item.result?.overall_score}%</td>
@@ -577,7 +600,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                          <div style={{ ...styles.card, background: "rgba(255,255,255,0.02)" }}>
                             <h4 style={{ ...styles.cardTitle, fontSize: "14px" }}>User Intelligence</h4>
                             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                              <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Tests:</span> {userAnalytics?.total_analyses || 0}</div>
                               <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Compatibility:</span> {userAnalytics?.compatibility_rate || 0}%</div>
                               <div style={{ fontSize: "12px", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "12px", fontWeight: "700" }}>Recent History</div>
                               {userHistory.slice(0, 3).map((h, i) => (
@@ -619,5 +641,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     </div>
   );
 };
+
+const td_style = (item) => ({
+  padding: "16px",
+  fontSize: "14px",
+  color: (item.result?.overall_score || 0) > 70 ? "#10b981" : (item.result?.overall_score || 0) > 40 ? "#fbbf24" : "#f87171",
+  fontWeight: "700",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
+});
 
 export default Dashboard;
