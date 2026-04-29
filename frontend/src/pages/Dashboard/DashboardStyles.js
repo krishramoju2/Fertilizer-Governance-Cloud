@@ -1,394 +1,222 @@
+
 export const styles = {
   app: {
-    padding: "40px",
-    background: `
-      radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%)
-    `,
-    backgroundImage: `
-      radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px)
-    `,
-    backgroundSize: "32px 32px",
+    display: "flex",
     minHeight: "100vh",
-    fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-    position: "relative",
-    zIndex: 1,
+    backgroundColor: "#020617", // Deep Black/Navy
     color: "#f8fafc",
-    lineHeight: "1.5"
+    fontFamily: "'Inter', -apple-system, sans-serif",
+    overflow: "hidden"
   },
-  silkBackground: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100vw",
-    height: "100vh",
-    zIndex: -1,
-    pointerEvents: "none",
-    opacity: 0.1,
-    mixBlendMode: "screen",
-    filter: "blur(40px)"
-  },
-
-  rightPanel: {
+  sidebar: {
+    width: "280px",
+    backgroundColor: "#0f172a", // Solid Navy
+    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
     display: "flex",
     flexDirection: "column",
-    gap: "32px",
-    width: "100%",
-    minWidth: 0
+    padding: "32px 20px",
+    flexShrink: 0,
+    zIndex: 100
   },
-
-  description: { fontSize: "15px", color: "#94a3b8", marginTop: "8px", lineHeight: "1.7" },
-  fuzzyNameWrap: { minWidth: "160px" },
-  fuzzyCountWrap: { minWidth: "100px", display: "flex", justifyContent: "flex-end" },
-  analyticsContainer: { display: "flex", flexDirection: "column", gap: "32px" },
-  summaryGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" },
-  title: { 
-    fontSize: "28px", 
-    fontWeight: "900", 
-    letterSpacing: "-0.5px",
-    color: "#fff"
-  },
-  welcome: { fontSize: "15px", color: "#64748b", fontWeight: "500" },
-  errorMessage: { color: "#f87171", margin: "16px 0", background: "rgba(248, 113, 113, 0.08)", padding: "16px", borderRadius: "12px", border: "1px solid rgba(248, 113, 113, 0.15)", fontSize: "14px" },
-  successMessage: { color: "#4ade80", margin: "16px 0", background: "rgba(74, 222, 128, 0.08)", padding: "16px", borderRadius: "12px", border: "1px solid rgba(74, 222, 128, 0.15)", fontSize: "14px" },
-  
-  resultCard: {
-    background: "rgba(30, 41, 59, 0.4)",
-    backdropFilter: "blur(24px)",
-    padding: "40px",
-    borderRadius: "28px",
-    marginBottom: "32px",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    color: "white"
-  },
-  resultHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" },
-  resultTitle: { fontSize: "26px", fontWeight: "900", color: "#fff", letterSpacing: "-0.5px" },
-  scoreCircle: {
-    textAlign: "center",
-    background: "linear-gradient(135deg, #059669, #10b981)",
-    borderRadius: "20px",
-    width: "100px",
-    height: "100px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 20px 40px rgba(16, 185, 129, 0.2)",
-    border: "1px solid rgba(255,255,255,0.1)"
-  },
-  scoreNumber: { fontSize: "32px", fontWeight: "900", color: "#fff", lineHeight: 1 },
-  scoreLabel: { fontSize: "11px", color: "rgba(255,255,255,0.9)", marginTop: "4px", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "700" },
-  resultGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "32px" },
-  resultItem: {
-    padding: "20px",
-    borderRadius: "20px",
-    background: "rgba(255, 255, 255, 0.02)",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-  },
-  resultLabel: { fontWeight: "700", fontSize: "12px", color: "#64748b", textTransform: "uppercase", letterSpacing: "1.5px", display: "block", marginBottom: "8px" },
-  resultValue: { display: "block", fontWeight: "800", color: "#f1f5f9", fontSize: "17px" },
-  resultDetail: { fontSize: "13px", color: "#94a3b8", marginTop: "6px", display: "block", lineHeight: "1.5" },
-  suggestionsBox: { marginTop: "24px", padding: "28px", background: "rgba(16, 185, 129, 0.03)", borderRadius: "24px", border: "1px solid rgba(16, 185, 129, 0.1)", backdropFilter: "blur(12px)" },
-  suggestionsTitle: { fontWeight: "900", color: "#4ade80", marginBottom: "16px", display: "block", fontSize: "16px", letterSpacing: "0.5px" },
-  suggestion: { fontSize: "15px", color: "#cbd5e1", marginBottom: "12px", lineHeight: "1.7", display: "flex", alignItems: "flex-start", gap: "12px" },
-  pdfButton: {
-    marginTop: "24px",
-    padding: "14px 28px",
-    background: "rgba(255, 255, 255, 0.05)",
+  sidebarBrand: {
+    fontSize: "20px",
+    fontWeight: "800",
     color: "#fff",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    cursor: "pointer",
-    borderRadius: "14px",
-    fontWeight: "700",
-    fontSize: "15px",
-    transition: "all 0.3s ease"
-  },
-  historyCard: {
-    background: "rgba(30, 41, 59, 0.3)",
-    backdropFilter: "blur(20px)",
-    padding: "32px",
-    borderRadius: "24px",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
-  },
-  emptyText: { color: "#475569", fontSize: "16px", textAlign: "center", padding: "40px 0", fontWeight: "500" },
-  
-  adminContainer: { marginTop: "32px" },
-  adminTitle: { fontSize: "28px", fontWeight: "900", color: "#fff", marginBottom: "24px" },
-  adminTabs: { display: "flex", gap: "16px", marginBottom: "32px" },
-  adminTab: (active) => ({ 
-    padding: "12px 24px", 
-    background: active ? "#10b981" : "rgba(255,255,255,0.03)", 
-    color: active ? "white" : "#64748b", 
-    border: "1px solid rgba(255,255,255,0.05)", 
-    borderRadius: "14px", 
-    cursor: "pointer",
-    fontWeight: "700",
-    transition: "all 0.3s ease"
-  }),
-  manageSection: { background: "rgba(15,23,42,0.3)", padding: "32px", borderRadius: "24px", border: "1px solid rgba(255,255,255,0.03)" },
-  addItemRow: { display: "flex", gap: "16px", marginBottom: "24px" },
-  addButton: { padding: "14px 28px", background: "#10b981", color: "white", border: "none", borderRadius: "14px", cursor: "pointer", fontWeight: "800", boxShadow: "0 10px 20px rgba(16, 185, 129, 0.2)" },
-  listItem: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.03)", background: "rgba(255,255,255,0.015)", borderRadius: "12px", marginBottom: "12px" },
-  removeButton: { background: "rgba(239,68,68,0.1)", color: "#f87171", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "10px", padding: "8px 16px", cursor: "pointer", fontSize: "13px", fontWeight: "800" },
-  userList: { width: "35%", maxHeight: "600px", overflowY: "auto", paddingRight: "16px" },
-  userCard: (active) => ({ 
-    padding: "20px", 
-    border: active ? "1px solid #10b981" : "1px solid rgba(255,255,255,0.05)", 
-    marginBottom: "16px", 
-    borderRadius: "20px", 
-    background: active ? "rgba(16,185,129,0.08)" : "rgba(30,41,59,0.4)", 
-    cursor: "pointer",
-    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-  }),
-
-  summaryCard: {
-    background: "rgba(30, 41, 59, 0.4)",
-    backdropFilter: "blur(24px)",
-    padding: "32px",
-    borderRadius: "24px",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
-    textAlign: "left",
-    color: "white",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    position: "relative",
-    overflow: "hidden",
-    transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-  },
-  summaryValue: { fontSize: "36px", fontWeight: "900", color: "#fff", display: "block", marginTop: "16px", letterSpacing: "-1px" },
-  summaryLabel: { fontSize: "13px", color: "#64748b", marginTop: "4px", display: "block", textTransform: "uppercase", letterSpacing: "2px", fontWeight: "800" },
-  summaryIcon: { fontSize: "22px", width: "48px", height: "48px", display: "grid", placeItems: "center", borderRadius: "16px", background: "rgba(255,255,255,0.03)", color: "#10b981", border: "1px solid rgba(255,255,255,0.05)" },
-  
-  card: {
-    background: "rgba(30, 41, 59, 0.4)",
-    backdropFilter: "blur(24px)",
-    padding: "40px",
-    borderRadius: "28px",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-  },
-  label: { display: "block", marginBottom: "10px", fontWeight: "800", color: "#64748b", fontSize: "12px", textTransform: "uppercase", letterSpacing: "1.5px" },
-  nav: { display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" },
-  analyzeButton: {
-    marginTop: "40px",
-    width: "100%",
-    padding: "20px",
-    background: "linear-gradient(135deg, #10b981, #059669)",
-    color: "white",
-    border: "none",
-    borderRadius: "20px",
-    fontSize: "17px",
-    fontWeight: "900",
-    cursor: "pointer",
-    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-    boxShadow: "0 20px 40px rgba(16, 185, 129, 0.25)",
-    letterSpacing: "1px",
-    textTransform: "uppercase"
-  },
-  main: { marginTop: "32px", position: "relative", zIndex: 2 },
-
-  // AgriCore Stage
-  agriCoreStage: {
-    perspective: "2500px",
-    width: "100%",
-    height: "450px", 
+    marginBottom: "48px",
+    padding: "0 12px",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    overflow: "visible",
-    marginTop: "32px"
+    gap: "10px"
   },
-  sideImageLeft: {
-    position: "absolute",
-    left: "0", 
-    width: "320px", 
-    height: "240px",
-    borderRadius: "32px",
-    overflow: "hidden",
-    boxShadow: "0 30px 60px rgba(0,0,0,0.7)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    transform: "rotateY(30deg) translateZ(-80px)", 
-    zIndex: 2,
-    opacity: 0.9,
-    transition: "all 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
-    filter: "contrast(1.1) brightness(0.9)"
-  },
-  sideImageRight: {
-    position: "absolute",
-    right: "0",
-    width: "320px",
-    height: "240px",
-    borderRadius: "32px",
-    overflow: "hidden",
-    boxShadow: "0 30px 60px rgba(0,0,0,0.7)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    transform: "rotateY(-30deg) translateZ(-80px)",
-    zIndex: 2,
-    opacity: 0.9,
-    transition: "all 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
-    filter: "contrast(1.1) brightness(0.9)"
-  },
-  digitalAgriCore: {
-    width: "120px",
-    height: "120px",
-    borderRadius: "32px",
-    background: "linear-gradient(135deg, #10b981, #064e3b)",
-    boxShadow: "0 30px 60px rgba(16, 185, 129, 0.3)",
-    position: "relative",
-    display: "grid",
-    placeItems: "center",
-    fontSize: "60px",
-    border: "1px solid rgba(255, 255, 255, 0.2)"
-  },
-  circuitOrbit: {
-    position: "absolute",
-    width: "400px",
-    height: "120px",
-    borderRadius: "50%",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    transform: "rotateX(75deg) rotateY(-5deg)",
-    zIndex: 4,
-    pointerEvents: "none",
-    background: "rgba(255, 255, 255, 0.01)"
-  },
-  agriOrbitRing: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    transformStyle: "preserve-3d",
-    transform: "rotateX(75deg)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  agriCardContainer: (angle) => ({
-    position: "absolute",
-    width: "220px",
-    height: "150px",
-    transformStyle: "preserve-3d",
-    transform: `rotateY(${angle}deg) translateZ(300px) rotateY(${-angle}deg) rotateX(-75deg)`,
-    transition: "all 0.8s cubic-bezier(0.23, 1, 0.32, 1)"
-  }),
-  agriCard: {
-    width: "100%",
-    height: "100%",
-    background: "rgba(30, 41, 59, 0.6)",
-    backdropFilter: "blur(16px)",
-    borderRadius: "24px",
-    padding: "20px",
+  sidebarNav: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-    cursor: "pointer",
-    boxSizing: "border-box"
+    gap: "8px",
+    flex: 1
   },
-  agriCardTitle: { fontSize: "17px", fontWeight: "900", marginBottom: "10px", color: "#fff", letterSpacing: "0.5px" },
-  agriCardDesc: { fontSize: "12px", color: "#94a3b8", lineHeight: "1.5", margin: 0 },
-  
-  cardTitle: { fontSize: "24px", fontWeight: "900", marginBottom: "24px", color: "#fff", letterSpacing: "-0.5px" },
-  input: {
-    width: "100%",
-    padding: "18px 24px",
-    borderRadius: "18px",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    fontSize: "16px",
-    outline: "none",
-    transition: "all 0.3s ease",
-    boxSizing: "border-box",
-    background: "rgba(2, 6, 23, 0.4)",
-    color: "#fff",
-    boxShadow: "inset 0 2px 10px rgba(0,0,0,0.1)"
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "separate",
-    borderSpacing: "0",
-    backgroundColor: "transparent",
-    borderRadius: "24px",
-    overflow: "hidden",
-    border: "1px solid rgba(255, 255, 255, 0.05)"
-  },
-  header: {
-    background: "rgba(15, 23, 42, 0.4)",
-    backdropFilter: "blur(32px) saturate(150%)",
-    padding: "20px 40px",
-    marginBottom: "40px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: "24px",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    position: "relative",
-    zIndex: 10
-  },
-  userBadge: {
+  sidebarLink: (active) => ({
     display: "flex",
     alignItems: "center",
     gap: "12px",
-    padding: "8px 16px",
-    background: "rgba(255, 255, 255, 0.03)",
-    borderRadius: "100px",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-  },
-  userInitial: {
-    width: "32px",
-    height: "32px",
-    borderRadius: "50%",
-    background: "linear-gradient(135deg, #10b981, #059669)",
-    display: "grid",
-    placeItems: "center",
+    padding: "12px 16px",
+    borderRadius: "10px",
     fontSize: "14px",
-    fontWeight: "800",
-    color: "white"
+    fontWeight: "600",
+    color: active ? "#fff" : "#94a3b8",
+    backgroundColor: active ? "rgba(16, 185, 129, 0.1)" : "transparent",
+    border: active ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid transparent",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    textAlign: "left",
+    width: "100%"
+  }),
+  sidebarFooter: {
+    paddingTop: "24px",
+    borderTop: "1px solid rgba(255, 255, 255, 0.1)"
   },
-  navButton: (active) => ({
-    padding: "10px 20px",
+  mainContent: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    overflowY: "auto",
+    position: "relative"
+  },
+  topBar: {
+    height: "72px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 40px",
+    backgroundColor: "rgba(2, 6, 23, 0.8)",
+    backdropFilter: "blur(12px)",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+    position: "sticky",
+    top: 0,
+    zIndex: 90
+  },
+  pageHeader: {
+    padding: "40px 40px 0 40px",
+    marginBottom: "32px"
+  },
+  pageTitle: {
+    fontSize: "32px",
+    fontWeight: "800",
+    color: "#fff",
+    letterSpacing: "-0.5px"
+  },
+  pageSubtitle: {
+    fontSize: "16px",
+    color: "#64748b",
+    marginTop: "4px"
+  },
+  contentArea: {
+    padding: "0 40px 40px 40px"
+  },
+  
+  // High-Density Cards
+  card: {
+    backgroundColor: "#1e293b",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "16px",
+    padding: "24px",
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+  },
+  cardTitle: {
+    fontSize: "18px",
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: "16px"
+  },
+  
+  // Stats Grid
+  statsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "24px",
+    marginBottom: "32px"
+  },
+  statCard: {
+    backgroundColor: "#1e293b",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "16px",
+    padding: "24px",
+    display: "flex",
+    flexDirection: "column"
+  },
+  statLabel: {
+    fontSize: "12px",
+    fontWeight: "700",
+    color: "#64748b",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px"
+  },
+  statValue: {
+    fontSize: "28px",
+    fontWeight: "800",
+    color: "#fff",
+    marginTop: "8px"
+  },
+  
+  // Data Tables
+  tableContainer: {
+    overflowX: "auto",
     borderRadius: "12px",
+    border: "1px solid rgba(255, 255, 255, 0.1)"
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    backgroundColor: "#0f172a"
+  },
+  th: {
+    textAlign: "left",
+    padding: "16px",
+    fontSize: "12px",
+    fontWeight: "700",
+    color: "#64748b",
+    textTransform: "uppercase",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.02)"
+  },
+  td: {
+    padding: "16px",
+    fontSize: "14px",
+    color: "#f1f5f9",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
+  },
+
+  // Buttons & Inputs
+  button: {
+    padding: "12px 24px",
+    backgroundColor: "#10b981",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
     fontSize: "14px",
     fontWeight: "700",
     cursor: "pointer",
-    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    background: active ? "rgba(16, 185, 129, 0.1)" : "transparent",
-    color: active ? "#10b981" : "#64748b",
-    border: active ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid transparent",
-    letterSpacing: "0.5px"
-  }),
-  th: { padding: "20px", textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.05)", fontWeight: "900", color: "#64748b", background: "rgba(2,6,23,0.3)", textTransform: "uppercase", fontSize: "12px", letterSpacing: "2px" },
-  td: { padding: "20px", textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.03)", color: "#f1f5f9", background: "rgba(30,41,59,0.1)" },
-
-  chartCard: {
-    background: "rgba(30, 41, 59, 0.4)",
-    backdropFilter: "blur(20px)",
-    padding: "32px",
-    borderRadius: "24px",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    flex: 1,
-    minWidth: "300px",
-    position: "relative",
-    overflow: "hidden"
+    transition: "all 0.2s ease"
   },
-  chartFill: { height: "100%", background: "linear-gradient(90deg, #10b981, #059669)", borderRadius: "6px", boxShadow: "0 0 20px rgba(16, 185, 129, 0.3)" },
-
-  trendContainer: {
-    marginTop: "32px",
-    background: "rgba(30, 41, 59, 0.4)",
-    backdropFilter: "blur(24px)",
-    padding: "40px",
-    borderRadius: "32px",
-    boxShadow: "0 30px 60px rgba(0,0,0,0.5)",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
+  secondaryButton: {
+    padding: "12px 24px",
+    backgroundColor: "transparent",
+    color: "#fff",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "700",
+    cursor: "pointer",
+    transition: "all 0.2s ease"
+  },
+  input: {
     width: "100%",
-    boxSizing: "border-box"
+    padding: "12px 16px",
+    backgroundColor: "#020617",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "8px",
+    color: "#fff",
+    fontSize: "14px",
+    outline: "none",
+    transition: "border-color 0.2s ease"
+  },
+
+  // Result Section
+  resultCard: {
+    backgroundColor: "#1e293b",
+    border: "1px solid #10b981",
+    borderRadius: "20px",
+    padding: "32px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px"
+  },
+  scoreBadge: {
+    padding: "8px 16px",
+    borderRadius: "100px",
+    fontSize: "12px",
+    fontWeight: "800",
+    backgroundColor: "rgba(16, 185, 129, 0.2)",
+    color: "#10b981",
+    border: "1px solid rgba(16, 185, 129, 0.3)"
   }
 };
