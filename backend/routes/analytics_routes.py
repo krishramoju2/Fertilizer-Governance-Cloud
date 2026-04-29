@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 import traceback
 import logging
 from bson import ObjectId
+from datetime import datetime
 
 from utils.auth import token_required
 from models.db import history_collection
@@ -23,7 +24,6 @@ def get_analytics(**kwargs):
         query = {'user_id': user_id}
         history = list(history_collection.find(query))
         
-        # If no history found by string, try ObjectId (for legacy records)
         if not history and len(user_id) == 24:
             try:
                 history = list(history_collection.find({'user_id': ObjectId(user_id)}))
@@ -43,8 +43,14 @@ def get_analytics(**kwargs):
                 }
             }), 200
 
-        # Sort history by timestamp (ascending for trend)
-        history.sort(key=lambda x: x.get('timestamp') or 0)
+        # Sort history by timestamp
+        def get_ts(h):
+            ts = h.get('timestamp')
+            if isinstance(ts, datetime):
+                return ts
+            return datetime.min
+
+        history.sort(key=get_ts)
 
         # ==================== CALCULATIONS ====================
         total = len(history)
@@ -79,15 +85,24 @@ def get_analytics(**kwargs):
             fertilizers[fert] = fertilizers.get(fert, 0) + 1
 
         # ==================== TIME SERIES ====================
-        recent = history[-10:] # Show last 10 for better trend
+        recent = history[-10:]
         time_labels = []
         time_scores = []
 
         for h in recent:
-            if h.get('timestamp'):
-                time_labels.append(h['timestamp'].strftime('%d/%m'))
+            ts = h.get('timestamp')
+            if isinstance(ts, datetime):
+                time_labels.append(ts.strftime('%d/%m'))
+            elif isinstance(ts, str):
+                try:
+                    # Try to parse string timestamp
+                    parsed_ts = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+                    time_labels.append(parsed_ts.strftime('%d/%m'))
+                except:
+                    time_labels.append('N/A')
             else:
                 time_labels.append('N/A')
+            
             time_scores.append(get_score(h))
 
         # ==================== RESPONSE ====================
@@ -109,4 +124,3 @@ def get_analytics(**kwargs):
     except Exception as e:
         logger.error(f"Analytics error: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': str(e)}), 500
-
