@@ -1,7 +1,15 @@
 export const styles = {
   app: {
     padding: "40px",
-    background: "radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%)",
+    background: `
+      radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%)
+    `,
+    backgroundImage: `
+      radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px)
+    `,
+    backgroundSize: "32px 32px",
     minHeight: "100vh",
     fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
     position: "relative",
@@ -17,8 +25,9 @@ export const styles = {
     height: "100vh",
     zIndex: -1,
     pointerEvents: "none",
-    opacity: 0.15,
-    mixBlendMode: "screen"
+    opacity: 0.1,
+    mixBlendMode: "screen",
+    filter: "blur(40px)"
   },
 
   rightPanel: {
@@ -308,19 +317,52 @@ export const styles = {
     border: "1px solid rgba(255, 255, 255, 0.05)"
   },
   header: {
-    background: "rgba(30, 41, 59, 0.4)",
-    backdropFilter: "blur(24px)",
-    padding: "32px 40px",
+    background: "rgba(15, 23, 42, 0.4)",
+    backdropFilter: "blur(32px) saturate(150%)",
+    padding: "20px 40px",
     marginBottom: "40px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    borderRadius: "32px",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+    borderRadius: "24px",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05)",
     border: "1px solid rgba(255, 255, 255, 0.08)",
     position: "relative",
     zIndex: 10
   },
+  userBadge: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    padding: "8px 16px",
+    background: "rgba(255, 255, 255, 0.03)",
+    borderRadius: "100px",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+  },
+  userInitial: {
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #10b981, #059669)",
+    display: "grid",
+    placeItems: "center",
+    fontSize: "14px",
+    fontWeight: "800",
+    color: "white"
+  },
+  navButton: (active) => ({
+    padding: "10px 20px",
+    borderRadius: "12px",
+    fontSize: "14px",
+    fontWeight: "700",
+    cursor: "pointer",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    background: active ? "rgba(16, 185, 129, 0.1)" : "transparent",
+    color: active ? "#10b981" : "#64748b",
+    border: active ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid transparent",
+    letterSpacing: "0.5px"
+  }),
   th: { padding: "20px", textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.05)", fontWeight: "900", color: "#64748b", background: "rgba(2,6,23,0.3)", textTransform: "uppercase", fontSize: "12px", letterSpacing: "2px" },
   td: { padding: "20px", textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.03)", color: "#f1f5f9", background: "rgba(30,41,59,0.1)" },
 
