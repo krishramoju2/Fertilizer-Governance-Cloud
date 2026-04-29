@@ -240,18 +240,19 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll({ container: scrollRef });
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 360]);
-
-  // Pre-defined transforms for the 10 nodes to follow Rules of Hooks
-  const yNode0 = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const yNode1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const yNode2 = useTransform(scrollYProgress, [0, 1], [0, -400]);
-  const yNode3 = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const yNode4 = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const yNode5 = useTransform(scrollYProgress, [0, 1], [0, -500]);
-  const yNode6 = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const yNode7 = useTransform(scrollYProgress, [0, 1], [0, -300]);
-  const yNode8 = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const yNode9 = useTransform(scrollYProgress, [0, 1], [0, -450]);
+  
+  // High-Impact Cinematic Transforms (Multi-axis movement)
+  const bgShift = useTransform(scrollYProgress, [0, 1], ["#020617", "#064e3b"]); // From Navy to Deep Forest
+  const yNode0 = useTransform(scrollYProgress, [0, 1], [0, -1200]);
+  const yNode1 = useTransform(scrollYProgress, [0, 1], [0, -2500]);
+  const yNode2 = useTransform(scrollYProgress, [0, 1], [0, -3500]);
+  const yNode3 = useTransform(scrollYProgress, [0, 1], [0, -1800]);
+  const yNode4 = useTransform(scrollYProgress, [0, 1], [0, -800]);
+  const yNode5 = useTransform(scrollYProgress, [0, 1], [0, -5000]); // Ultra-fast foreground
+  const yNode6 = useTransform(scrollYProgress, [0, 1], [0, -1500]);
+  const yNode7 = useTransform(scrollYProgress, [0, 1], [0, -3200]);
+  const yNode8 = useTransform(scrollYProgress, [0, 1], [0, -1000]);
+  const yNode9 = useTransform(scrollYProgress, [0, 1], [0, -4200]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -289,16 +290,16 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   const renderParallax = () => {
     const nodes = [
-      { top: "5%", left: "10%", size: "400px", color: "rgba(16, 185, 129, 0.07)", blur: "80px", y: yNode0 },
-      { top: "15%", left: "70%", size: "300px", color: "rgba(59, 130, 246, 0.05)", blur: "60px", y: yNode1 },
-      { top: "25%", left: "5%", size: "150px", color: "rgba(16, 185, 129, 0.1)", blur: "20px", y: yNode2, rotate: true },
-      { top: "35%", left: "80%", size: "200px", color: "rgba(59, 130, 246, 0.08)", blur: "40px", y: yNode3 },
-      { top: "45%", left: "15%", size: "500px", color: "rgba(16, 185, 129, 0.04)", blur: "100px", y: yNode4 },
-      { top: "55%", left: "60%", size: "120px", color: "rgba(16, 185, 129, 0.15)", blur: "10px", y: yNode5, rotate: true },
-      { top: "65%", left: "85%", size: "350px", color: "rgba(59, 130, 246, 0.06)", blur: "70px", y: yNode6 },
-      { top: "75%", left: "10%", size: "250px", color: "rgba(16, 185, 129, 0.09)", blur: "30px", y: yNode7 },
-      { top: "85%", left: "75%", size: "450px", color: "rgba(59, 130, 246, 0.03)", blur: "90px", y: yNode8 },
-      { top: "92%", left: "20%", size: "180px", color: "rgba(16, 185, 129, 0.12)", blur: "15px", y: yNode9, rotate: true },
+      { top: "5%", left: "5%", size: "600px", color: "rgba(16, 185, 129, 0.1)", blur: "120px", y: yNode0 },
+      { top: "12%", left: "65%", size: "450px", color: "rgba(59, 130, 246, 0.08)", blur: "90px", y: yNode1 },
+      { top: "22%", left: "0%", size: "250px", color: "rgba(16, 185, 129, 0.2)", blur: "30px", y: yNode2, rotate: true },
+      { top: "32%", left: "75%", size: "350px", color: "rgba(59, 130, 246, 0.12)", blur: "60px", y: yNode3 },
+      { top: "42%", left: "10%", size: "700px", color: "rgba(16, 185, 129, 0.06)", blur: "150px", y: yNode4 },
+      { top: "52%", left: "55%", size: "200px", color: "rgba(16, 185, 129, 0.25)", blur: "15px", y: yNode5, rotate: true },
+      { top: "62%", left: "80%", size: "550px", color: "rgba(59, 130, 246, 0.1)", blur: "100px", y: yNode6 },
+      { top: "72%", left: "5%", size: "400px", color: "rgba(16, 185, 129, 0.15)", blur: "40px", y: yNode7 },
+      { top: "82%", left: "70%", size: "650px", color: "rgba(59, 130, 246, 0.05)", blur: "130px", y: yNode8 },
+      { top: "90%", left: "15%", size: "280px", color: "rgba(16, 185, 129, 0.2)", blur: "25px", y: yNode9, rotate: true },
     ];
 
     return (
@@ -308,6 +309,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           return (
             <motion.div
               key={i}
+              animate={node.rotate ? { scale: [1, 1.1, 1], opacity: [0.6, 0.9, 0.6] } : {}}
+              transition={{ duration: 4 + (i % 3), repeat: Infinity, ease: "easeInOut" }}
               style={{
                 y: node.y,
                 rotate: rotation,
@@ -319,32 +322,34 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 borderRadius: node.rotate ? "30% 70% 70% 30% / 30% 30% 70% 70%" : "50%",
                 background: node.color,
                 filter: `blur(${node.blur})`,
-                border: node.rotate ? `2px solid ${node.color.replace('0.', '0.2')}` : "none",
-                boxShadow: `0 0 40px ${node.color.replace('0.', '0.05')}`
+                border: node.rotate ? `3px solid ${node.color.replace('0.', '0.4')}` : "none",
+                boxShadow: `0 0 80px ${node.color.replace('0.', '0.1')}`,
+                opacity: 0.8
               }}
             />
           );
         })}
         
-        {/* Constant Ambient Particles Field */}
-        {[...Array(15)].map((_, i) => (
+        {/* Intense Bioluminescent Spark Field */}
+        {[...Array(25)].map((_, i) => (
           <motion.div
             key={`p-${i}`}
             animate={{ 
-              y: [0, -40, 0], 
-              opacity: [0.1, 0.4, 0.1],
-              scale: [1, 1.2, 1]
+              y: [0, -60, 0], 
+              x: [0, 20, 0],
+              opacity: [0.2, 0.7, 0.2],
+              scale: [1, 1.5, 1]
             }}
-            transition={{ duration: 3 + (i % 5), repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2 + (i % 4), repeat: Infinity, ease: "easeInOut" }}
             style={{
               position: "absolute",
-              top: `${(i * 7) % 100}%`,
-              left: `${(i * 13) % 100}%`,
-              width: "6px",
-              height: "6px",
+              top: `${(i * 4) % 100}%`,
+              left: `${(i * 17) % 100}%`,
+              width: "10px",
+              height: "10px",
               borderRadius: "50%",
               background: "#10b981",
-              boxShadow: "0 0 12px #10b981",
+              boxShadow: "0 0 20px #10b981, 0 0 40px rgba(16, 185, 129, 0.5)",
               zIndex: 1
             }}
           />
@@ -411,8 +416,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     <div style={styles.app}>
       {renderSidebar()}
       
-      <div 
-        style={{ ...styles.mainContent, position: "relative", flex: 1, overflowY: "auto", background: "transparent" }} 
+      <motion.div 
+        style={{ ...styles.mainContent, position: "relative", flex: 1, overflowY: "auto", backgroundColor: bgShift }} 
         ref={scrollRef}
       >
         {/* The Parallax Field - Spans entire scrollable height */}
@@ -640,7 +645,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -654,4 +659,5 @@ const td_style = (item) => ({
 });
 
 export default Dashboard;
+
 
