@@ -49,67 +49,6 @@ app.register_blueprint(config_bp, url_prefix='/api')
 app.register_blueprint(analytics_bp, url_prefix='/api')
 app.register_blueprint(admin_bp, url_prefix='/api')
 
-# ==================== DIRECT ROUTES (NO BLUEPRINT) ====================
-@app.route('/api/config/soil-types', methods=['GET', 'OPTIONS'])
-def get_soil_types_direct():
-    """Direct route for soil types - no auth required"""
-    from models.db import config_collection, check_db_connection
-    
-    if request.method == 'OPTIONS':
-        return '', 200
-    
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'Database error'}), 500
-    
-    try:
-        config = config_collection.find_one({'id': 'dropdowns'})
-        if config and 'soil_types' in config:
-            soil_types = config['soil_types']
-        else:
-            soil_types = ['Loamy', 'Sandy', 'Clay', 'Black', 'Red']
-        return jsonify({'success': True, 'data': soil_types})
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
-
-@app.route('/api/config/crop-types', methods=['GET', 'OPTIONS'])
-def get_crop_types_direct():
-    from models.db import config_collection, check_db_connection
-    
-    if request.method == 'OPTIONS':
-        return '', 200
-    
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'Database error'}), 500
-    
-    try:
-        config = config_collection.find_one({'id': 'dropdowns'})
-        if config and 'crop_types' in config:
-            crop_types = config['crop_types']
-        else:
-            crop_types = ['Maize', 'Wheat', 'Rice', 'Millets', 'Cotton']
-        return jsonify({'success': True, 'data': crop_types})
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
-
-@app.route('/api/config/fertilizer-names', methods=['GET', 'OPTIONS'])
-def get_fertilizer_names_direct():
-    from models.db import config_collection, check_db_connection
-    
-    if request.method == 'OPTIONS':
-        return '', 200
-    
-    if not check_db_connection():
-        return jsonify({'success': False, 'message': 'Database error'}), 500
-    
-    try:
-        config = config_collection.find_one({'id': 'dropdowns'})
-        if config and 'fertilizer_names' in config:
-            fertilizer_names = config['fertilizer_names']
-        else:
-            fertilizer_names = ['Urea', 'DAP', 'Potash', 'NPK']
-        return jsonify({'success': True, 'data': fertilizer_names})
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/health', methods=['GET', 'OPTIONS'])
 def health():
@@ -157,3 +96,4 @@ logger.info("Keep-alive background thread started.")
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
