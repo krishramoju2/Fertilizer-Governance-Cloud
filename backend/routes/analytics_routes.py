@@ -10,9 +10,11 @@ analytics_bp = Blueprint('analytics', __name__)
 logger = logging.getLogger(__name__)
 
 # ==================== ANALYTICS ROUTE ====================
-@analytics_bp.route('/analytics', methods=['GET'])
+@analytics_bp.route('/analytics', methods=['GET', 'OPTIONS'])
 @token_required
 def get_analytics(**kwargs):
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         current_user = kwargs['current_user']
         user_id = str(current_user['_id'])
