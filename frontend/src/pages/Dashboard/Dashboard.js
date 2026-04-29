@@ -245,6 +245,18 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 360]);
   const scale1 = useTransform(scrollYProgress, [0, 1], [1, 1.5]);
 
+  // Pre-defined transforms for the 10 nodes to follow Rules of Hooks
+  const yNode0 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const yNode1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const yNode2 = useTransform(scrollYProgress, [0, 1], [0, -400]);
+  const yNode3 = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  const yNode4 = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const yNode5 = useTransform(scrollYProgress, [0, 1], [0, -500]);
+  const yNode6 = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const yNode7 = useTransform(scrollYProgress, [0, 1], [0, -300]);
+  const yNode8 = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const yNode9 = useTransform(scrollYProgress, [0, 1], [0, -450]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (!scrollRef.current) return;
@@ -280,33 +292,28 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   };
 
   const renderParallax = () => {
-    // Distributed node configuration for a 5-section journey
     const nodes = [
-      { top: "5%", left: "10%", size: "400px", color: "rgba(16, 185, 129, 0.07)", blur: "80px", speed: 0.1 },
-      { top: "15%", left: "70%", size: "300px", color: "rgba(59, 130, 246, 0.05)", blur: "60px", speed: 0.2 },
-      { top: "25%", left: "5%", size: "150px", color: "rgba(16, 185, 129, 0.1)", blur: "20px", speed: 0.4, rotate: true },
-      { top: "35%", left: "80%", size: "200px", color: "rgba(59, 130, 246, 0.08)", blur: "40px", speed: 0.15 },
-      { top: "45%", left: "15%", size: "500px", color: "rgba(16, 185, 129, 0.04)", blur: "100px", speed: 0.05 },
-      { top: "55%", left: "60%", size: "120px", color: "rgba(16, 185, 129, 0.15)", blur: "10px", speed: 0.5, rotate: true },
-      { top: "65%", left: "85%", size: "350px", color: "rgba(59, 130, 246, 0.06)", blur: "70px", speed: 0.12 },
-      { top: "75%", left: "10%", size: "250px", color: "rgba(16, 185, 129, 0.09)", blur: "30px", speed: 0.3 },
-      { top: "85%", left: "75%", size: "450px", color: "rgba(59, 130, 246, 0.03)", blur: "90px", speed: 0.08 },
-      { top: "92%", left: "20%", size: "180px", color: "rgba(16, 185, 129, 0.12)", blur: "15px", speed: 0.45, rotate: true },
+      { top: "5%", left: "10%", size: "400px", color: "rgba(16, 185, 129, 0.07)", blur: "80px", y: yNode0 },
+      { top: "15%", left: "70%", size: "300px", color: "rgba(59, 130, 246, 0.05)", blur: "60px", y: yNode1 },
+      { top: "25%", left: "5%", size: "150px", color: "rgba(16, 185, 129, 0.1)", blur: "20px", y: yNode2, rotate: true },
+      { top: "35%", left: "80%", size: "200px", color: "rgba(59, 130, 246, 0.08)", blur: "40px", y: yNode3 },
+      { top: "45%", left: "15%", size: "500px", color: "rgba(16, 185, 129, 0.04)", blur: "100px", y: yNode4 },
+      { top: "55%", left: "60%", size: "120px", color: "rgba(16, 185, 129, 0.15)", blur: "10px", y: yNode5, rotate: true },
+      { top: "65%", left: "85%", size: "350px", color: "rgba(59, 130, 246, 0.06)", blur: "70px", y: yNode6 },
+      { top: "75%", left: "10%", size: "250px", color: "rgba(16, 185, 129, 0.09)", blur: "30px", y: yNode7 },
+      { top: "85%", left: "75%", size: "450px", color: "rgba(59, 130, 246, 0.03)", blur: "90px", y: yNode8 },
+      { top: "92%", left: "20%", size: "180px", color: "rgba(16, 185, 129, 0.12)", blur: "15px", y: yNode9, rotate: true },
     ];
 
     return (
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }}>
         {nodes.map((node, i) => {
-          // Calculate movement based on speed
-          // We use scrollYProgress (0 to 1) to move the node relative to its starting position
-          const moveY = useTransform(scrollYProgress, [0, 1], [0, -1000 * node.speed]);
           const rotation = node.rotate ? rotate1 : 0;
-          
           return (
             <motion.div
               key={i}
               style={{
-                y: moveY,
+                y: node.y,
                 rotate: rotation,
                 position: "absolute",
                 top: node.top,
