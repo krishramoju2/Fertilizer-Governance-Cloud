@@ -8,8 +8,10 @@ config_bp = Blueprint('config', __name__)
 
 # ==================== PUBLIC CONFIG ENDPOINTS ====================
 
-@config_bp.route('/config/soil-types', methods=['GET'])
+@config_bp.route('/config/soil-types', methods=['GET', 'OPTIONS'])
 def get_soil_types():
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         if not check_db_connection():
             return jsonify({'success': False, 'message': 'DB error'}), 503
@@ -25,8 +27,10 @@ def get_soil_types():
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
-@config_bp.route('/config/crop-types', methods=['GET'])
+@config_bp.route('/config/crop-types', methods=['GET', 'OPTIONS'])
 def get_crop_types():
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         if not check_db_connection():
             return jsonify({'success': False, 'message': 'DB error'}), 503
@@ -42,8 +46,10 @@ def get_crop_types():
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
-@config_bp.route('/config/fertilizer-names', methods=['GET'])
+@config_bp.route('/config/fertilizer-names', methods=['GET', 'OPTIONS'])
 def get_fertilizer_names():
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         if not check_db_connection():
             return jsonify({'success': False, 'message': 'DB error'}), 503
@@ -57,3 +63,4 @@ def get_fertilizer_names():
 
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
+
