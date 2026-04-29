@@ -4,8 +4,10 @@ import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
 import { styles } from "./DashboardStyles";
+import { translations } from "../../utils/translations";
 
-function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
+function Dashboard({ token, setToken, currentUser, setCurrentUser, language, setLanguage }) {
+  const t = (key) => translations[language]?.[key] || translations.en[key];
   const [activeTab, setActiveTab] = useState("menu");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -410,18 +412,41 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   const renderSidebar = () => {
     const links = [
-      { id: 'menu', label: 'Farm Home' },
-      { id: 'analysis', label: 'Test Soil & Fertilizer' },
-      { id: 'ml', label: 'Smart Predictions' },
-      { id: 'analytics', label: 'Farm Reports' },
-      { id: 'chat', label: 'Ask AI Expert' }
+      { id: 'menu', label: t('home') },
+      { id: 'analysis', label: t('test') },
+      { id: 'ml', label: t('ml') },
+      { id: 'analytics', label: t('reports') },
+      { id: 'chat', label: t('chat') }
     ];
 
     return (
       <aside style={styles.sidebar}>
         <div style={styles.sidebarBrand}>
           <div style={{ width: "32px", height: "32px", background: "#10b981", borderRadius: "8px", display: "grid", placeItems: "center", fontSize: "14px", fontWeight: "900", color: "#fff" }}>AP</div>
-          <span>Advisor Pro</span>
+          <span>{t('brand')}</span>
+        </div>
+
+        {/* Language Switcher in Sidebar */}
+        <div style={{ padding: "0 20px", marginBottom: "20px", display: "flex", gap: "6px" }}>
+          {["en", "hi", "te"].map(l => (
+            <button 
+              key={l}
+              onClick={() => setLanguage(l)}
+              style={{
+                flex: 1,
+                padding: "6px 0",
+                backgroundColor: language === l ? "#10b981" : "rgba(255,255,255,0.05)",
+                color: "#fff",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "4px",
+                fontSize: "10px",
+                fontWeight: "700",
+                cursor: "pointer"
+              }}
+            >
+              {l.toUpperCase()}
+            </button>
+          ))}
         </div>
         <nav style={styles.sidebarNav}>
           {links.map(link => (
@@ -431,13 +456,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           ))}
           {currentUser?.is_admin && (
             <button onClick={() => scrollToSection('admin')} style={styles.sidebarLink(activeTab === 'admin')}>
-              Admin Console
+              {t('admin')}
             </button>
           )}
         </nav>
         <div style={styles.sidebarFooter}>
           <button style={{ ...styles.secondaryButton, width: "100%", textAlign: "left", color: "#f87171", border: "none" }} onClick={handleSignOut}>
-             Sign Out
+             {t('signout')}
           </button>
         </div>
       </aside>
@@ -486,26 +511,26 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: HOME ==================== */}
             <section id="section-menu" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-              <h1 style={styles.pageTitle}>Welcome to Your Farm Dashboard</h1>
-              <p style={styles.pageSubtitle}>See how your farm is performing today.</p>
+              <h1 style={styles.pageTitle}>{t('welcome')}</h1>
+              <p style={styles.pageSubtitle}>{t('perf')}</p>
               <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
                 <div style={styles.statsGrid}>
-                  <div style={styles.statCard}><span style={styles.statLabel}>Total Analyses</span><span style={styles.statValue}>{history.length}</span></div>
-                  <div style={styles.statCard}><span style={styles.statLabel}><Definition text="This shows how well the fertilizer matches what your soil needs.">Fertilizer Match</Definition></span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
-                  <div style={styles.statCard}><span style={styles.statLabel}><Definition text="A prediction of how well your crops will grow with this setup.">Expected Growth</Definition></span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
-                  <div style={styles.statCard}><span style={styles.statLabel}><Definition text="Shows if our sensors and farm data systems are working correctly.">System Status</Definition></span><span style={styles.statValue}>Healthy</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>{t('total_analyses')}</span><span style={styles.statValue}>{history.length}</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}><Definition text={t('def_fert_match')}>{t('fert_match')}</Definition></span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}><Definition text={t('def_exp_growth')}>{t('exp_growth')}</Definition></span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}><Definition text={t('def_sys_status')}>{t('sys_status')}</Definition></span><span style={styles.statValue}>{t('healthy')}</span></div>
                 </div>
                 <div style={styles.card}>
-                  <h3 style={styles.cardTitle}><Definition text="A historical record of all your soil-fertilizer checks saved in our secure database.">Recent Activity Log</Definition></h3>
+                  <h3 style={styles.cardTitle}><Definition text={t('def_recent_log')}>{t('recent_log')}</Definition></h3>
                   <div style={styles.tableContainer}>
                     <table style={styles.table}>
                       <thead>
                         <tr>
-                          <th style={styles.th}>Date</th>
-                          <th style={styles.th}>Crop Choice</th>
-                          <th style={styles.th}>Soil Type</th>
-                          <th style={styles.th}>Result</th>
-                          <th style={styles.th}>Accuracy</th>
+                          <th style={styles.th}>{t('date')}</th>
+                          <th style={styles.th}>{t('crop_choice')}</th>
+                          <th style={styles.th}>{t('soil_type')}</th>
+                          <th style={styles.th}>{t('result')}</th>
+                          <th style={styles.th}>{t('accuracy')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -527,28 +552,28 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: TEST ==================== */}
             <section id="section-analysis" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-              <h1 style={styles.pageTitle}><Definition text="Our main tool to verify if your fertilizer is healthy for your specific soil.">Check Your Fertilizer</Definition></h1>
-              <p style={styles.pageSubtitle}>Fill in your details to see if your fertilizer is right for your soil.</p>
+              <h1 style={styles.pageTitle}><Definition text={t('def_check_tool')}>{t('check_fert')}</Definition></h1>
+              <p style={styles.pageSubtitle}>{t('fill_details')}</p>
               <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
                 <div style={styles.card}>
-                  <h3 style={styles.cardTitle}>Enter Farm Details</h3>
+                  <h3 style={styles.cardTitle}>{t('enter_details')}</h3>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text="Current air temperature which affects how quickly fertilizer dissolves into the soil.">Temperature (°C)</Definition></label><input type="number" style={styles.input} value={inputs.Temperature} onChange={(e) => setInputs({ ...inputs, Temperature: e.target.value })} /></div>
-                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text="The amount of water in your soil, used to check if the fertilizer will be absorbed properly.">Moisture (%)</Definition></label><input type="number" style={styles.input} value={inputs.Moisture} onChange={(e) => setInputs({ ...inputs, Moisture: e.target.value })} /></div>
-                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text="The texture of your soil (like Sandy or Clay) which determines its nutrient-holding capacity.">Select Soil Type</Definition></label><select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>{soilTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text="The specific plant you are growing; each crop has unique nutrient requirements.">Select Crop Type</Definition></label><select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>{cropTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text="The brand or chemical composition of the fertilizer you intend to apply.">Select Fertilizer</Definition></label><select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>{fertilizerNames.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text="The weight of fertilizer used per hectare. Too much can damage the soil.">Quantity (kg/ha)</Definition></label><input type="number" style={styles.input} value={inputs.Fertilizer_Quantity} onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: e.target.value })} /></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text={t('def_temp')}>{t('temp')}</Definition></label><input type="number" style={styles.input} value={inputs.Temperature} onChange={(e) => setInputs({ ...inputs, Temperature: e.target.value })} /></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text={t('def_moisture')}>{t('moisture')}</Definition></label><input type="number" style={styles.input} value={inputs.Moisture} onChange={(e) => setInputs({ ...inputs, Moisture: e.target.value })} /></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text={t('def_soil_type')}>{t('select_soil')}</Definition></label><select style={styles.input} value={inputs.Soil_Type} onChange={(e) => setInputs({ ...inputs, Soil_Type: e.target.value })}>{soilTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text={t('def_crop_type')}>{t('select_crop')}</Definition></label><select style={styles.input} value={inputs.Crop_Type} onChange={(e) => setInputs({ ...inputs, Crop_Type: e.target.value })}>{cropTypes.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text={t('def_fert_name')}>{t('select_fert')}</Definition></label><select style={styles.input} value={inputs.Fertilizer_Name} onChange={(e) => setInputs({ ...inputs, Fertilizer_Name: e.target.value })}>{fertilizerNames.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                    <div><label style={{ display: "block", fontSize: "12px", fontWeight: "800", color: "#64748b", marginBottom: "8px", textTransform: "uppercase" }}><Definition text={t('def_quantity')}>{t('quantity')}</Definition></label><input type="number" style={styles.input} value={inputs.Fertilizer_Quantity} onChange={(e) => setInputs({ ...inputs, Fertilizer_Quantity: e.target.value })} /></div>
                   </div>
-                  <button style={{ ...styles.button, marginTop: "32px", width: "100%" }} onClick={handleAnalyze} disabled={loading}>{loading ? "Checking..." : "Check Compatibility"}</button>
+                  <button style={{ ...styles.button, marginTop: "32px", width: "100%" }} onClick={handleAnalyze} disabled={loading}>{loading ? "Checking..." : t('check_btn')}</button>
                 </div>
 
                 <div>
                   {result ? (
                     <div style={styles.resultCard}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <h3 style={{ ...styles.cardTitle, marginBottom: 0 }}>Final Result</h3>
-                        <span style={styles.scoreBadge}><Definition text="How accurate our AI system is about this specific calculation.">{result.overall_score}% Accuracy</Definition></span>
+                        <h3 style={{ ...styles.cardTitle, marginBottom: 0 }}>{t('final_result')}</h3>
+                        <span style={styles.scoreBadge}><Definition text={t('accuracy')}>{result.overall_score}% {t('accuracy')}</Definition></span>
                       </div>
                       <p style={{ fontSize: "20px", fontWeight: "800", color: "#10b981", margin: 0 }}>{result.overall_compatibility}</p>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -562,8 +587,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     </div>
                   ) : (
                     <div style={{ ...styles.card, textAlign: "center", padding: "80px 20px" }}>
-                      <div style={{ fontSize: "14px", color: "#10b981", fontWeight: "800", marginBottom: "16px" }}>SYSTEM IDLE</div>
-                      <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>Run a test to see results here.</p>
+                      <div style={{ fontSize: "14px", color: "#10b981", fontWeight: "800", marginBottom: "16px" }}>{t('sys_idle')}</div>
+                      <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>{t('run_test')}</p>
                     </div>
                   )}
                 </div>
@@ -572,8 +597,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: ML ==================== */}
             <section id="section-ml" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-              <h1 style={styles.pageTitle}><Definition text="Intelligent recommendations generated by our AI model to help you pick the best crop.">AI Farming Advice</Definition></h1>
-              <p style={styles.pageSubtitle}>Get the best advice on what to plant next for better yields.</p>
+              <h1 style={styles.pageTitle}><Definition text={t('def_ai_advice')}>{t('ai_advice')}</Definition></h1>
+              <p style={styles.pageSubtitle}>{t('best_advice')}</p>
               <div style={{ marginTop: "40px", ...styles.card }}>
                 <MLModel />
               </div>
@@ -581,8 +606,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: REPORTS ==================== */}
             <section id="section-analytics" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-              <h1 style={styles.pageTitle}>Your Farm Reports</h1>
-              <p style={styles.pageSubtitle}>Summary of all your past tests and farm health.</p>
+              <h1 style={styles.pageTitle}>{t('reports')}</h1>
+              <p style={styles.pageSubtitle}>{t('perf')}</p>
               <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
                 <div style={styles.statsGrid}>
                   <div style={styles.statCard}><span style={styles.statLabel}>Total Tests Done</span><span style={styles.statValue}>{analytics?.total_analyses ?? 0}</span></div>
@@ -604,8 +629,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: CHAT ==================== */}
             <section id="section-chat" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-              <h1 style={styles.pageTitle}><Definition text="A smart chat system that cross-references our agricultural dataset to answer your farming questions.">Talk to AI Farm Expert</Definition></h1>
-              <p style={styles.pageSubtitle}>Ask any question about farming or fertilizers.</p>
+              <h1 style={styles.pageTitle}><Definition text={t('def_ai_chat')}>{t('talk_ai')}</Definition></h1>
+              <p style={styles.pageSubtitle}>{t('ask_any')}</p>
               <div style={{ marginTop: "40px" }}>
                 <Chatbot />
               </div>
@@ -614,7 +639,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             {/* ==================== SECTION: ADMIN ==================== */}
             {currentUser?.is_admin && (
               <section id="section-admin" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-                <h1 style={styles.pageTitle}>Admin Console</h1>
+                <h1 style={styles.pageTitle}>{t('admin')}</h1>
                 <p style={styles.pageSubtitle}>Manage users and farm settings.</p>
                 <div style={{ marginTop: "40px", ...styles.card }}>
                    <div style={{ display: "flex", gap: "12px", marginBottom: "32px" }}>
