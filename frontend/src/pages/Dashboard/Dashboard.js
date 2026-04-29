@@ -288,28 +288,72 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
+  const renderTrain = () => {
+    // Train moves from 0 to 90% of the viewport as you scroll the entire page
+    const trainY = useTransform(scrollYProgress, [0, 1], ["0vh", "90vh"]);
+    const trainWobble = useTransform(scrollYProgress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 2, -2, 2, -2, 0]);
+    
+    return (
+      <motion.div 
+        style={{ 
+          y: trainY, 
+          x: trainWobble,
+          position: "fixed", 
+          right: "40px", 
+          top: "100px", 
+          zIndex: 5,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "4px"
+        }}
+      >
+        {/* Steam/Smoke particles */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{ y: [-10, -40], x: [0, (i % 2 === 0 ? 15 : -15)], opacity: [0.6, 0], scale: [0.5, 2] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.5 }}
+            style={{ width: "12px", height: "12px", background: "rgba(255,255,255,0.2)", borderRadius: "50%", filter: "blur(4px)" }}
+          />
+        ))}
+        {/* Engine */}
+        <div style={{ width: "24px", height: "32px", background: "#10b981", borderRadius: "4px 4px 2px 2px", position: "relative", boxShadow: "0 0 15px rgba(16, 185, 129, 0.5)" }}>
+          <div style={{ position: "absolute", top: "4px", left: "4px", width: "16px", height: "10px", background: "rgba(0,0,0,0.3)", borderRadius: "2px" }} />
+          <div style={{ position: "absolute", bottom: "-2px", left: "-2px", width: "28px", height: "4px", background: "#064e3b", borderRadius: "100px" }} />
+        </div>
+        {/* Cars */}
+        <div style={{ width: "20px", height: "24px", background: "#064e3b", borderRadius: "2px", border: "1px solid rgba(16, 185, 129, 0.3)" }} />
+        <div style={{ width: "20px", height: "24px", background: "#064e3b", borderRadius: "2px", border: "1px solid rgba(16, 185, 129, 0.3)" }} />
+        {/* Track (Vertical Line) */}
+        <div style={{ position: "absolute", top: "-100vh", bottom: "-100vh", width: "2px", background: "repeating-linear-gradient(to bottom, transparent, transparent 10px, rgba(16, 185, 129, 0.1) 10px, rgba(16, 185, 129, 0.1) 20px)", zIndex: -1 }} />
+      </motion.div>
+    );
+  };
+
   const renderParallax = () => {
     const nodes = [
-      { top: "5%", left: "5%", size: "600px", color: "rgba(16, 185, 129, 0.1)", blur: "120px", y: yNode0 },
-      { top: "12%", left: "65%", size: "450px", color: "rgba(59, 130, 246, 0.08)", blur: "90px", y: yNode1 },
-      { top: "22%", left: "0%", size: "250px", color: "rgba(16, 185, 129, 0.2)", blur: "30px", y: yNode2, rotate: true },
-      { top: "32%", left: "75%", size: "350px", color: "rgba(59, 130, 246, 0.12)", blur: "60px", y: yNode3 },
-      { top: "42%", left: "10%", size: "700px", color: "rgba(16, 185, 129, 0.06)", blur: "150px", y: yNode4 },
-      { top: "52%", left: "55%", size: "200px", color: "rgba(16, 185, 129, 0.25)", blur: "15px", y: yNode5, rotate: true },
-      { top: "62%", left: "80%", size: "550px", color: "rgba(59, 130, 246, 0.1)", blur: "100px", y: yNode6 },
-      { top: "72%", left: "5%", size: "400px", color: "rgba(16, 185, 129, 0.15)", blur: "40px", y: yNode7 },
-      { top: "82%", left: "70%", size: "650px", color: "rgba(59, 130, 246, 0.05)", blur: "130px", y: yNode8 },
-      { top: "90%", left: "15%", size: "280px", color: "rgba(16, 185, 129, 0.2)", blur: "25px", y: yNode9, rotate: true },
+      { top: "5%", left: "5%", size: "600px", color: "rgba(16, 185, 129, 0.12)", blur: "120px", y: yNode0 },
+      { top: "12%", left: "65%", size: "450px", color: "rgba(59, 130, 246, 0.1)", blur: "90px", y: yNode1 },
+      { top: "22%", left: "0%", size: "250px", color: "rgba(16, 185, 129, 0.25)", blur: "30px", y: yNode2, rotate: true },
+      { top: "32%", left: "75%", size: "350px", color: "rgba(59, 130, 246, 0.15)", blur: "60px", y: yNode3 },
+      { top: "42%", left: "10%", size: "700px", color: "rgba(16, 185, 129, 0.08)", blur: "150px", y: yNode4 },
+      { top: "52%", left: "55%", size: "200px", color: "rgba(16, 185, 129, 0.3)", blur: "15px", y: yNode5, rotate: true },
+      { top: "62%", left: "80%", size: "550px", color: "rgba(59, 130, 246, 0.12)", blur: "100px", y: yNode6 },
+      { top: "72%", left: "5%", size: "400px", color: "rgba(16, 185, 129, 0.2)", blur: "40px", y: yNode7 },
+      { top: "82%", left: "70%", size: "650px", color: "rgba(59, 130, 246, 0.07)", blur: "130px", y: yNode8 },
+      { top: "90%", left: "15%", size: "280px", color: "rgba(16, 185, 129, 0.25)", blur: "25px", y: yNode9, rotate: true },
     ];
 
     return (
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }}>
+        {renderTrain()}
         {nodes.map((node, i) => {
           const rotation = node.rotate ? rotate1 : 0;
           return (
             <motion.div
               key={i}
-              animate={node.rotate ? { scale: [1, 1.1, 1], opacity: [0.6, 0.9, 0.6] } : {}}
+              animate={node.rotate ? { scale: [1, 1.1, 1], opacity: [0.7, 1, 0.7] } : {}}
               transition={{ duration: 4 + (i % 3), repeat: Infinity, ease: "easeInOut" }}
               style={{
                 y: node.y,
@@ -322,34 +366,34 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 borderRadius: node.rotate ? "30% 70% 70% 30% / 30% 30% 70% 70%" : "50%",
                 background: node.color,
                 filter: `blur(${node.blur})`,
-                border: node.rotate ? `3px solid ${node.color.replace('0.', '0.4')}` : "none",
-                boxShadow: `0 0 80px ${node.color.replace('0.', '0.1')}`,
-                opacity: 0.8
+                border: node.rotate ? `4px solid ${node.color.replace('0.', '0.5')}` : "none",
+                boxShadow: `0 0 100px ${node.color.replace('0.', '0.15')}`,
+                opacity: 0.9
               }}
             />
           );
         })}
         
-        {/* Intense Bioluminescent Spark Field */}
-        {[...Array(25)].map((_, i) => (
+        {/* Extreme Bioluminescent Spark Field */}
+        {[...Array(30)].map((_, i) => (
           <motion.div
             key={`p-${i}`}
             animate={{ 
-              y: [0, -60, 0], 
-              x: [0, 20, 0],
-              opacity: [0.2, 0.7, 0.2],
-              scale: [1, 1.5, 1]
+              y: [0, -80, 0], 
+              x: [0, 30, 0],
+              opacity: [0.3, 0.8, 0.3],
+              scale: [1, 1.8, 1]
             }}
-            transition={{ duration: 2 + (i % 4), repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2 + (i % 5), repeat: Infinity, ease: "easeInOut" }}
             style={{
               position: "absolute",
-              top: `${(i * 4) % 100}%`,
-              left: `${(i * 17) % 100}%`,
-              width: "10px",
-              height: "10px",
+              top: `${(i * 3.3) % 100}%`,
+              left: `${(i * 19) % 100}%`,
+              width: "12px",
+              height: "12px",
               borderRadius: "50%",
               background: "#10b981",
-              boxShadow: "0 0 20px #10b981, 0 0 40px rgba(16, 185, 129, 0.5)",
+              boxShadow: "0 0 25px #10b981, 0 0 50px rgba(16, 185, 129, 0.6)",
               zIndex: 1
             }}
           />
@@ -436,7 +480,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             )}
 
             {/* ==================== SECTION: HOME ==================== */}
-            <section id="section-menu" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+            <section id="section-menu" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
               <h1 style={styles.pageTitle}>Welcome to Your Farm Dashboard</h1>
               <p style={styles.pageSubtitle}>See how your farm is performing today.</p>
               <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
@@ -477,7 +521,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </section>
 
             {/* ==================== SECTION: TEST ==================== */}
-            <section id="section-analysis" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+            <section id="section-analysis" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
               <h1 style={styles.pageTitle}>Check Soil & Fertilizer</h1>
               <p style={styles.pageSubtitle}>Fill in the details below to see if your fertilizer matches your soil.</p>
               <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
@@ -522,7 +566,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </section>
 
             {/* ==================== SECTION: ML ==================== */}
-            <section id="section-ml" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+            <section id="section-ml" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
               <h1 style={styles.pageTitle}>Smart Crop Predictions</h1>
               <p style={styles.pageSubtitle}>Advanced predictions to help you choose the right crop.</p>
               <div style={{ marginTop: "40px", ...styles.card }}>
@@ -531,7 +575,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </section>
 
             {/* ==================== SECTION: REPORTS ==================== */}
-            <section id="section-analytics" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+            <section id="section-analytics" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
               <h1 style={styles.pageTitle}>Your Farm Reports</h1>
               <p style={styles.pageSubtitle}>Summary of all your past tests and farm health.</p>
               <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
@@ -554,7 +598,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
             </section>
 
             {/* ==================== SECTION: CHAT ==================== */}
-            <section id="section-chat" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+            <section id="section-chat" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
               <h1 style={styles.pageTitle}>Talk to AI Farm Expert</h1>
               <p style={styles.pageSubtitle}>Ask any question about farming or fertilizers.</p>
               <div style={{ marginTop: "40px" }}>
@@ -564,7 +608,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: ADMIN ==================== */}
             {currentUser?.is_admin && (
-              <section id="section-admin" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+              <section id="section-admin" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
                 <h1 style={styles.pageTitle}>Admin Console</h1>
                 <p style={styles.pageSubtitle}>Manage users and farm settings.</p>
                 <div style={{ marginTop: "40px", ...styles.card }}>
@@ -659,5 +703,3 @@ const td_style = (item) => ({
 });
 
 export default Dashboard;
-
-
