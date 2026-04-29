@@ -12,9 +12,11 @@ from services.analyzer import FertilizerAnalyzer
 chat_bp = Blueprint('chat', __name__)
 
 # ==================== CHAT ROUTE ====================
-@chat_bp.route('/chat', methods=['POST'])
+@chat_bp.route('/chat', methods=['POST', 'OPTIONS'])
 @token_required
 def chatbot(**kwargs):
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         data = request.get_json() or {}
         message = data.get("message", "").lower()
