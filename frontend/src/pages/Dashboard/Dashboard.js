@@ -279,10 +279,37 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   const renderParallax = () => (
     <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
-      <motion.div style={{ y: y1, position: "absolute", top: "10%", left: "5%", width: "300px", height: "300px", borderRadius: "50%", background: "radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)" }} />
-      <motion.div style={{ y: y2, position: "absolute", top: "40%", left: "80%", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%)" }} />
-      <motion.div style={{ y: y3, position: "absolute", top: "70%", left: "15%", width: "400px", height: "400px", borderRadius: "50%", background: "radial-gradient(circle, rgba(16, 185, 129, 0.04) 0%, transparent 70%)" }} />
-      <motion.div style={{ y: y1, position: "absolute", top: "120%", left: "60%", width: "350px", height: "350px", borderRadius: "50%", background: "radial-gradient(circle, rgba(139, 92, 246, 0.03) 0%, transparent 70%)" }} />
+      {/* Deep Background - Slowest */}
+      <motion.div style={{ y: y3, position: "absolute", top: "5%", left: "10%", width: "400px", height: "400px", borderRadius: "50%", filter: "blur(80px)", background: "rgba(16, 185, 129, 0.03)" }} />
+      <motion.div style={{ y: y3, position: "absolute", top: "60%", left: "70%", width: "600px", height: "600px", borderRadius: "50%", filter: "blur(100px)", background: "rgba(59, 130, 246, 0.02)" }} />
+
+      {/* Mid Ground - Interactive Nodes */}
+      <motion.div style={{ y: y1, rotate: rotate1, position: "absolute", top: "20%", left: "85%", width: "150px", height: "150px", border: "1px solid rgba(16, 185, 129, 0.1)", borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%" }} />
+      <motion.div style={{ y: y2, scale: scale1, position: "absolute", top: "45%", left: "5%", width: "200px", height: "200px", border: "1px solid rgba(59, 130, 246, 0.08)", borderRadius: "50% 50% 20% 80% / 25% 80% 20% 75%" }} />
+
+      {/* Foreground - Fastest & Sharpest */}
+      <motion.div style={{ y: y2, position: "absolute", top: "15%", left: "40%", width: "4px", height: "100px", background: "linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.2), transparent)" }} />
+      <motion.div style={{ y: y1, position: "absolute", top: "80%", left: "20%", width: "100px", height: "100px", borderRadius: "20px", rotate: "45deg", border: "1px solid rgba(16, 185, 129, 0.15)" }} />
+      
+      {/* Floating Ambient Particles */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          animate={{ y: [0, -20, 0], opacity: [0.1, 0.3, 0.1] }}
+          transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            top: `${15 + i * 20}%`,
+            left: `${10 + i * 15}%`,
+            width: "8px",
+            height: "8px",
+            borderRadius: "50%",
+            background: "#10b981",
+            boxShadow: "0 0 10px #10b981",
+            zIndex: 1
+          }}
+        />
+      ))}
     </div>
   );
 
@@ -571,3 +598,4 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 };
 
 export default Dashboard;
+
