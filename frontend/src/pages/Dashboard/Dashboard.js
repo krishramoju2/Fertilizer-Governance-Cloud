@@ -767,37 +767,56 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
   const getNavButtonStyle = (tabName, isLogout = false) => {
     if (isLogout) {
-      return { padding: "8px 12px", background: "#e74c3c", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" };
+      return { 
+        padding: "10px 20px", 
+        background: "rgba(239, 68, 68, 0.1)", 
+        color: "#f87171", 
+        border: "1px solid rgba(239, 68, 68, 0.2)", 
+        borderRadius: "12px", 
+        cursor: "pointer",
+        fontSize: "14px",
+        fontWeight: "700",
+        transition: "all 0.3s ease"
+      };
     }
-    return {
-      padding: "8px 14px",
-      background: activeTab === tabName ? "linear-gradient(135deg, #4f46e5, #22c55e)" : "rgba(255,255,255,0.2)",
-      color: "white",
-      border: "none",
-      borderRadius: "8px",
-      cursor: "pointer",
-      transition: "all 0.3s ease",
-      backdropFilter: "blur(6px)"
-    };
+    return styles.navButton(activeTab === tabName);
   };
 
   return (
     <div style={styles.app}>
       <div style={styles.silkBackground}>
-        <Silk speed={3} scale={1} color="#f59e0b" noiseIntensity={1.2} rotation={0} />
+        <Silk speed={1.5} scale={1.2} color="#10b981" noiseIntensity={0.8} rotation={15} />
       </div>
 
       <header style={styles.header}>
-        <div><h1 style={styles.title}>🌾 FarmAdvisor Pro</h1><p style={styles.welcome}>Welcome, {currentUser?.name || 'Farmer'}!</p></div>
-        <nav style={styles.nav}>
-          <button style={getNavButtonStyle('menu')} onClick={() => setActiveTab('menu')}>Home</button>
-          <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>Analysis</button>
-          <button style={getNavButtonStyle('ml')} onClick={() => setActiveTab('ml')}>ML Model</button>
-          <button style={getNavButtonStyle('analytics')} onClick={() => setActiveTab('analytics')}>Analytics</button>
-          {currentUser?.is_admin && <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>Admin</button>}
-          <button style={getNavButtonStyle('chat')} onClick={() => setActiveTab('chat')}>Chatbot</button>
-          <button style={getNavButtonStyle('', true)} onClick={() => { localStorage.removeItem('token'); setToken(null); setCurrentUser(null); }}>Logout</button>
-        </nav>
+        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          <div>
+            <h1 style={styles.title}>FarmAdvisor <span style={{ color: "#10b981" }}>Pro</span></h1>
+            <p style={styles.welcome}>Strategic Governance Cloud</p>
+          </div>
+          <div style={{ width: "1px", height: "32px", background: "rgba(255,255,255,0.1)" }} />
+          <nav style={styles.nav}>
+            <button style={getNavButtonStyle('menu')} onClick={() => setActiveTab('menu')}>Core</button>
+            <button style={getNavButtonStyle('analysis')} onClick={() => setActiveTab('analysis')}>Analysis</button>
+            <button style={getNavButtonStyle('ml')} onClick={() => setActiveTab('ml')}>Predictions</button>
+            <button style={getNavButtonStyle('analytics')} onClick={() => setActiveTab('analytics')}>Intelligence</button>
+            {currentUser?.is_admin && <button style={getNavButtonStyle('admin')} onClick={() => setActiveTab('admin')}>Governance</button>}
+            <button style={getNavButtonStyle('chat')} onClick={() => setActiveTab('chat')}>Assistant</button>
+          </nav>
+        </div>
+        
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div style={styles.userBadge}>
+            <div style={styles.userInitial}>
+              {currentUser?.name?.charAt(0) || "U"}
+            </div>
+            <div style={{ textAlign: "left" }}>
+              <p style={{ fontSize: "13px", fontWeight: "800", margin: 0, color: "#fff" }}>{currentUser?.name || "Member"}</p>
+              <p style={{ fontSize: "10px", fontWeight: "600", margin: 0, color: "#64748b", textTransform: "uppercase" }}>{currentUser?.is_admin ? "Strategic Admin" : "Premium Partner"}</p>
+            </div>
+          </div>
+          <button style={getNavButtonStyle('', true)} onClick={() => { localStorage.removeItem('token'); setToken(null); setCurrentUser(null); }}>Sign Out</button>
+        </div>
       </header>
 
       {message.text && <div style={message.type === 'error' ? styles.errorMessage : styles.successMessage}>{message.text}</div>}
@@ -1349,5 +1368,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
 
 
