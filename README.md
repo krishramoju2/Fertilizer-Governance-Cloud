@@ -1,4 +1,5 @@
-
+Dataset Used
+https://www.kaggle.com/datasets/gdabhishek/fertilizer-prediction
 
 1. **User Authentication** - Register and login with JWT based authentication
 2. **Farm Profile** - Save soil type, farm size, location, primary crops.
