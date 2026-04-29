@@ -299,34 +299,48 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           y: trainY, 
           x: trainWobble,
           position: "fixed", 
-          right: "40px", 
-          top: "100px", 
-          zIndex: 5,
+          right: "30px", 
+          top: "120px", 
+          zIndex: 999,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: "4px"
+          gap: "4px",
+          pointerEvents: "none"
         }}
       >
-        {/* Steam/Smoke particles */}
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{ y: [-10, -40], x: [0, (i % 2 === 0 ? 15 : -15)], opacity: [0.6, 0], scale: [0.5, 2] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.5 }}
-            style={{ width: "12px", height: "12px", background: "rgba(255,255,255,0.2)", borderRadius: "50%", filter: "blur(4px)" }}
-          />
-        ))}
-        {/* Engine */}
-        <div style={{ width: "24px", height: "32px", background: "#10b981", borderRadius: "4px 4px 2px 2px", position: "relative", boxShadow: "0 0 15px rgba(16, 185, 129, 0.5)" }}>
-          <div style={{ position: "absolute", top: "4px", left: "4px", width: "16px", height: "10px", background: "rgba(0,0,0,0.3)", borderRadius: "2px" }} />
-          <div style={{ position: "absolute", bottom: "-2px", left: "-2px", width: "28px", height: "4px", background: "#064e3b", borderRadius: "100px" }} />
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+          {/* Steam Particles */}
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{ y: [-10, -40], x: [0, (i % 2 === 0 ? 15 : -15)], opacity: [0.8, 0], scale: [0.5, 2.5] }}
+              transition={{ duration: 1, repeat: Infinity, delay: i * 0.3 }}
+              style={{ width: "16px", height: "16px", background: "#fff", borderRadius: "50%", filter: "blur(4px)" }}
+            />
+          ))}
+          {/* Bigger Engine */}
+          <div style={{ width: "40px", height: "50px", background: "#10b981", borderRadius: "8px 8px 4px 4px", position: "relative", boxShadow: "0 0 25px #10b981, 0 4px 15px rgba(0,0,0,0.5)" }}>
+            <div style={{ position: "absolute", top: "8px", left: "8px", width: "24px", height: "15px", background: "rgba(0,0,0,0.4)", borderRadius: "3px" }} />
+            <div style={{ position: "absolute", bottom: "-4px", left: "-4px", width: "48px", height: "8px", background: "#064e3b", borderRadius: "100px" }} />
+          </div>
+          {/* Bigger Cars */}
+          <div style={{ width: "32px", height: "36px", background: "#064e3b", borderRadius: "4px", border: "2px solid #10b981", boxShadow: "0 4px 10px rgba(0,0,0,0.3)" }} />
+          <div style={{ width: "32px", height: "36px", background: "#064e3b", borderRadius: "4px", border: "2px solid #10b981", boxShadow: "0 4px 10px rgba(0,0,0,0.3)" }} />
         </div>
-        {/* Cars */}
-        <div style={{ width: "20px", height: "24px", background: "#064e3b", borderRadius: "2px", border: "1px solid rgba(16, 185, 129, 0.3)" }} />
-        <div style={{ width: "20px", height: "24px", background: "#064e3b", borderRadius: "2px", border: "1px solid rgba(16, 185, 129, 0.3)" }} />
-        {/* Track (Vertical Line) */}
-        <div style={{ position: "absolute", top: "-100vh", bottom: "-100vh", width: "2px", background: "repeating-linear-gradient(to bottom, transparent, transparent 10px, rgba(16, 185, 129, 0.1) 10px, rgba(16, 185, 129, 0.1) 20px)", zIndex: -1 }} />
+        
+        {/* The Track (Locked in viewport behind the train) */}
+        <div style={{ 
+          position: "absolute", 
+          right: "26px", 
+          top: "-200vh", 
+          bottom: "-200vh", 
+          width: "4px", 
+          background: "rgba(16, 185, 129, 0.1)", 
+          zIndex: -1, 
+          borderLeft: "1px dashed rgba(16, 185, 129, 0.3)",
+          borderRight: "1px dashed rgba(16, 185, 129, 0.3)"
+        }} />
       </motion.div>
     );
   };
@@ -347,7 +361,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
     return (
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }}>
-        {renderTrain()}
         {nodes.map((node, i) => {
           const rotation = node.rotate ? rotate1 : 0;
           return (
@@ -460,6 +473,9 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     <div style={styles.app}>
       {renderSidebar()}
       
+      {/* Global Sticky Train - Progress Tracker */}
+      {renderTrain()}
+
       <motion.div 
         style={{ ...styles.mainContent, position: "relative", flex: 1, overflowY: "auto", backgroundColor: bgShift }} 
         ref={scrollRef}
@@ -485,10 +501,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               <p style={styles.pageSubtitle}>See how your farm is performing today.</p>
               <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
                 <div style={styles.statsGrid}>
-                  <div style={styles.statCard}><span style={styles.statLabel}>Operations Logged</span><span style={styles.statValue}>{history.length}</span></div>
-                  <div style={styles.statCard}><span style={styles.statLabel}>Mean Compatibility</span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
-                  <div style={styles.statCard}><span style={styles.statLabel}>Avg Yield Potential</span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
-                  <div style={styles.statCard}><span style={styles.statLabel}>System Integrity</span><span style={styles.statValue}>100%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Total Analyses</span><span style={styles.statValue}>{history.length}</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Fertilizer Match</span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>Expected Growth</span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
+                  <div style={styles.statCard}><span style={styles.statLabel}>System Status</span><span style={styles.statValue}>Healthy</span></div>
                 </div>
                 <div style={styles.card}>
                   <h3 style={styles.cardTitle}>Recent Activity Log</h3>
@@ -497,10 +513,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       <thead>
                         <tr>
                           <th style={styles.th}>Date</th>
-                          <th style={styles.th}>Crop Profile</th>
-                          <th style={styles.th}>Soil Spec</th>
+                          <th style={styles.th}>Crop Choice</th>
+                          <th style={styles.th}>Soil Type</th>
                           <th style={styles.th}>Result</th>
-                          <th style={styles.th}>Confidence</th>
+                          <th style={styles.th}>Accuracy</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -522,8 +538,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: TEST ==================== */}
             <section id="section-analysis" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-              <h1 style={styles.pageTitle}>Check Soil & Fertilizer</h1>
-              <p style={styles.pageSubtitle}>Fill in the details below to see if your fertilizer matches your soil.</p>
+              <h1 style={styles.pageTitle}>Check Your Fertilizer</h1>
+              <p style={styles.pageSubtitle}>Fill in your details to see if your fertilizer is right for your soil.</p>
               <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
                 <div style={styles.card}>
                   <h3 style={styles.cardTitle}>Enter Farm Details</h3>
@@ -542,8 +558,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                   {result ? (
                     <div style={styles.resultCard}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <h3 style={{ ...styles.cardTitle, marginBottom: 0 }}>Assessment Output</h3>
-                        <span style={styles.scoreBadge}>{result.overall_score}% Confidence</span>
+                        <h3 style={{ ...styles.cardTitle, marginBottom: 0 }}>Final Result</h3>
+                        <span style={styles.scoreBadge}>{result.overall_score}% Accuracy</span>
                       </div>
                       <p style={{ fontSize: "20px", fontWeight: "800", color: "#10b981", margin: 0 }}>{result.overall_compatibility}</p>
                       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -567,8 +583,8 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 
             {/* ==================== SECTION: ML ==================== */}
             <section id="section-ml" style={{ minHeight: "130vh", paddingBottom: "200px" }}>
-              <h1 style={styles.pageTitle}>Smart Crop Predictions</h1>
-              <p style={styles.pageSubtitle}>Advanced predictions to help you choose the right crop.</p>
+              <h1 style={styles.pageTitle}>AI Farming Advice</h1>
+              <p style={styles.pageSubtitle}>Get the best advice on what to plant next for better yields.</p>
               <div style={{ marginTop: "40px", ...styles.card }}>
                 <MLModel />
               </div>
@@ -703,4 +719,5 @@ const td_style = (item) => ({
 });
 
 export default Dashboard;
+
 
