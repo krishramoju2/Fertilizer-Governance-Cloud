@@ -1,7 +1,123 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import GradientBlinds from "./GradientBlinds";
 
+// ===== STATIC DESCRIPTION HELPERS =====
+
+const fertilizerDescriptions = {
+  "Urea": "High nitrogen content for rapid vegetative growth. Best for crops needing quick green growth.",
+  "DAP": "Phosphorus-rich formula for root development and flowering. Ideal for initial plant stages.",
+  "14-35-14": "Balanced NPK with high phosphorus for flowering and grain formation.",
+  "28-28": "High nitrogen and phosphorus for early growth stages. Best as basal dose.",
+  "17-17-17": "Balanced nutrition for overall plant health. Suitable for maintenance feeding.",
+  "20-20": "Equal NPK ratio for balanced crop development across all stages.",
+  "10-26-26": "Low nitrogen, high P&K for flowering and grain fill stages."
+};
+
+const fertilizerApplications = {
+  "Urea": "Apply in split doses for sustained nitrogen release",
+  "DAP": "Apply at planting stage for optimal root growth",
+  "14-35-14": "Ideal for flowering and fruiting stages",
+  "28-28": "Best as basal dose at sowing time",
+  "17-17-17": "Suitable for maintenance feeding throughout season",
+  "20-20": "Apply at vegetative growth stage",
+  "10-26-26": "Ideal for reproductive stage application"
+};
+
+const cropGrowthDescriptions = {
+  "Maize": "High yield potential with adequate nitrogen. Responds well to balanced fertilization.",
+  "Wheat": "Requires steady nitrogen supply for grain filling. Frost tolerance varies by variety.",
+  "Paddy": "Needs consistent moisture and nitrogen for grain development.",
+  "Cotton": "Requires phosphorus for boll formation. Drought tolerant varieties available.",
+  "Sugarcane": "Long duration crop needing sustained nutrition. Responds well to split applications."
+};
+
+const soilGrowthFactors = {
+  "Loamy": "Excellent water retention and nutrient holding capacity",
+  "Sandy": "Good drainage but low nutrient retention - requires more frequent feeding",
+  "Clayey": "High nutrient retention but poor drainage - avoid overwatering",
+  "Black": "High fertility but prone to compaction - use organic matter",
+  "Red": "Moderate fertility with good drainage - supplement with micronutrients"
+};
+
+function getFertilizerDescription(fertilizer) {
+  return fertilizerDescriptions[fertilizer] || "Balanced fertilizer for crop nutrition";
+}
+
+function getFertilizerApplication(fertilizer) {
+  return fertilizerApplications[fertilizer] || "Follow recommended dosage guidelines";
+}
+
+function getGrowthDescription(crop, soil) {
+  const cropDesc = cropGrowthDescriptions[crop] || "General crop growth requirements";
+  const soilDesc = soilGrowthFactors[soil] || "Standard soil conditions";
+  return `${cropDesc} ${soilDesc}.`;
+}
+
+function getGrowthEstimate(confidence) {
+  if (confidence >= 75) return "Expected yield increase: 20-30%";
+  if (confidence >= 50) return "Expected yield increase: 10-20%";
+  return "Expected yield increase: 5-10%";
+}
+
+function getTrustLevel(score) {
+  if (score >= 85) return "Very High";
+  if (score >= 70) return "High";
+  if (score >= 50) return "Moderate";
+  return "Low";
+}
+
+function getTrustDescription(score) {
+  if (score >= 85) return "Model predictions are highly reliable based on training data quality";
+  if (score >= 70) return "Model shows good reliability with minor uncertainty in edge cases";
+  if (score >= 50) return "Model has moderate reliability - consider additional validation";
+  return "Limited training data for this scenario - results should be verified";
+}
+
+// ===== MAIN COMPONENT =====
 
 export default function MLModel() {
   const [form, setForm] = useState({
@@ -157,6 +273,48 @@ export default function MLModel() {
                   <span style={styles.hudLabel}>TRUST_INDEX:</span>
                   <span style={styles.hudValue}>{result.overall_score}</span>
                 </div>
+                
+                {/* Fertilizer Match Section - Static Descriptions */}
+                <div style={styles.detailSection}>
+                  <div style={styles.sectionTitle}>FERTILIZER MATCH</div>
+                  <div style={styles.detailRow}>
+                    <span style={styles.detailLabel}>Type:</span>
+                    <span style={styles.detailValue}>{form.fertilizer}</span>
+                  </div>
+                  <div style={styles.detailDescription}>
+                    {getFertilizerDescription(form.fertilizer)}
+                  </div>
+                  <div style={styles.detailTip}>
+                    💡 {getFertilizerApplication(form.fertilizer)}
+                  </div>
+                </div>
+                
+                {/* Expected Growth Section - Static Analysis */}
+                <div style={styles.detailSection}>
+                  <div style={styles.sectionTitle}>EXPECTED GROWTH</div>
+                  <div style={styles.detailRow}>
+                    <span style={styles.detailLabel}>Base Growth:</span>
+                    <span style={styles.detailValue}>{result.confidence}%</span>
+                  </div>
+                  <div style={styles.detailDescription}>
+                    {getGrowthDescription(form.crop, form.soil)}
+                  </div>
+                  <div style={styles.detailEstimate}>
+                    📈 {getGrowthEstimate(result.confidence)}
+                  </div>
+                </div>
+                
+                {/* Trust Index Section - Static Description */}
+                <div style={styles.detailSection}>
+                  <div style={styles.sectionTitle}>TRUST INDEX</div>
+                  <div style={styles.detailRow}>
+                    <span style={styles.detailLabel}>Score:</span>
+                    <span style={styles.detailValue}>{result.overall_score}% ({getTrustLevel(result.overall_score)})</span>
+                  </div>
+                  <div style={styles.detailDescription}>
+                    {getTrustDescription(result.overall_score)}
+                  </div>
+                </div>
               </div>
             ) : (
               <div style={styles.hudPlaceholder}>WAITING FOR INPUT...</div>
@@ -296,7 +454,8 @@ const styles = {
 
   hudDisplay: {
     width: "350px",
-    height: "100px",
+    height: "auto",
+    minHeight: "100px",
     background: "#020617",
     border: "1px solid #1e293b",
     borderRadius: "4px",
@@ -304,7 +463,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    boxShadow: "inset 0 0 15px rgba(56,189,248,0.1)"
+    boxShadow: "inset 0 0 15px rgba(56,189,248,0.1)",
+    overflowY: "auto"
   },
 
   hudPlaceholder: { color: "#1e293b", fontSize: "14px", textAlign: "center", fontFamily: "monospace", letterSpacing: "2px" },
@@ -312,6 +472,68 @@ const styles = {
   hudRow: { display: "flex", justifyContent: "space-between", alignItems: "center" },
   hudLabel: { color: "#334155", fontSize: "11px", fontWeight: "800" },
   hudValue: { color: "#38bdf8", fontSize: "14px", fontWeight: "900", fontFamily: "monospace", textShadow: "0 0 8px rgba(56,189,248,0.5)" },
+
+  // Static description styles
+  detailSection: {
+    marginTop: "12px",
+    padding: "10px",
+    background: "#0f172a",
+    borderRadius: "4px",
+    border: "1px solid #334155"
+  },
+
+  sectionTitle: {
+    color: "#f472b6",
+    fontSize: "10px",
+    fontWeight: "800",
+    letterSpacing: "1px",
+    marginBottom: "8px",
+    borderBottom: "1px solid #334155",
+    paddingBottom: "4px"
+  },
+
+  detailRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "4px"
+  },
+
+  detailLabel: {
+    color: "#94a3b8",
+    fontSize: "10px",
+    fontFamily: "monospace"
+  },
+
+  detailValue: {
+    color: "#22d3ee",
+    fontSize: "10px",
+    fontWeight: "600",
+    fontFamily: "monospace"
+  },
+
+  detailDescription: {
+    color: "#cbd5e1",
+    fontSize: "9px",
+    fontFamily: "monospace",
+    marginTop: "6px",
+    lineHeight: "1.4"
+  },
+
+  detailTip: {
+    color: "#a78bfa",
+    fontSize: "9px",
+    fontFamily: "monospace",
+    marginTop: "6px",
+    fontStyle: "italic"
+  },
+
+  detailEstimate: {
+    color: "#34d399",
+    fontSize: "11px",
+    fontWeight: "700",
+    fontFamily: "monospace",
+    marginTop: "4px"
+  },
 
   logsChassis: { width: "700px", marginTop: "30px", zIndex: 1 },
   logsTitle: { color: "#475569", fontSize: "12px", fontWeight: "800", marginBottom: "15px", letterSpacing: "2px" },
@@ -330,3 +552,10 @@ const styles = {
   logData: { color: "#cbd5e1", fontSize: "11px", fontWeight: "600" },
   logTimestamp: { color: "#475569", fontSize: "8px", fontFamily: "monospace" }
 };
+
+
+
+
+
+
+
