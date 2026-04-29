@@ -254,9 +254,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const yNode8 = useTransform(scrollYProgress, [0, 1], [0, -1000]);
   const yNode9 = useTransform(scrollYProgress, [0, 1], [0, -4200]);
 
-  // Train Specific Cinematic Transforms
-  const trainY = useTransform(scrollYProgress, [0, 1], ["0vh", "90vh"]);
-  const trainWobble = useTransform(scrollYProgress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 2, -2, 2, -2, 0]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -290,59 +287,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
         behavior: 'smooth'
       });
     }
-  };
-
-  const renderTrain = () => {
-    return (
-      <motion.div 
-        style={{ 
-          y: trainY, 
-          x: trainWobble,
-          position: "fixed", 
-          right: "120px", 
-          top: "150px", 
-          zIndex: 999,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "4px",
-          pointerEvents: "none"
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-          {/* Steam Particles */}
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{ y: [-10, -40], x: [0, (i % 2 === 0 ? 15 : -15)], opacity: [0.8, 0], scale: [0.5, 2.5] }}
-              transition={{ duration: 1, repeat: Infinity, delay: i * 0.3 }}
-              style={{ width: "16px", height: "16px", background: "#fff", borderRadius: "50%", filter: "blur(4px)" }}
-            />
-          ))}
-          {/* Bigger Engine - High Contrast Silver/White */}
-          <div style={{ width: "42px", height: "54px", background: "#f8fafc", borderRadius: "8px 8px 4px 4px", position: "relative", boxShadow: "0 0 30px rgba(255, 255, 255, 0.5), 0 4px 15px rgba(0,0,0,0.5)" }}>
-            <div style={{ position: "absolute", top: "8px", left: "8px", width: "26px", height: "18px", background: "rgba(0,0,0,0.6)", borderRadius: "3px" }} />
-            <div style={{ position: "absolute", bottom: "-4px", left: "-4px", width: "50px", height: "10px", background: "#10b981", borderRadius: "100px" }} />
-          </div>
-          {/* Bigger Cars - High Contrast Emerald */}
-          <div style={{ width: "34px", height: "38px", background: "#10b981", borderRadius: "4px", border: "2px solid #fff", boxShadow: "0 4px 10px rgba(0,0,0,0.5)" }} />
-          <div style={{ width: "34px", height: "38px", background: "#10b981", borderRadius: "4px", border: "2px solid #fff", boxShadow: "0 4px 10px rgba(0,0,0,0.5)" }} />
-        </div>
-        
-        {/* The Track (Locked in viewport behind the train) */}
-        <div style={{ 
-          position: "absolute", 
-          right: "26px", 
-          top: "-200vh", 
-          bottom: "-200vh", 
-          width: "4px", 
-          background: "rgba(16, 185, 129, 0.1)", 
-          zIndex: -1, 
-          borderLeft: "1px dashed rgba(16, 185, 129, 0.3)",
-          borderRight: "1px dashed rgba(16, 185, 129, 0.3)"
-        }} />
-      </motion.div>
-    );
   };
 
   const renderParallax = () => {
@@ -472,9 +416,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     <div style={styles.app}>
       {renderSidebar()}
       
-      {/* Global Sticky Train - Progress Tracker */}
-      {renderTrain()}
-
       <motion.div 
         style={{ ...styles.mainContent, position: "relative", flex: 1, overflowY: "auto", backgroundColor: bgShift }} 
         ref={scrollRef}
@@ -718,5 +659,3 @@ const td_style = (item) => ({
 });
 
 export default Dashboard;
-
-
