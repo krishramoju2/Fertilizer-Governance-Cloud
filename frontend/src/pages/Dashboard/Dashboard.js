@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
@@ -385,38 +384,40 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
           {activeTab === 'analytics' && (
             <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
               <div style={styles.statsGrid}>
-                <div style={styles.statCard}><span style={styles.statLabel}>Aggregate Sessions</span><span style={styles.statValue}>{analytics?.total_analyses || 0}</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Success Ratio</span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
-                <div style={styles.statCard}><span style={styles.statLabel}>Performance Index</span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
+                <div style={styles.statCard}><span style={styles.statLabel}>Aggregate Sessions</span><span style={styles.statValue}>{analytics?.total_analyses ?? 0}</span></div>
+                <div style={styles.statCard}><span style={styles.statLabel}>Success Ratio</span><span style={styles.statValue}>{analytics?.compatibility_rate ?? 0}%</span></div>
+                <div style={styles.statCard}><span style={styles.statLabel}>Performance Index</span><span style={styles.statValue}>{analytics?.average_score ?? 0}%</span></div>
               </div>
               <div style={styles.card}>
                 <h3 style={styles.cardTitle}>Performance Trend Analysis</h3>
                 <div style={{ height: "240px", width: "100%", display: "flex", alignItems: "flex-end", gap: "12px", padding: "20px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                  {analytics?.time_series?.scores?.length > 0 ? (
+                  {analytics?.time_series?.scores && analytics.time_series.scores.length > 0 ? (
                     analytics.time_series.scores.map((score, i) => (
                       <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
                         <div 
                           style={{ 
                             width: "100%", 
-                            height: `${score}%`, 
+                            height: `${Math.max(5, score)}%`, 
                             backgroundColor: "#10b981", 
                             borderRadius: "6px 6px 0 0", 
-                            opacity: 0.6 + (score / 250),
+                            opacity: 0.4 + (score / 150),
                             transition: "height 0.5s ease"
                           }} 
                           title={`Score: ${score}%`}
                         />
-                        <span style={{ fontSize: "10px", fontWeight: "800", color: "#64748b" }}>{analytics.time_series.labels[i]}</span>
+                        <span style={{ fontSize: "10px", fontWeight: "800", color: "#64748b" }}>
+                          {analytics.time_series.labels && analytics.time_series.labels[i] ? analytics.time_series.labels[i] : '---'}
+                        </span>
                       </div>
                     ))
                   ) : (
                     <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", color: "#64748b", fontWeight: "600" }}>
-                      Insufficient data for trend projection.
+                      System scanning for historical data... (Run an assessment to initialize)
                     </div>
                   )}
                 </div>
                 <p style={{ color: "#64748b", fontWeight: "600", fontSize: "14px", marginTop: "20px" }}>
-                  Historical data indicates a consistent performance trajectory. Strategic optimizations in moisture management are recommended based on recent 100% compatibility scores.
+                  The Intelligence Engine is monitoring your strategic performance. Once data thresholds are met, this visualization will provide predictive yield insights.
                 </p>
               </div>
             </div>
