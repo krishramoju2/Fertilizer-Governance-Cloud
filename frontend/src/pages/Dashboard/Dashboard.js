@@ -216,12 +216,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     }
   };
 
-  const handleSelectUser = (userId) => {
-    setSelectedUserId(userId);
-    loadUserAnalytics(userId);
-    loadUserHistory(userId);
-  };
-
   const handleSignOut = () => {
     localStorage.removeItem('token');
     setToken(null);
