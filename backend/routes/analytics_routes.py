@@ -126,6 +126,3 @@ def get_analytics(**kwargs):
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
-
-
-
