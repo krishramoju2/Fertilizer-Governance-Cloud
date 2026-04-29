@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import datetime
@@ -112,8 +120,10 @@ def health():
     return jsonify({'status': 'ok', 'database': 'connected' if db_status else 'disconnected'})
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'OPTIONS'])
 def home():
+    if request.method == 'OPTIONS':
+        return '', 200
     return jsonify({'success': True, 'message': 'API is running'})
 
 # ==================== ERROR HANDLERS ====================
