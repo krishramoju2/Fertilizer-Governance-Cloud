@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Silk from "../../components/Home/Silk";
 import { styles } from "./DashboardStyles";
 
+// eslint-disable-next-line no-unused-vars
 const _styles_ignore = {
   app: {
     padding: "30px",
@@ -1348,4 +1349,5 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
 }
 
 export default Dashboard;
+
 
