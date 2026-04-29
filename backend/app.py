@@ -119,46 +119,6 @@ def health():
     db_status = check_db_connection()
     return jsonify({'status': 'ok', 'database': 'connected' if db_status else 'disconnected'})
 
-@app.route('/api/me', methods=['GET', 'OPTIONS'])
-def get_me_direct():
-    from models.db import users_collection
-    import jwt
-    from functools import wraps
-    
-    if request.method == 'OPTIONS':
-        return '', 200
-    
-    token = None
-    auth_header = request.headers.get('Authorization')
-    
-    if auth_header and auth_header.startswith('Bearer '):
-        token = auth_header.split(' ')[1]
-    
-    if not token:
-        return jsonify({'success': False, 'message': 'Token missing'}), 401
-    
-    try:
-        SECRET_KEY = os.environ.get('SECRET_KEY', 'btech_project_2026_secret_key')
-        data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        user_id = data.get('user_id')
-        
-        if user_id == 'bypass-user':
-            return jsonify({'success': True, 'user': {'_id': 'bypass-user', 'email': 'bypass@example.com', 'name': 'Bypass User', 'is_admin': True}})
-        
-        from bson import ObjectId
-        user = users_collection.find_one({'_id': ObjectId(user_id)})
-        if not user:
-            return jsonify({'success': False, 'message': 'User not found'}), 401
-        
-        return jsonify({'success': True, 'user': {
-            '_id': str(user['_id']),
-            'name': user.get('name'),
-            'email': user.get('email'),
-            'is_admin': user.get('is_admin', False),
-            'farm_details': user.get('farm_details', {})
-        }})
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 401
 
 @app.route('/', methods=['GET'])
 def home():
