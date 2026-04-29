@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import MLModel from "../../components/ML/MLModel";
 import api from "../../services/api";
@@ -220,29 +221,107 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     localStorage.removeItem('token');
     setToken(null);
     setCurrentUser(null);
+  };  // 🧠 Intelligent Tip Engine
+  const getPersonalizedTip = () => {
+    if (!history || history.length === 0) return "Start testing your soil to see personalized farming advice here!";
+    const recent = history.slice(0, 20);
+    const highMoisture = recent.filter(h => (h.input_data?.Moisture || 0) > 55).length;
+    const highTemp = recent.filter(h => (h.input_data?.Temperature || 0) > 32).length;
+    const lowCompatibility = recent.filter(h => (h.result?.overall_score || 0) < 60).length;
+
+    if (highMoisture > 8) return "⚠️ ALERT: Your soil is consistently too wet (High Moisture). Consider clearing drainage channels or using raised beds to prevent root rot.";
+    if (highTemp > 8) return "🌡️ CLIMATE TIP: High temperature trends detected. We recommend morning-only irrigation and using straw mulch to keep the soil cool.";
+    if (lowCompatibility > 5) return "🛠️ STRATEGY CHANGE: Many recent tests show low compatibility. We suggest switching to a more balanced fertilizer like NPK 17-17-17 for better results.";
+    
+    return "✅ STABLE GROWTH: Your recent farm tests show optimal conditions. Maintain your current schedule for a healthy harvest!";
   };
 
-  const renderSidebar = () => (
-    <aside style={styles.sidebar}>
-      <div style={styles.sidebarBrand}>
-        <div style={{ width: "32px", height: "32px", background: "#10b981", borderRadius: "8px", display: "grid", placeItems: "center", fontSize: "18px" }}>🌾</div>
-        <span>Advisor Pro</span>
-      </div>
-      <nav style={styles.sidebarNav}>
-        <button style={styles.sidebarLink(activeTab === 'menu')} onClick={() => setActiveTab('menu')}>Operations Overview</button>
-        <button style={styles.sidebarLink(activeTab === 'analysis')} onClick={() => setActiveTab('analysis')}>Analysis Engine</button>
-        <button style={styles.sidebarLink(activeTab === 'ml')} onClick={() => setActiveTab('ml')}>Predictions</button>
-        <button style={styles.sidebarLink(activeTab === 'analytics')} onClick={() => setActiveTab('analytics')}>System Analytics</button>
-        {currentUser?.is_admin && <button style={styles.sidebarLink(activeTab === 'admin')} onClick={() => setActiveTab('admin')}>Governance Console</button>}
-        <button style={styles.sidebarLink(activeTab === 'chat')} onClick={() => setActiveTab('chat')}>AI Assistant</button>
-      </nav>
-      <div style={styles.sidebarFooter}>
-        <button style={styles.sidebarLink(false)} onClick={handleSignOut}>
-          <span style={{ color: "#f87171" }}>Sign Out</span>
-        </button>
-      </div>
-    </aside>
+  // 🎡 Scroll Navigation Logic
+  const scrollRef = useRef(null);
+  const { scrollYProgress } = useScroll({ container: scrollRef });
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, -400]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!scrollRef.current) return;
+      const sections = ['menu', 'analysis', 'ml', 'analytics', 'chat'];
+      const currentScroll = scrollRef.current.scrollTop;
+      
+      sections.forEach(id => {
+        const element = document.getElementById(`section-${id}`);
+        if (element) {
+          const offset = element.offsetTop - 150;
+          if (currentScroll >= offset && currentScroll < offset + element.offsetHeight) {
+            setActiveTab(id);
+          }
+        }
+      });
+    };
+
+    const container = scrollRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(`section-${id}`);
+    if (element && scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const renderParallax = () => (
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
+      <motion.div style={{ y: y1, position: "absolute", top: "10%", left: "5%", width: "300px", height: "300px", borderRadius: "50%", background: "radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%)" }} />
+      <motion.div style={{ y: y2, position: "absolute", top: "40%", left: "80%", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%)" }} />
+      <motion.div style={{ y: y3, position: "absolute", top: "70%", left: "15%", width: "400px", height: "400px", borderRadius: "50%", background: "radial-gradient(circle, rgba(16, 185, 129, 0.04) 0%, transparent 70%)" }} />
+      <motion.div style={{ y: y1, position: "absolute", top: "120%", left: "60%", width: "350px", height: "350px", borderRadius: "50%", background: "radial-gradient(circle, rgba(139, 92, 246, 0.03) 0%, transparent 70%)" }} />
+    </div>
   );
+
+  const renderSidebar = () => {
+    const links = [
+      { id: 'menu', label: 'Farm Home', icon: '🏠' },
+      { id: 'analysis', label: 'Test Soil & Fertilizer', icon: '🧪' },
+      { id: 'ml', label: 'Smart Predictions', icon: '🤖' },
+      { id: 'analytics', label: 'Farm Reports', icon: '📈' },
+      { id: 'chat', label: 'Ask AI Expert', icon: '💬' }
+    ];
+
+    return (
+      <aside style={styles.sidebar}>
+        <div style={styles.sidebarBrand}>
+          <div style={{ width: "32px", height: "32px", background: "#10b981", borderRadius: "8px", display: "grid", placeItems: "center", fontSize: "18px" }}>🌾</div>
+          <span>Advisor Pro</span>
+        </div>
+        <nav style={styles.sidebarNav}>
+          {links.map(link => (
+            <button key={link.id} onClick={() => scrollToSection(link.id)} style={styles.sidebarLink(activeTab === link.id)}>
+              <span style={{ fontSize: "18px", marginRight: "10px" }}>{link.icon}</span>
+              {link.label}
+            </button>
+          ))}
+          {currentUser?.is_admin && (
+            <button onClick={() => scrollToSection('admin')} style={styles.sidebarLink(activeTab === 'admin')}>
+              <span style={{ fontSize: "18px", marginRight: "10px" }}>🛡️</span> Admin Console
+            </button>
+          )}
+        </nav>
+        <div style={styles.sidebarFooter}>
+          <button style={{ ...styles.secondaryButton, width: "100%", textAlign: "left", color: "#f87171", border: "none" }} onClick={handleSignOut}>
+             🚪 Sign Out
+          </button>
+        </div>
+      </aside>
+    );
+  };
 
   const renderTopBar = () => (
     <header style={styles.topBar}>
@@ -265,51 +344,35 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
     <div style={styles.app}>
       {renderSidebar()}
       
-      <div style={styles.mainContent}>
+      <div style={{ ...styles.mainContent, position: "relative" }} ref={scrollRef}>
+        {renderParallax()}
         {renderTopBar()}
-
-        <div style={styles.pageHeader}>
-          <h1 style={styles.pageTitle}>
-            {activeTab === 'menu' && "Welcome to Your Farm Dashboard"}
-            {activeTab === 'analysis' && "Check Soil & Fertilizer"}
-            {activeTab === 'ml' && "Smart Crop Predictions"}
-            {activeTab === 'analytics' && "Your Farm Reports"}
-            {activeTab === 'admin' && "Admin Console"}
-            {activeTab === 'chat' && "Talk to AI Farm Expert"}
-          </h1>
-          <p style={styles.pageSubtitle}>
-            {activeTab === 'menu' && "See how your farm is performing today."}
-            {activeTab === 'analysis' && "Fill in the details below to see if your fertilizer matches your soil."}
-            {activeTab === 'ml' && "Advanced predictions to help you choose the right crop."}
-            {activeTab === 'analytics' && "Summary of all your past tests and farm health."}
-            {activeTab === 'admin' && "Manage users and farm settings."}
-            {activeTab === 'chat' && "Ask any question about farming or fertilizers."}
-          </p>
-        </div>
 
         <div style={styles.contentArea}>
           {message.text && (
-            <div style={{ marginBottom: "32px", padding: "16px", borderRadius: "12px", background: message.type === 'error' ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.1)", color: message.type === 'error' ? "#f87171" : "#4ade80", border: `1px solid ${message.type === 'error' ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)"}`, fontWeight: "600", fontSize: "14px" }}>
+            <div style={{ position: "sticky", top: "20px", zIndex: 1000, marginBottom: "32px", padding: "16px", borderRadius: "12px", background: message.type === 'error' ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.1)", color: message.type === 'error' ? "#f87171" : "#4ade80", border: `1px solid ${message.type === 'error' ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)"}`, fontWeight: "600", fontSize: "14px" }}>
               {message.text}
             </div>
           )}
 
-          {activeTab === 'menu' && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+          {/* ==================== SECTION: HOME ==================== */}
+          <section id="section-menu" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
+            <h1 style={styles.pageTitle}>Welcome to Your Farm Dashboard</h1>
+            <p style={styles.pageSubtitle}>See how your farm is performing today.</p>
+            <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
               <div style={styles.statsGrid}>
                 <div style={styles.statCard}><span style={styles.statLabel}>Operations Logged</span><span style={styles.statValue}>{history.length}</span></div>
                 <div style={styles.statCard}><span style={styles.statLabel}>Mean Compatibility</span><span style={styles.statValue}>{analytics?.compatibility_rate || 0}%</span></div>
                 <div style={styles.statCard}><span style={styles.statLabel}>Avg Yield Potential</span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
                 <div style={styles.statCard}><span style={styles.statLabel}>System Integrity</span><span style={styles.statValue}>100%</span></div>
               </div>
-
               <div style={styles.card}>
                 <h3 style={styles.cardTitle}>Recent Activity Log</h3>
                 <div style={styles.tableContainer}>
                   <table style={styles.table}>
                     <thead>
                       <tr>
-                        <th style={styles.th}>Timestamp</th>
+                        <th style={styles.th}>Date</th>
                         <th style={styles.th}>Crop Profile</th>
                         <th style={styles.th}>Soil Spec</th>
                         <th style={styles.th}>Result</th>
@@ -317,7 +380,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {history.slice(0, 10).map((item, i) => (
+                      {history.slice(0, 5).map((item, i) => (
                         <tr key={i}>
                           <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
                           <td style={styles.td}>{item.input_data?.Crop_Type}</td>
@@ -331,10 +394,13 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 </div>
               </div>
             </div>
-          )}
+          </section>
 
-          {activeTab === 'analysis' && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
+          {/* ==================== SECTION: TEST ==================== */}
+          <section id="section-analysis" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
+            <h1 style={styles.pageTitle}>Check Soil & Fertilizer</h1>
+            <p style={styles.pageSubtitle}>Fill in the details below to see if your fertilizer matches your soil.</p>
+            <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 400px", gap: "32px" }}>
               <div style={styles.card}>
                 <h3 style={styles.cardTitle}>Enter Farm Details</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
@@ -368,21 +434,27 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                 ) : (
                   <div style={{ ...styles.card, textAlign: "center", padding: "80px 20px" }}>
                     <div style={{ fontSize: "40px", marginBottom: "16px" }}>🔍</div>
-                    <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>System Idle.<br />Execute analysis to generate strategic data.</p>
+                    <p style={{ color: "#64748b", fontSize: "14px", fontWeight: "600" }}>System Idle.<br />Run a test to see results here.</p>
                   </div>
                 )}
               </div>
             </div>
-          )}
+          </section>
 
-          {activeTab === 'ml' && (
-            <div style={styles.card}>
+          {/* ==================== SECTION: ML ==================== */}
+          <section id="section-ml" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
+            <h1 style={styles.pageTitle}>Smart Crop Predictions</h1>
+            <p style={styles.pageSubtitle}>Advanced predictions to help you choose the right crop.</p>
+            <div style={{ marginTop: "40px", ...styles.card }}>
               <MLModel />
             </div>
-          )}
+          </section>
 
-          {activeTab === 'analytics' && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+          {/* ==================== SECTION: REPORTS ==================== */}
+          <section id="section-analytics" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
+            <h1 style={styles.pageTitle}>Your Farm Reports</h1>
+            <p style={styles.pageSubtitle}>Summary of all your past tests and farm health.</p>
+            <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "32px" }}>
               <div style={styles.statsGrid}>
                 <div style={styles.statCard}><span style={styles.statLabel}>Total Tests Done</span><span style={styles.statValue}>{analytics?.total_analyses ?? 0}</span></div>
                 <div style={styles.statCard}><span style={styles.statLabel}>Success Rate</span><span style={styles.statValue}>{analytics?.compatibility_rate ?? 0}%</span></div>
@@ -390,100 +462,113 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
               </div>
               
               <div style={styles.card}>
-                <h3 style={styles.cardTitle}>Farm Summary & Tips</h3>
-                <div style={{ padding: "16px", borderRadius: "12px", background: "rgba(16, 185, 129, 0.05)", border: "1px solid rgba(16, 185, 129, 0.1)" }}>
-                   <p style={{ color: "#10b981", fontWeight: "800", fontSize: "14px", marginBottom: "8px" }}>💡 Pro Tip for your Farm</p>
-                   <p style={{ color: "#94a3b8", fontWeight: "600", fontSize: "15px", lineHeight: "1.6" }}>
-                     Based on your last {analytics?.total_analyses ?? 0} tests, your farm is doing well. To get even better results, make sure to check your soil moisture regularly. Most crops grow best when the soil is not too dry and not too wet.
+                <h3 style={styles.cardTitle}>Farm Intelligence Summary</h3>
+                <div style={{ padding: "24px", borderRadius: "12px", background: "rgba(16, 185, 129, 0.05)", border: "1px solid rgba(16, 185, 129, 0.1)" }}>
+                   <p style={{ color: "#10b981", fontWeight: "900", fontSize: "14px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>Personalized Advice (Last 20 Sessions)</p>
+                   <p style={{ color: "#f1f5f9", fontWeight: "600", fontSize: "18px", lineHeight: "1.6", margin: 0 }}>
+                     {getPersonalizedTip()}
                    </p>
                 </div>
               </div>
             </div>
-          )}
+          </section>
 
-          {activeTab === 'admin' && currentUser?.is_admin && (
-            <div style={styles.card}>
-               <div style={{ display: "flex", gap: "12px", marginBottom: "32px" }}>
-                  {['soil', 'crop', 'fertilizer', 'users'].map(type => (
-                    <button 
-                      key={type} 
-                      onClick={() => setAdminManageType(type)}
-                      style={{ ...styles.secondaryButton, padding: "10px 16px", fontSize: "12px", backgroundColor: adminManageType === type ? "rgba(16, 185, 129, 0.1)" : "transparent", borderColor: adminManageType === type ? "#10b981" : "rgba(255,255,255,0.1)", color: adminManageType === type ? "#10b981" : "#fff" }}
-                    >
-                      {type.toUpperCase()} MANAGEMENT
-                    </button>
-                  ))}
-               </div>
-               
-               {adminManageType === 'users' ? (
-                 <div style={{ display: "grid", gridTemplateColumns: selectedUserId ? "1fr 300px" : "1fr", gap: "24px" }}>
-                   <div style={styles.tableContainer}>
-                      <table style={styles.table}>
-                        <thead>
-                          <tr><th style={styles.th}>Entity Name</th><th style={styles.th}>Contact Info</th><th style={styles.th}>Access Level</th><th style={styles.th}>Command</th></tr>
-                        </thead>
-                        <tbody>
-                          {users.map((u, i) => (
-                            <tr key={i} style={{ background: selectedUserId === u._id ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
-                              <td style={styles.td}>{u.name}</td>
-                              <td style={styles.td}>{u.email}</td>
-                              <td style={styles.td}>{u.is_admin ? 'Strategic Admin' : 'Premium Partner'}</td>
-                              <td style={styles.td}><button style={{ color: "#10b981", background: "none", border: "none", fontWeight: "800", cursor: "pointer", fontSize: "12px" }} onClick={() => handleSelectUser(u._id)}>VIEW INTEL</button></td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                   </div>
-                   {selectedUserId && (
-                     <div style={{ ...styles.card, background: "rgba(255,255,255,0.02)", padding: "24px" }}>
-                       <h4 style={{ ...styles.cardTitle, fontSize: "16px" }}>User Intelligence</h4>
-                       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                         <div style={styles.statCard}>
-                           <span style={{ ...styles.statLabel, fontSize: "10px" }}>Total Operations</span>
-                           <span style={{ ...styles.statValue, fontSize: "20px" }}>{userAnalytics?.total_analyses || 0}</span>
-                         </div>
-                         <div style={styles.statCard}>
-                           <span style={{ ...styles.statLabel, fontSize: "10px" }}>Avg Score</span>
-                           <span style={{ ...styles.statValue, fontSize: "20px" }}>{userAnalytics?.average_score || 0}%</span>
-                         </div>
-                         <div>
-                           <p style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", textTransform: "uppercase", marginBottom: "8px" }}>Recent Activity</p>
-                           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                             {userHistory.slice(0, 3).map((h, i) => (
-                               <div key={i} style={{ fontSize: "12px", padding: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "6px" }}>
-                                 <span style={{ color: "#10b981" }}>{h.crop_type}</span> - {h.score}%
-                               </div>
-                             ))}
-                           </div>
-                         </div>
-                       </div>
-                       <button style={{ ...styles.secondaryButton, marginTop: "20px", width: "100%", fontSize: "11px" }} onClick={() => setSelectedUserId(null)}>Close Intel</button>
-                     </div>
-                   )}
-                 </div>
-               ) : (
-                 <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                    <div style={{ display: "flex", gap: "16px" }}>
-                      <input type="text" placeholder={`New ${adminManageType} record`} value={newItem} onChange={(e) => setNewItem(e.target.value)} style={styles.input} />
-                      <button onClick={handleAddItem} style={styles.button}>COMMIT</button>
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px" }}>
-                      {(adminManageType === 'soil' ? soilTypes : adminManageType === 'crop' ? cropTypes : fertilizerNames).map(item => (
-                        <div key={item} style={{ padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: "14px", fontWeight: "600" }}>{item}</span>
-                          <button onClick={() => handleRemoveItem(item)} style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", fontSize: "18px" }}>×</button>
-                        </div>
-                      ))}
-                    </div>
-                 </div>
-               )}
-            </div>
-          )}
-
-          {activeTab === 'chat' && (
-            <div style={styles.card}>
+          {/* ==================== SECTION: CHAT ==================== */}
+          <section id="section-chat" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
+            <h1 style={styles.pageTitle}>Talk to AI Farm Expert</h1>
+            <p style={styles.pageSubtitle}>Ask any question about farming or fertilizers.</p>
+            <div style={{ marginTop: "40px" }}>
               <Chatbot />
             </div>
+          </section>
+
+          {/* ==================== SECTION: ADMIN ==================== */}
+          {currentUser?.is_admin && (
+            <section id="section-admin" style={{ minHeight: "90vh", paddingBottom: "100px" }}>
+              <h1 style={styles.pageTitle}>Admin Console</h1>
+              <p style={styles.pageSubtitle}>Manage users and farm settings.</p>
+              <div style={{ marginTop: "40px", ...styles.card }}>
+                 <div style={{ display: "flex", gap: "12px", marginBottom: "32px" }}>
+                    {['soil', 'crop', 'fertilizer', 'users'].map(type => (
+                      <button 
+                        key={type} 
+                        onClick={() => setAdminManageType(type)}
+                        style={{ ...styles.secondaryButton, padding: "10px 16px", fontSize: "12px", backgroundColor: adminManageType === type ? "rgba(16, 185, 129, 0.1)" : "transparent", borderColor: adminManageType === type ? "#10b981" : "rgba(255,255,255,0.1)", color: adminManageType === type ? "#10b981" : "#fff" }}
+                      >
+                        {type.toUpperCase()} MANAGEMENT
+                      </button>
+                    ))}
+                 </div>
+                 
+                 {adminManageType === 'users' ? (
+                   <div style={{ display: "grid", gridTemplateColumns: selectedUserId ? "1fr 300px" : "1fr", gap: "24px" }}>
+                     <div style={styles.tableContainer}>
+                        <table style={styles.table}>
+                          <thead>
+                            <tr>
+                              <th style={styles.th}>Name</th>
+                              <th style={styles.th}>Email</th>
+                              <th style={styles.th}>Access</th>
+                              <th style={styles.th}>Intel</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {users.map((u, i) => (
+                              <tr key={i} style={{ background: selectedUserId === u._id ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
+                                <td style={styles.td}>{u.name}</td>
+                                <td style={styles.td}>{u.email}</td>
+                                <td style={styles.td}>{u.is_admin ? 'Admin' : 'User'}</td>
+                                <td style={styles.td}><button style={{ color: "#10b981", background: "none", border: "none", fontWeight: "800", cursor: "pointer" }} onClick={() => handleSelectUser(u._id)}>VIEW</button></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                     </div>
+                     {selectedUserId && (
+                       <div style={{ ...styles.card, background: "rgba(255,255,255,0.02)" }}>
+                          <h4 style={{ ...styles.cardTitle, fontSize: "14px" }}>User Intelligence</h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                            <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Tests:</span> {userAnalytics?.total_analyses || 0}</div>
+                            <div style={{ fontSize: "12px" }}><span style={{ color: "#64748b" }}>Compatibility:</span> {userAnalytics?.compatibility_rate || 0}%</div>
+                            <div style={{ fontSize: "12px", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "12px", fontWeight: "700" }}>Recent History</div>
+                            {userHistory.slice(0, 3).map((h, i) => (
+                              <div key={i} style={{ fontSize: "11px", padding: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "4px" }}>
+                                {h.crop_type} - {h.score}%
+                              </div>
+                            ))}
+                          </div>
+                       </div>
+                     )}
+                   </div>
+                 ) : (
+                   <div>
+                     <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
+                       <input 
+                         style={styles.input} 
+                         placeholder={`Enter new ${adminManageType} record...`} 
+                         value={newItem} 
+                         onChange={(e) => setNewItem(e.target.value)} 
+                       />
+                       <button style={styles.button} onClick={handleAddItem}>Add Record</button>
+                     </div>
+                     <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                        {(adminManageType === 'soil' ? soilTypes : adminManageType === 'crop' ? cropTypes : fertilizerNames).map(item => (
+                          <div key={item} style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", borderRadius: "100px", fontSize: "12px", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: "8px" }}>
+                            {item}
+                            <button onClick={() => handleRemoveItem(item)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontWeight: "800" }}>×</button>
+                          </div>
+                        ))}
+                     </div>
+                   </div>
+                 )}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};v>
           )}
         </div>
       </div>
