@@ -20,10 +20,12 @@ logger = logging.getLogger(__name__)
 # ✅ Blueprint
 predict_bp = Blueprint('predict', __name__)
 
-# ==================== PREDICT ROUTE ====================
-@predict_bp.route('/predict', methods=['POST'])
+# ==================== ANALYZE ROUTE ====================
+@predict_bp.route('/analyze', methods=['POST', 'OPTIONS'])
 @token_required
-def predict(**kwargs):
+def analyze(**kwargs):
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         current_user = kwargs['current_user']
         data = request.get_json() or {}
@@ -96,4 +98,5 @@ def predict(**kwargs):
             'success': False,
             'message': str(e)
         }), 500
+
 
