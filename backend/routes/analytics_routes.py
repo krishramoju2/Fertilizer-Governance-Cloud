@@ -124,3 +124,8 @@ def get_analytics(**kwargs):
     except Exception as e:
         logger.error(f"Analytics error: {traceback.format_exc()}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+
+
+
