@@ -59,10 +59,10 @@ e)Weather is cool and low moisture, crop is wheat, fertilizer DAP 25 kg ;
 f)Warm climate, medium moisture, maize crop with NPK fertilizer ; 
 
 
+**registration test case**
 
-
-
-
+krish@cbit.com
+krish
 
 
 
