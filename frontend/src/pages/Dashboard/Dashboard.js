@@ -6,6 +6,36 @@ import api from "../../services/api";
 import { styles } from "./DashboardStyles";
 import { translations } from "../../utils/translations";
 
+// ===== BEGINNER DEFINITIONS FOR ML TERMS =====
+
+const termDefinitions = {
+  fertilizerMatch: {
+    title: "Fertilizer Match",
+    definition: "How well your chosen fertilizer fits your soil and crop needs. A better match means the fertilizer can provide the nutrients your crops actually need.",
+    example: "If your soil is low in nitrogen, a high-nitrogen fertilizer like Urea would be a good match."
+  },
+  expectedGrowth: {
+    title: "Expected Growth",
+    definition: "An estimate of how much your crop yield may increase based on current conditions compared to optimal growing patterns.",
+    example: "With good fertilizer match and ideal weather, you might see 20-30% higher yield."
+  },
+  prediction: {
+    title: "Prediction",
+    definition: "Our AI's suggestion of whether your current fertilizer-soil-crop combination will work well together.",
+    example: "Highly Compatible = Great match! | Moderately Compatible = Decent | Not Compatible = Needs change"
+  },
+  confidence: {
+    title: "Confidence",
+    definition: "How sure our AI model is about its prediction. Higher confidence means more historical data supports this result.",
+    example: "85% confidence means we're quite sure the prediction is accurate."
+  },
+  trustIndex: {
+    title: "Trust Index",
+    definition: "A reliability score showing how stable your farm data is today. Based on data quality and consistency.",
+    example: "Very High = Reliable data | Low = May need more tests for accuracy"
+  }
+};
+
 function Dashboard({ token, setToken, currentUser, setCurrentUser, language, setLanguage }) {
   const t = (key) => translations[language]?.[key] || translations.en[key];
   const [activeTab, setActiveTab] = useState("menu");
@@ -520,6 +550,25 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser, language, set
                   <div style={styles.statCard}><span style={styles.statLabel}><Definition text={t('def_exp_growth')}>{t('exp_growth')}</Definition></span><span style={styles.statValue}>{analytics?.average_score || 0}%</span></div>
                   <div style={styles.statCard}><span style={styles.statLabel}><Definition text={t('def_sys_status')}>{t('sys_status')}</Definition></span><span style={styles.statValue}>{t('healthy')}</span></div>
                 </div>
+                
+                {/* ML Terms Definitions for Beginners */}
+                <div style={{ ...styles.card, background: "linear-gradient(135deg, #1e293b, #0f172a)" }}>
+                  <h3 style={{ ...styles.cardTitle, color: "#38bdf8", marginBottom: "16px" }}>📖 ML Model Terms - Beginner Guide</h3>
+                  <p style={{ fontSize: "13px", color: "#94a3b8", marginBottom: "20px" }}>Understanding what each term means helps you interpret your results better.</p>
+                  
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+                    {Object.entries(termDefinitions).map(([key, term]) => (
+                      <div key={key} style={{ padding: "16px", background: "rgba(255,255,255,0.03)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                        <div style={{ fontSize: "14px", fontWeight: "800", color: "#10b981", marginBottom: "8px" }}>{term.title}</div>
+                        <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: "1.5", marginBottom: "10px" }}>{term.definition}</div>
+                        <div style={{ fontSize: "11px", color: "#64748b", fontStyle: "italic", padding: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "6px" }}>
+                          💡 Example: {term.example}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
                 <div style={styles.card}>
                   <h3 style={styles.cardTitle}><Definition text={t('def_recent_log')}>{t('recent_log')}</Definition></h3>
                   <div style={styles.tableContainer}>
