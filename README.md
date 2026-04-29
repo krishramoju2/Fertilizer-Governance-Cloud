@@ -1,4 +1,4 @@
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cdbcce89-bd57-48d7-843a-31ba6e935118" />
+
 
 1. **User Authentication** - Register and login with JWT based authentication
 2. **Farm Profile** - Save soil type, farm size, location, primary crops.
