@@ -319,7 +319,7 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
                     <tbody>
                       {history.slice(0, 10).map((item, i) => (
                         <tr key={i}>
-                          <td style={styles.td}>{new Date(item.created_at).toLocaleDateString()}</td>
+                          <td style={styles.td}>{item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'N/A'}</td>
                           <td style={styles.td}>{item.input_data?.Crop_Type}</td>
                           <td style={styles.td}>{item.input_data?.Soil_Type}</td>
                           <td style={styles.td}>{item.result?.overall_compatibility}</td>
