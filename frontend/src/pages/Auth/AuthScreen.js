@@ -2,9 +2,6 @@ import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { GoogleLogin } from "@react-oauth/google";
 
-// Placeholder for the corporate hero image - User should update this path if needed
-const heroImg = "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=2070";
-
 export default function AuthScreen({ setToken, setCurrentUser }) {
   const [isLogin, setIsLogin] = useState(true);
   const [soilTypes, setSoilTypes] = useState(["Loamy", "Sandy", "Clay"]);
@@ -113,295 +110,241 @@ export default function AuthScreen({ setToken, setCurrentUser }) {
 
   return (
     <div style={styles.container}>
-      {/* Hero Background with mesh overlay */}
-      <div style={styles.heroBg}>
-        <div style={styles.meshOverlay} />
-      </div>
-
-      <div style={styles.content}>
-        <div style={styles.leftSide}>
-          <h1 style={styles.brandTitle}>FarmAdvisor <span style={{color: '#4ade80'}}>Pro</span></h1>
-          <p style={styles.brandSubtitle}>
-            Precision Governance for Sustainable Agriculture. <br />
-            Empowering farmers with data-driven decision intelligence.
-          </p>
-          <div style={styles.statsContainer}>
-            <div style={styles.statItem}>
-              <span style={styles.statValue}>98%</span>
-              <span style={styles.statLabel}>Prediction Accuracy</span>
-            </div>
-            <div style={styles.statItem}>
-              <span style={styles.statValue}>10k+</span>
-              <span style={styles.statLabel}>Farmers Empowered</span>
-            </div>
-          </div>
+      <div style={styles.loginCard}>
+        <div style={styles.brandSection}>
+          <div style={styles.logo}>🌾</div>
+          <h1 style={styles.brandName}>FarmAdvisor <span style={{ color: "#10b981" }}>Pro</span></h1>
+          <p style={styles.brandTagline}>Enterprise Governance Cloud</p>
         </div>
 
-        <div style={styles.rightSide}>
-          <div style={styles.card}>
-            <h2 style={styles.title}>{isLogin ? "Welcome Back" : "Join the Network"}</h2>
-            <p style={styles.subtitle}>{isLogin ? "Access your strategic dashboard" : "Register your farm for precision insights"}</p>
+        {error && <div style={styles.error}>{error}</div>}
 
-            {error && <p style={styles.error}>{error}</p>}
-
-            <form onSubmit={handleSubmit} style={styles.form}>
-              <input
-                style={styles.input}
-                type="email"
-                placeholder="Corporate Email Address"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-              />
-
-              <input
-                style={styles.input}
-                type="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required
-              />
-
-              {!isLogin && (
-                <>
-                  <input
-                    style={styles.input}
-                    type="text"
-                    placeholder="Full Professional Name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
-
-                  <select
-                    style={styles.input}
-                    value={formData.soil_type}
-                    onChange={(e) => setFormData({ ...formData, soil_type: e.target.value })}
-                    required
-                  >
-                    {soilTypes.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </>
-              )}
-
-              <button type="submit" style={styles.button} disabled={loading}>
-                {loading ? "Processing..." : (isLogin ? "Sign In" : "Get Started")}
-              </button>
-            </form>
-
-            <div style={styles.divider}>
-              <span style={styles.dividerLine}></span>
-              <span style={styles.dividerText}>SECURE ACCESS</span>
-              <span style={styles.dividerLine}></span>
-            </div>
-
-            <div style={styles.googleWrapper}>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap={false}
-                theme="filled_blue"
-                shape="pill"
-              />
-            </div>
-
-            <p style={styles.switchText}>
-              {isLogin ? "Don't have an account?" : "Already part of the network?"}
-              <button style={styles.switchButton} onClick={switchMode} disabled={loading}>
-                {isLogin ? "Request Access" : "Sign In"}
-              </button>
-            </p>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Corporate Email</label>
+            <input
+              style={styles.input}
+              type="email"
+              placeholder="name@company.com"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
           </div>
+
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Access Key</label>
+            <input
+              style={styles.input}
+              type="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required
+            />
+          </div>
+
+          {!isLogin && (
+            <>
+              <div style={styles.inputGroup}>
+                <label style={styles.label}>Full Name</label>
+                <input
+                  style={styles.input}
+                  type="text"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div style={styles.inputGroup}>
+                <label style={styles.label}>Soil Specification</label>
+                <select
+                  style={styles.input}
+                  value={formData.soil_type}
+                  onChange={(e) => setFormData({ ...formData, soil_type: e.target.value })}
+                  required
+                >
+                  {soilTypes.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? "Authenticating..." : (isLogin ? "Sign In" : "Request Access")}
+          </button>
+        </form>
+
+        <div style={styles.divider}>
+          <div style={styles.line} />
+          <span style={styles.dividerText}>OR CONTINUE WITH</span>
+          <div style={styles.line} />
         </div>
+
+        <div style={styles.googleWrapper}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            useOneTap={false}
+            theme="outline"
+            shape="rectangular"
+            width="100%"
+          />
+        </div>
+
+        <p style={styles.footerText}>
+          {isLogin ? "New to the platform?" : "Already have access?"}
+          <button style={styles.switchButton} onClick={switchMode} disabled={loading}>
+            {isLogin ? "Request an Account" : "Sign In Here"}
+          </button>
+        </p>
       </div>
-      
-      <footer style={styles.footer}>
-        © 2026 FarmAdvisor Governance Cloud. All Rights Reserved. Confidential & Proprietary.
-      </footer>
+
+      <p style={styles.legalText}>
+        © 2026 FarmAdvisor Pro. Strategic Governance Node. Secure & Confidential.
+      </p>
     </div>
   );
 }
 
 const styles = {
   container: {
-    position: "relative",
-    width: "100%",
     minHeight: "100vh",
-    backgroundColor: "#020617",
-    color: "#f8fafc",
-    fontFamily: "'Inter', sans-serif",
     display: "flex",
     flexDirection: "column",
-    overflowX: "hidden"
-  },
-  heroBg: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundImage: `url(${heroImg})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    zIndex: 0,
-    opacity: 0.6
-  },
-  meshOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    background: "radial-gradient(circle at 20% 30%, rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.95))",
-    zIndex: 1
-  },
-  content: {
-    position: "relative",
-    zIndex: 2,
-    flex: 1,
-    display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 10%",
-    gap: "50px"
+    justifyContent: "center",
+    backgroundColor: "#020617",
+    padding: "20px",
+    fontFamily: "'Inter', sans-serif"
   },
-  leftSide: {
-    maxWidth: "500px"
+  loginCard: {
+    width: "100%",
+    maxWidth: "420px",
+    backgroundColor: "#0f172a",
+    padding: "48px",
+    borderRadius: "16px",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
   },
-  brandTitle: {
-    fontSize: "56px",
-    fontWeight: "900",
-    marginBottom: "20px",
-    letterSpacing: "-2px"
-  },
-  brandSubtitle: {
-    fontSize: "20px",
-    color: "#94a3b8",
-    lineHeight: "1.6",
+  brandSection: {
+    textAlign: "center",
     marginBottom: "40px"
   },
-  statsContainer: {
-    display: "flex",
-    gap: "40px"
-  },
-  statItem: {
-    display: "flex",
-    flexDirection: "column"
-  },
-  statValue: {
+  logo: {
     fontSize: "32px",
+    marginBottom: "16px"
+  },
+  brandName: {
+    fontSize: "24px",
     fontWeight: "800",
-    color: "#4ade80"
+    color: "#fff",
+    margin: 0,
+    letterSpacing: "-0.5px"
   },
-  statLabel: {
-    fontSize: "12px",
-    color: "#64748b",
-    textTransform: "uppercase",
-    letterSpacing: "1px"
-  },
-  rightSide: {
-    width: "400px"
-  },
-  card: {
-    background: "rgba(15, 23, 42, 0.8)",
-    backdropFilter: "blur(20px)",
-    padding: "48px",
-    borderRadius: "24px",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    textAlign: "center"
-  },
-  title: {
-    fontSize: "28px",
-    fontWeight: "800",
-    marginBottom: "8px",
-    color: "#fff"
-  },
-  subtitle: {
+  brandTagline: {
     fontSize: "14px",
-    color: "#94a3b8",
-    marginBottom: "32px"
+    color: "#64748b",
+    fontWeight: "600",
+    marginTop: "4px"
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "16px"
+    gap: "20px"
+  },
+  inputGroup: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px"
+  },
+  label: {
+    fontSize: "12px",
+    fontWeight: "700",
+    color: "#94a3b8",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px"
   },
   input: {
-    padding: "16px 20px",
-    borderRadius: "12px",
-    background: "rgba(2, 6, 23, 0.5)",
+    width: "100%",
+    padding: "12px 16px",
+    backgroundColor: "#020617",
     border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "8px",
     color: "#fff",
-    fontSize: "15px",
+    fontSize: "14px",
     outline: "none",
-    transition: "all 0.3s ease"
+    transition: "border-color 0.2s ease",
+    boxSizing: "border-box"
   },
   button: {
-    padding: "16px",
-    background: "linear-gradient(135deg, #10b981, #059669)",
-    color: "white",
+    marginTop: "12px",
+    padding: "14px",
+    backgroundColor: "#10b981",
+    color: "#fff",
     border: "none",
-    borderRadius: "12px",
+    borderRadius: "8px",
+    fontSize: "14px",
     fontWeight: "700",
-    fontSize: "16px",
     cursor: "pointer",
-    marginTop: "8px",
-    transition: "all 0.3s ease",
-    boxShadow: "0 10px 20px rgba(16, 185, 129, 0.2)"
+    transition: "background 0.2s ease"
   },
   divider: {
     display: "flex",
     alignItems: "center",
-    margin: "32px 0",
-    gap: "10px"
+    gap: "16px",
+    margin: "32px 0"
   },
-  dividerLine: {
+  line: {
     flex: 1,
     height: "1px",
-    background: "rgba(255, 255, 255, 0.1)"
+    backgroundColor: "rgba(255, 255, 255, 0.1)"
   },
   dividerText: {
     fontSize: "10px",
-    color: "#64748b",
     fontWeight: "800",
-    letterSpacing: "2px"
+    color: "#475569",
+    letterSpacing: "1px"
   },
   googleWrapper: {
-    display: "flex",
-    justifyContent: "center",
-    marginBottom: "24px"
+    width: "100%",
+    marginBottom: "32px"
   },
-  switchText: {
+  footerText: {
+    textAlign: "center",
     fontSize: "14px",
-    color: "#94a3b8"
+    color: "#64748b",
+    margin: 0
   },
   switchButton: {
     background: "none",
     border: "none",
-    color: "#4ade80",
-    cursor: "pointer",
+    color: "#10b981",
     fontWeight: "700",
+    cursor: "pointer",
     marginLeft: "8px",
     padding: 0
   },
   error: {
-    color: "#f87171",
-    background: "rgba(248, 113, 113, 0.1)",
     padding: "12px",
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    border: "1px solid rgba(239, 68, 68, 0.2)",
     borderRadius: "8px",
-    marginBottom: "20px",
-    fontSize: "14px",
-    border: "1px solid rgba(248, 113, 113, 0.2)"
+    color: "#f87171",
+    fontSize: "13px",
+    fontWeight: "600",
+    marginBottom: "24px",
+    textAlign: "center"
   },
-  footer: {
-    padding: "32px",
-    textAlign: "center",
-    fontSize: "12px",
+  legalText: {
+    marginTop: "48px",
+    fontSize: "11px",
     color: "#475569",
-    borderTop: "1px solid rgba(255, 255, 255, 0.05)"
+    fontWeight: "600",
+    letterSpacing: "0.5px"
   }
 };
