@@ -254,6 +254,10 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   const yNode8 = useTransform(scrollYProgress, [0, 1], [0, -1000]);
   const yNode9 = useTransform(scrollYProgress, [0, 1], [0, -4200]);
 
+  // Train Specific Cinematic Transforms
+  const trainY = useTransform(scrollYProgress, [0, 1], ["0vh", "90vh"]);
+  const trainWobble = useTransform(scrollYProgress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 2, -2, 2, -2, 0]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (!scrollRef.current) return;
@@ -289,10 +293,6 @@ function Dashboard({ token, setToken, currentUser, setCurrentUser }) {
   };
 
   const renderTrain = () => {
-    // Train moves from 0 to 90% of the viewport as you scroll the entire page
-    const trainY = useTransform(scrollYProgress, [0, 1], ["0vh", "90vh"]);
-    const trainWobble = useTransform(scrollYProgress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 2, -2, 2, -2, 0]);
-    
     return (
       <motion.div 
         style={{ 
@@ -703,3 +703,4 @@ const td_style = (item) => ({
 });
 
 export default Dashboard;
+
