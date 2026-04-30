@@ -1,32 +1,24 @@
 import Iridescence from "./Iridescence";
-
 import React, { useState } from "react";
 import api from "../../services/api";
-
 export default function Chatbot() {
-  
   const [messages, setMessages] = useState([
     {
       sender: "bot",
       text: "SYSTEM INITIALIZED. I am the Agri-Governance Diagnostic Assistant. Please provide your environmental parameters or query for technical analysis."
     }
   ]);
-  
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
-
   const sendMessage = async () => {
     if (!input.trim() || isThinking) return;
-
     const userMessage = { sender: "user", text: input };
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsThinking(true);
-
     try {
       const res = await api.post("/chat", { message: input });
       const { thinking, reply } = res.data;
-
       // Reveal thinking steps one by one
       if (thinking && thinking.length > 0) {
         for (let i = 0; i < thinking.length; i++) {
@@ -37,16 +29,13 @@ export default function Chatbot() {
           ]);
         }
       }
-
       await new Promise(resolve => setTimeout(resolve, 400));
       setIsThinking(false);
-
       const botMessage = {
         sender: "bot",
         text: reply
       };
       setMessages(prev => [...prev, botMessage]);
-
     } catch (error) {
       setIsThinking(false);
       setMessages(prev => [
@@ -55,10 +44,8 @@ export default function Chatbot() {
       ]);
     }
   };
-
   return (
     <div style={{ ...styles.container, position: "relative", overflow: "hidden" }}>
-  
     {/* 🔥 Iridescence Background */}
     <div style={styles.bg}>
       <Iridescence 
@@ -67,8 +54,7 @@ export default function Chatbot() {
         amplitude={0.03} 
         mouseReact={true}
       />
-    </div>
-          
+    </div> 
       <div style={styles.card}>
         <h2 style={{ marginBottom: "5px", fontWeight: "800", color: "#0f172a", fontSize: "20px" }}>
         🛡️ Agri-Governance AI
@@ -76,7 +62,6 @@ export default function Chatbot() {
         <p style={{ fontSize: "11px", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "15px" }}>
           Enterprise Diagnostic Protocol v4.0.2
         </p>
-
         {/* 🔥 PROFESSIONAL DESCRIPTION BOX */}
         <div style={styles.infoBox}>
           <p style={styles.description}>
@@ -85,7 +70,6 @@ export default function Chatbot() {
             biochemical compatibility algorithms.
           </p>
         </div>
-
         <div style={styles.chatBox}>
           {messages.map((m, i) => (
             <div
@@ -109,7 +93,6 @@ export default function Chatbot() {
             </div>
           )}
         </div>
-
         <div style={styles.inputRow}>
           <input
             style={styles.input}
@@ -125,7 +108,6 @@ export default function Chatbot() {
     </div>
   );
 }
-
 const styles = {
   
   container: {
